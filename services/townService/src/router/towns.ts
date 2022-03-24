@@ -2,6 +2,7 @@ import express, { Express } from 'express';
 import io from 'socket.io';
 import { Server } from 'http';
 import { StatusCodes } from 'http-status-codes';
+import { auth } from 'express-oauth2-jwt-bearer';
 import {
   conversationAreaCreateHandler,
   townCreateHandler, townDeleteHandler,
