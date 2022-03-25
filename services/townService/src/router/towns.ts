@@ -48,7 +48,7 @@ export default function addTownRoutes(http: Server, app: Express): io.Server {
   });
 
   // create a user
-  app.post('/api/v2/users', jwtCheck, async (req, res) => {
+  app.post('/api/v2/users', async (req, res) => {
     try {
       const result = await createProfile({
         firstName: req.body.given_name,
@@ -67,7 +67,7 @@ export default function addTownRoutes(http: Server, app: Express): io.Server {
   });
 
   // list or search users
-  app.get('/api/v2/users', jwtCheck, (_req, res) => {
+  app.get('/api/v2/users', (_req, res) => {
     try {
       const result = userListHandler();
       res.status(StatusCodes.OK)
