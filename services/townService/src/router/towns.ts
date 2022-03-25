@@ -31,6 +31,52 @@ const jwtCheck = jwt({
 
 
 export default function addTownRoutes(http: Server, app: Express): io.Server {
+  // This route doesn't need authentication
+  app.get('/api/public', (req, res) => {
+    res.json({
+      message: 'Hello from a public endpoint! You don\'t need to be authenticated to see this.',
+    });
+  });
+
+  // This route needs authentication
+  app.get('/api/private', jwtCheck, (req, res) => {
+    res.json({
+      message: 'Hello from a private endpoint! You need to be authenticated to see this.',
+    });
+  });
+
+  // create a user
+  app.post('/api/v2/users', jwtCheck, (req, res) => {
+    try {
+      const result = await createUser({
+        profile: req.body,
+      });
+      res.status(StatusCodes.OK)
+        .json(result);
+    } catch (err) {
+      logError(err);
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .json({
+          message: 'Internal server error, please see log in server for more details',
+        });
+    }
+  });
+
+  // list or search users
+  app.get('/api/v2/users', jwtCheck, (req, res) => {
+    try {
+      const result = userListHandler();
+      res.status(StatusCodes.OK)
+        .json(result);
+    } catch (err) {
+      logError(err);
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .json({
+          message: 'Internal server error, please see log in server for more details',
+        });
+    }
+  });
+
   /*
    * Create a new session (aka join a town)
    */
