@@ -81,6 +81,27 @@ export default function addTownRoutes(http: Server, app: Express): io.Server {
     }
   });
 
+  // get a user
+  app.get('/api/v2/users/:id', async (req, res) => {
+    try {
+      const result = await fetchProfile({
+        id: req.params.id,
+      });
+      if (result.isOK) {
+        res.status(StatusCodes.OK).json(result.result);
+      } else {
+        res.status(404).json({
+          message: 'profile not found',
+        });
+      }
+    } catch (err) {
+      logError(err);
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        message: 'Internal server error, please see log in server for more details',
+      });
+    }
+  });
+
   /*
   * Create a new session (aka join a town)
   */
