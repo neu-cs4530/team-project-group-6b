@@ -34,7 +34,7 @@ export default function addTownRoutes(http: Server, app: Express): io.Server {
 
   app.get('/profile', requiresAuth(), (req, res) => {
     try {
-      const result = await townProfileHandler({
+      const result = await userProfileHandler({
         user: req.oidc.user,
       });
       res.status(StatusCodes.OK)
