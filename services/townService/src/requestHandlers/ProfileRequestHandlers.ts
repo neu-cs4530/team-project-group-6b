@@ -16,10 +16,6 @@ export interface CreateProfileRequest {
   email: string
 }
 
-export interface Doc {
-  doc: WithId<Document>;
-}
-
 export async function createProfile(requestData: CreateProfileRequest): Promise<ResponseEnvelope<string>> {
   try {
     const collection = await getProfileCollection();
