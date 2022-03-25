@@ -15,7 +15,7 @@ import {
 } from '../requestHandlers/CoveyTownRequestHandlers';
 import { logError } from '../Utils';
 
-const port = process.env.PORT || 8080;
+// const port = process.env.PORT || 8080;
 
 const jwtCheck = jwt({
   secret: jwks.expressJwtSecret({
@@ -32,14 +32,14 @@ const jwtCheck = jwt({
 
 export default function addTownRoutes(http: Server, app: Express): io.Server {
   // This route doesn't need authentication
-  app.get('/api/public', (req, res) => {
+  app.get('/api/public', (_req, res) => {
     res.json({
       message: 'Hello from a public endpoint! You don\'t need to be authenticated to see this.',
     });
   });
 
   // This route needs authentication
-  app.get('/api/private', jwtCheck, (req, res) => {
+  app.get('/api/private', jwtCheck, (_req, res) => {
     res.json({
       message: 'Hello from a private endpoint! You need to be authenticated to see this.',
     });
@@ -63,7 +63,7 @@ export default function addTownRoutes(http: Server, app: Express): io.Server {
   });
 
   // list or search users
-  app.get('/api/v2/users', jwtCheck, (req, res) => {
+  app.get('/api/v2/users', jwtCheck, (_req, res) => {
     try {
       const result = userListHandler();
       res.status(StatusCodes.OK)
