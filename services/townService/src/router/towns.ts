@@ -2,7 +2,9 @@ import express, { Express } from 'express';
 import io from 'socket.io';
 import { Server } from 'http';
 import { StatusCodes } from 'http-status-codes';
-import { auth, requiresAuth } from 'express-openid-connect';
+import jwt from 'express-jwt';
+import jwks from 'jwks-rsa';
+
 import {
   conversationAreaCreateHandler,
   townCreateHandler, townDeleteHandler,
@@ -13,41 +15,22 @@ import {
 } from '../requestHandlers/CoveyTownRequestHandlers';
 import { logError } from '../Utils';
 
-const config = {
-  authRequired: false,
-  auth0Logout: true,
-  secret: 'a long, randomly-generated string stored in env',
-  baseURL: 'http://localhost:3000',
-  clientID: 'gd0SP4ARU8ENIxF5YcAwufBuCwUrClYF',
-  issuerBaseURL: 'https://harrymerzin.auth0.com',
-};
+const port = process.env.PORT || 8080;
+
+const jwtCheck = jwt({
+  secret: jwks.expressJwtSecret({
+    cache: true,
+    rateLimit: true,
+    jwksRequestsPerMinute: 5,
+    jwksUri: 'https://harrymerzin.auth0.com/.well-known/jwks.json',
+  }),
+  audience: 'https://coveytown.com/api',
+  issuer: 'https://harrymerzin.auth0.com/',
+  algorithms: ['RS256'],
+});
 
 
 export default function addTownRoutes(http: Server, app: Express): io.Server {
-  // auth router attaches /login, /logout, and /callback routes to the baseURL
-  app.use(auth(config));
-
-  // req.isAuthenticated is provided from the auth router
-  app.get('/', (req, res) => {
-    res.send(req.oidc.isAuthenticated() ? 'Logged in' : 'Logged out');
-  });
-
-  app.get('/profile', requiresAuth(), (req, res) => {
-    try {
-      const result = await userProfileHandler({
-        user: req.oidc.user,
-      });
-      res.status(StatusCodes.OK)
-        .json(result);
-    } catch (err) {
-      logError(err);
-      res.status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .json({
-          message: 'Internal server error, please see log in server for more details',
-        });
-    }
-  });
-
   /*
    * Create a new session (aka join a town)
    */
