@@ -1,3 +1,4 @@
+import { useAuth0 } from '@auth0/auth0-react';
 import { ChakraProvider } from '@chakra-ui/react';
 import { MuiThemeProvider } from '@material-ui/core/styles';
 import assert from 'assert';
@@ -10,7 +11,7 @@ import React, {
   useReducer,
   useState,
 } from 'react';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { io, Socket } from 'socket.io-client';
 import './App.css';
 import ConversationArea, { ServerConversationArea } from './classes/ConversationArea';
@@ -18,6 +19,7 @@ import Player, { ServerPlayer, UserLocation } from './classes/Player';
 import TownsServiceClient, { TownJoinResponse } from './classes/TownsServiceClient';
 import Video from './classes/Video/Video';
 import Login from './components/Login/Login';
+import Register from './components/Register';
 import { ChatProvider } from './components/VideoCall/VideoFrontend/components/ChatProvider';
 import ErrorDialog from './components/VideoCall/VideoFrontend/components/ErrorDialog/ErrorDialog';
 import UnsupportedBrowserWarning from './components/VideoCall/VideoFrontend/components/UnsupportedBrowserWarning/UnsupportedBrowserWarning';
@@ -228,11 +230,13 @@ function App(props: { setOnDisconnect: Dispatch<SetStateAction<Callback | undefi
       });
       socket.on('conversationDestroyed', (_conversationArea: ServerConversationArea) => {
         const existingArea = localConversationAreas.find(a => a.label === _conversationArea.label);
-        if(existingArea){
+        if (existingArea) {
           existingArea.topic = undefined;
           existingArea.occupants = [];
         }
-        localConversationAreas = localConversationAreas.filter(a => a.label !== _conversationArea.label);
+        localConversationAreas = localConversationAreas.filter(
+          a => a.label !== _conversationArea.label,
+        );
         setConversationAreas(localConversationAreas);
         recalculateNearbyPlayers();
       });
@@ -286,6 +290,8 @@ function App(props: { setOnDisconnect: Dispatch<SetStateAction<Callback | undefi
     );
   }, [setupGameController, appState.sessionToken, videoInstance]);
 
+  const PageComponent = () => <>{page}</>;
+
   return (
     <CoveyAppContext.Provider value={appState}>
       <VideoContext.Provider value={Video.instance()}>
@@ -294,7 +300,11 @@ function App(props: { setOnDisconnect: Dispatch<SetStateAction<Callback | undefi
             <PlayersInTownContext.Provider value={playersInTown}>
               <NearbyPlayersContext.Provider value={nearbyPlayers}>
                 <ConversationAreasContext.Provider value={conversationAreas}>
-                  {page}
+                  <Switch>
+                    <Route path='/register' component={Register} />
+                    <Route component={PageComponent} />
+                  </Switch>
+                  {/* {page} */}
                 </ConversationAreasContext.Provider>
               </NearbyPlayersContext.Provider>
             </PlayersInTownContext.Provider>
@@ -320,8 +330,31 @@ function EmbeddedTwilioAppWrapper() {
 }
 
 export default function AppStateWrapper(): JSX.Element {
+  const {
+    user,
+    loginWithRedirect,
+    isAuthenticated,
+    isLoading,
+    logout,
+    getAccessTokenSilently,
+  } = useAuth0();
+  console.log('USER: ', user);
+
+  useEffect(() => {
+    (async () => {
+      if (isAuthenticated) {
+        console.log('Token: ', await getAccessTokenSilently());
+      }
+      if (!isLoading && !isAuthenticated) {
+        await loginWithRedirect();
+      }
+    })();
+  });
   return (
     <BrowserRouter>
+      <button type='button' onClick={() => logout()}>
+        Logout
+      </button>
       <ChakraProvider>
         <MuiThemeProvider theme={theme}>
           <AppStateProvider>
