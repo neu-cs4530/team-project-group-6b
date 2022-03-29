@@ -1,9 +1,13 @@
-import { Box, Button, FormLabel, Heading, Input } from '@chakra-ui/react';
+import { useAuth0 } from '@auth0/auth0-react';
+import { Box, Button, FormLabel, Heading, Input, Text } from '@chakra-ui/react';
 import { Form, FormikProps, withFormik } from 'formik';
-import React from 'react';
+import React, { useState } from 'react';
+import { Redirect } from 'react-router-dom';
+import ProfileServiceClient from '../classes/ProfileServiceClient';
+
+const profileServiceClient = new ProfileServiceClient();
 
 interface FormValues {
-  email: string;
   username: string;
   firstName: string;
   lastName: string;
@@ -19,8 +23,6 @@ const InnerForm = (props: FormikProps<FormValues>) => {
           <Heading as='h2' size='lg'>
             Enter your profile information
           </Heading>
-          <FormLabel>Email</FormLabel>
-          <Input name='email' onChange={handleChange} onTouchStart={handleBlur} />
           <FormLabel>Username</FormLabel>
           <Input name='username' onChange={handleChange} onTouchStart={handleBlur} />
           <FormLabel>First Name</FormLabel>
@@ -38,12 +40,38 @@ const InnerForm = (props: FormikProps<FormValues>) => {
 };
 
 // Wrap our form with the withFormik HoC
-const OuterForm = withFormik<Record<string, never>, FormValues>({
-  handleSubmit: values => {
-    // do submitting things
-    alert(JSON.stringify(values));
-  },
-})(InnerForm);
+const OuterForm = () => {
+  const { getAccessTokenSilently, user } = useAuth0();
+  const [shouldRedirect, setShouldRedirect] = useState(false);
+  const [error, setError] = useState<string | undefined>(undefined);
+  const Wrapper = withFormik<any, FormValues>({
+    handleSubmit: async values => {
+      const token = await getAccessTokenSilently();
+      try {
+        if (!user || !user.email) {
+          throw new Error('no user');
+        }
+        await profileServiceClient.postProfile({
+          token,
+          email: user.email,
+          username: values.username,
+          firstName: values.firstName,
+          lastName: values.lastName,
+        });
+        setShouldRedirect(true);
+      } catch (err) {
+        setError('something bad happened');
+      }
+    },
+  })(InnerForm);
+  return (
+    <>
+      {error && <Text>{error}</Text>}
+      {shouldRedirect && <Redirect to='/' />}
+      <Wrapper />
+    </>
+  );
+};
 
 // Use <MyForm /> wherevs
 const Wrapper = () => (

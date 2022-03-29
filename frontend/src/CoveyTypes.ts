@@ -5,21 +5,31 @@ import TownsServiceClient from './classes/TownsServiceClient';
 export type CoveyEvent = 'playerMoved' | 'playerAdded' | 'playerRemoved';
 
 export type VideoRoom = {
-  twilioID: string,
-  id: string
+  twilioID: string;
+  id: string;
 };
 export type UserProfile = {
-  displayName: string,
-  id: string
+  displayName: string;
+  id: string;
 };
 export type CoveyAppState = {
-  sessionToken: string,
-  userName: string,
-  currentTownFriendlyName: string,
-  currentTownID: string,
-  currentTownIsPubliclyListed: boolean,
-  myPlayerID: string,
-  emitMovement: (location: UserLocation) => void,
-  socket: Socket | null,
-  apiClient: TownsServiceClient
+  sessionToken: string;
+  userName: string;
+  currentTownFriendlyName: string;
+  currentTownID: string;
+  currentTownIsPubliclyListed: boolean;
+  myPlayerID: string;
+  emitMovement: (location: UserLocation) => void;
+  socket: Socket | null;
+  apiClient: TownsServiceClient;
+};
+
+export type AuthenticatedUser = {
+  token: string;
+  username: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  isAuthenticated: boolean;
+  logout: () => void;
 };

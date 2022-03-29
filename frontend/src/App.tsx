@@ -1,4 +1,3 @@
-import { useAuth0 } from '@auth0/auth0-react';
 import { ChakraProvider } from '@chakra-ui/react';
 import { MuiThemeProvider } from '@material-ui/core/styles';
 import assert from 'assert';
@@ -6,6 +5,7 @@ import React, {
   Dispatch,
   SetStateAction,
   useCallback,
+  useContext,
   useEffect,
   useMemo,
   useReducer,
@@ -16,6 +16,7 @@ import { io, Socket } from 'socket.io-client';
 import './App.css';
 import ConversationArea, { ServerConversationArea } from './classes/ConversationArea';
 import Player, { ServerPlayer, UserLocation } from './classes/Player';
+import ProfileServiceClient from './classes/ProfileServiceClient';
 import TownsServiceClient, { TownJoinResponse } from './classes/TownsServiceClient';
 import Video from './classes/Video/Video';
 import Login from './components/Login/Login';
@@ -30,6 +31,7 @@ import { Callback } from './components/VideoCall/VideoFrontend/types';
 import useConnectionOptions from './components/VideoCall/VideoFrontend/utils/useConnectionOptions/useConnectionOptions';
 import VideoOverlay from './components/VideoCall/VideoOverlay/VideoOverlay';
 import WorldMap from './components/world/WorldMap';
+import AuthenticatedUserContext from './contexts/AuthenticatedUserContext';
 import ConversationAreasContext from './contexts/ConversationAreasContext';
 import CoveyAppContext from './contexts/CoveyAppContext';
 import NearbyPlayersContext from './contexts/NearbyPlayersContext';
@@ -40,6 +42,7 @@ import { CoveyAppState } from './CoveyTypes';
 
 export const MOVEMENT_UPDATE_DELAY_MS = 0;
 export const CALCULATE_NEARBY_PLAYERS_MOVING_DELAY_MS = 300;
+const profileServiceClient = new ProfileServiceClient();
 type CoveyAppUpdate =
   | {
       action: 'doConnect';
@@ -330,31 +333,19 @@ function EmbeddedTwilioAppWrapper() {
 }
 
 export default function AppStateWrapper(): JSX.Element {
-  const {
-    user,
-    loginWithRedirect,
-    isAuthenticated,
-    isLoading,
-    logout,
-    getAccessTokenSilently,
-  } = useAuth0();
-  console.log('USER: ', user);
-
-  useEffect(() => {
-    (async () => {
-      if (isAuthenticated) {
-        console.log('Token: ', await getAccessTokenSilently());
-      }
-      if (!isLoading && !isAuthenticated) {
-        await loginWithRedirect();
-      }
-    })();
-  });
+  const authenticatedUserContext = useContext(AuthenticatedUserContext);
   return (
     <BrowserRouter>
-      <button type='button' onClick={() => logout()}>
-        Logout
-      </button>
+      {authenticatedUserContext && (
+        <button type='button' onClick={() => authenticatedUserContext.logout()}>
+          Logout
+        </button>
+      )}
+      <div>
+        {authenticatedUserContext?.email}
+        {authenticatedUserContext?.firstName}
+        {authenticatedUserContext?.lastName}
+      </div>
       <ChakraProvider>
         <MuiThemeProvider theme={theme}>
           <AppStateProvider>

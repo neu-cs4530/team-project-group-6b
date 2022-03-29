@@ -2,6 +2,7 @@ import { Auth0Provider } from '@auth0/auth0-react';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
+import AuthenticatedUserContextProvider from './components/AuthenticatedUsers/AuthenticatedUserProvider';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
 
@@ -10,10 +11,14 @@ ReactDOM.render(
     <Auth0Provider
       useRefreshTokens
       cacheLocation='memory'
+      audience='https://coveytown.com/api'
       domain='harrymerzin.auth0.com'
       clientId='cEVvHBp7TMMUFxSr0PQWvkuhZkV9Tzxf'
+      scope='profile email'
       redirectUri='http://localhost:3000'>
-      <App />
+      <AuthenticatedUserContextProvider>
+        <App />
+      </AuthenticatedUserContextProvider>
     </Auth0Provider>
   </React.StrictMode>,
   document.getElementById('root'),
