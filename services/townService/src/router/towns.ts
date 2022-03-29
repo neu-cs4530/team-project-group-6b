@@ -1,10 +1,9 @@
 import express, { Express } from 'express';
+import jwt from 'express-jwt';
 import { Server } from 'http';
 import { StatusCodes } from 'http-status-codes';
-import jwt from 'express-jwt';
 import jwks from 'jwks-rsa';
 import io from 'socket.io';
-
 import {
   conversationAreaCreateHandler,
   townCreateHandler,
@@ -31,18 +30,19 @@ const jwtCheck = jwt({
   algorithms: ['RS256'],
 });
 
-
 export default function addTownRoutes(http: Server, app: Express): io.Server {
   // This route doesn't need authentication
   app.get('/api/public', express.json(), (_req, res) => {
     res.json({
-      message: 'Hello from a public endpoint! You don\'t need to be authenticated to see this.',
+      message: "Hello from a public endpoint! You don't need to be authenticated to see this.",
     });
   });
 
   // This route needs authentication
   app.get('/api/private', express.json(), jwtCheck, (_req, res) => {
+    console.log((_req as any).user);
     res.json({
+      user: (_req as any).user,
       message: 'Hello from a private endpoint! You need to be authenticated to see this.',
     });
   });
@@ -55,29 +55,25 @@ export default function addTownRoutes(http: Server, app: Express): io.Server {
         lastName: req.body.family_name,
         email: req.body.email,
       });
-      res.status(StatusCodes.OK)
-        .json(result);
+      res.status(StatusCodes.OK).json(result);
     } catch (err) {
       logError(err);
-      res.status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .json({
-          message: 'Internal server error, please see log in server for more details',
-        });
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        message: 'Internal server error, please see log in server for more details',
+      });
     }
   });
 
   // list or search users
   app.get('/api/v2/users', express.json(), (_req, res) => {
     try {
-      const result = 'temp';// userListHandler();
-      res.status(StatusCodes.OK)
-        .json(result);
+      const result = 'temp'; // userListHandler();
+      res.status(StatusCodes.OK).json(result);
     } catch (err) {
       logError(err);
-      res.status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .json({
-          message: 'Internal server error, please see log in server for more details',
-        });
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        message: 'Internal server error, please see log in server for more details',
+      });
     }
   });
 
@@ -87,7 +83,7 @@ export default function addTownRoutes(http: Server, app: Express): io.Server {
       const result = await fetchProfile(req.params.id);
 
       if (result.isOK) {
-        res.status(StatusCodes.OK).json(result.response);
+        res.status(StatusCodes.OK).json(result);
       } else {
         res.status(404).json({
           message: 'profile not found',
@@ -102,15 +98,15 @@ export default function addTownRoutes(http: Server, app: Express): io.Server {
   });
 
   /*
-  * Create a new session (aka join a town)
-  */
+   * Create a new session (aka join a town)
+   */
   app.post('/sessions', express.json(), async (req, res) => {
     try {
       const result = await townJoinHandler({
         userName: req.body.userName,
         coveyTownID: req.body.coveyTownID,
       });
-      res.status(StatusCodes.OK).json(result); 
+      res.status(StatusCodes.OK).json(result);
     } catch (err) {
       logError(err);
       res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
@@ -118,10 +114,10 @@ export default function addTownRoutes(http: Server, app: Express): io.Server {
       });
     }
   });
-  
+
   /**
-  * Delete a town
-  */
+   * Delete a town
+   */
   app.delete('/towns/:townID/:townPassword', express.json(), async (req, res) => {
     try {
       const result = townDeleteHandler({
@@ -136,10 +132,10 @@ export default function addTownRoutes(http: Server, app: Express): io.Server {
       });
     }
   });
-  
+
   /**
-  * List all towns
-  */
+   * List all towns
+   */
   app.get('/towns', express.json(), async (_req, res) => {
     try {
       const result = townListHandler();
@@ -151,10 +147,10 @@ export default function addTownRoutes(http: Server, app: Express): io.Server {
       });
     }
   });
-  
+
   /**
-  * Create a town
-  */
+   * Create a town
+   */
   app.post('/towns', express.json(), async (req, res) => {
     try {
       const result = townCreateHandler(req.body);
@@ -167,8 +163,8 @@ export default function addTownRoutes(http: Server, app: Express): io.Server {
     }
   });
   /**
-  * Update a town
-  */
+   * Update a town
+   */
   app.patch('/towns/:townID', express.json(), async (req, res) => {
     try {
       const result = townUpdateHandler({
@@ -185,7 +181,7 @@ export default function addTownRoutes(http: Server, app: Express): io.Server {
       });
     }
   });
-  
+
   app.post('/towns/:townID/conversationAreas', express.json(), async (req, res) => {
     try {
       const result = conversationAreaCreateHandler({
@@ -201,7 +197,7 @@ export default function addTownRoutes(http: Server, app: Express): io.Server {
       });
     }
   });
-  
+
   const socketServer = new io.Server(http, { cors: { origin: '*' } });
   socketServer.on('connection', townSubscriptionHandler);
   return socketServer;
