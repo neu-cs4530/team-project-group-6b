@@ -11,7 +11,7 @@ import React, {
   useReducer,
   useState,
 } from 'react';
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import { Route, Switch } from 'react-router-dom';
 import { io, Socket } from 'socket.io-client';
 import './App.css';
 import ConversationArea, { ServerConversationArea } from './classes/ConversationArea';
@@ -335,7 +335,7 @@ function EmbeddedTwilioAppWrapper() {
 export default function AppStateWrapper(): JSX.Element {
   const authenticatedUserContext = useContext(AuthenticatedUserContext);
   return (
-    <BrowserRouter>
+    <>
       {authenticatedUserContext && (
         <button type='button' onClick={() => authenticatedUserContext.logout()}>
           Logout
@@ -353,6 +353,6 @@ export default function AppStateWrapper(): JSX.Element {
           </AppStateProvider>
         </MuiThemeProvider>
       </ChakraProvider>
-    </BrowserRouter>
+    </>
   );
 }
