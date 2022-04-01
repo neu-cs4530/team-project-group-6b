@@ -21,7 +21,7 @@ const InnerForm = (props: FormikProps<FormValues>) => {
       <Box p='4' borderWidth='1px' borderRadius='lg' maxWidth='800'>
         <Form>
           <Heading as='h2' size='lg'>
-            Enter your profile information
+            Enter your registration information
           </Heading>
           <FormLabel>Username</FormLabel>
           <Input name='username' onChange={handleChange} onTouchStart={handleBlur} />

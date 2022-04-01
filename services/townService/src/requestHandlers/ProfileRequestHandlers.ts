@@ -13,6 +13,7 @@ export interface IUserProfile {
   firstName: string;
   lastName: string;
   email: string;
+  username: string;
 }
 
 export async function createProfile(requestData: IUserProfile): Promise<ResponseEnvelope<string>> {

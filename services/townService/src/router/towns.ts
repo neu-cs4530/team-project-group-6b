@@ -54,6 +54,7 @@ export default function addTownRoutes(http: Server, app: Express): io.Server {
         firstName: req.body.firstName,
         lastName: req.body.lastName,
         email: req.body.email,
+        username: req.body.username,
       });
       res.status(StatusCodes.OK).json(result);
     } catch (err) {

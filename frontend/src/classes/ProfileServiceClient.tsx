@@ -82,4 +82,6 @@ export default class ProfileServiceClient {
     );
     return ProfileServiceClient.unwrapOrThrowError(responseWrapper);
   }
+
+  // make a new request to PUT / PATCH a user profile (convo with miraj)
 }
