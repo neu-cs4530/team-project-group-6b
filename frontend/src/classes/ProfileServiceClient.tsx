@@ -73,7 +73,6 @@ export default class ProfileServiceClient {
   }
 
   async postProfile(requestData: PostProfileRequest): Promise<any> {
-    console.log('TOKEN: ', requestData.token);
     const responseWrapper = await this._axios.post<ResponseEnvelope<any>>(
       `/api/v2/users/`,
       requestData,

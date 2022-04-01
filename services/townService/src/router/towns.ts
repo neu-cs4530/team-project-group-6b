@@ -51,8 +51,8 @@ export default function addTownRoutes(http: Server, app: Express): io.Server {
   app.post('/api/v2/users', express.json(), jwtCheck, async (req, res) => {
     try {
       const result = await createProfile({
-        firstName: req.body.given_name,
-        lastName: req.body.family_name,
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
         email: req.body.email,
       });
       res.status(StatusCodes.OK).json(result);
