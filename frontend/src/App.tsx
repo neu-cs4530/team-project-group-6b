@@ -5,19 +5,22 @@ import React, {
   Dispatch,
   SetStateAction,
   useCallback,
+  useContext,
   useEffect,
   useMemo,
   useReducer,
   useState,
 } from 'react';
-import { BrowserRouter } from 'react-router-dom';
+import { Route, Switch } from 'react-router-dom';
 import { io, Socket } from 'socket.io-client';
 import './App.css';
 import ConversationArea, { ServerConversationArea } from './classes/ConversationArea';
 import Player, { ServerPlayer, UserLocation } from './classes/Player';
+import ProfileServiceClient from './classes/ProfileServiceClient';
 import TownsServiceClient, { TownJoinResponse } from './classes/TownsServiceClient';
 import Video from './classes/Video/Video';
 import Login from './components/Login/Login';
+import Register from './components/Register';
 import { ChatProvider } from './components/VideoCall/VideoFrontend/components/ChatProvider';
 import ErrorDialog from './components/VideoCall/VideoFrontend/components/ErrorDialog/ErrorDialog';
 import UnsupportedBrowserWarning from './components/VideoCall/VideoFrontend/components/UnsupportedBrowserWarning/UnsupportedBrowserWarning';
@@ -28,6 +31,7 @@ import { Callback } from './components/VideoCall/VideoFrontend/types';
 import useConnectionOptions from './components/VideoCall/VideoFrontend/utils/useConnectionOptions/useConnectionOptions';
 import VideoOverlay from './components/VideoCall/VideoOverlay/VideoOverlay';
 import WorldMap from './components/world/WorldMap';
+import AuthenticatedUserContext from './contexts/AuthenticatedUserContext';
 import ConversationAreasContext from './contexts/ConversationAreasContext';
 import CoveyAppContext from './contexts/CoveyAppContext';
 import NearbyPlayersContext from './contexts/NearbyPlayersContext';
@@ -38,6 +42,7 @@ import { CoveyAppState } from './CoveyTypes';
 
 export const MOVEMENT_UPDATE_DELAY_MS = 0;
 export const CALCULATE_NEARBY_PLAYERS_MOVING_DELAY_MS = 300;
+const profileServiceClient = new ProfileServiceClient();
 type CoveyAppUpdate =
   | {
       action: 'doConnect';
@@ -228,11 +233,13 @@ function App(props: { setOnDisconnect: Dispatch<SetStateAction<Callback | undefi
       });
       socket.on('conversationDestroyed', (_conversationArea: ServerConversationArea) => {
         const existingArea = localConversationAreas.find(a => a.label === _conversationArea.label);
-        if(existingArea){
+        if (existingArea) {
           existingArea.topic = undefined;
           existingArea.occupants = [];
         }
-        localConversationAreas = localConversationAreas.filter(a => a.label !== _conversationArea.label);
+        localConversationAreas = localConversationAreas.filter(
+          a => a.label !== _conversationArea.label,
+        );
         setConversationAreas(localConversationAreas);
         recalculateNearbyPlayers();
       });
@@ -286,6 +293,8 @@ function App(props: { setOnDisconnect: Dispatch<SetStateAction<Callback | undefi
     );
   }, [setupGameController, appState.sessionToken, videoInstance]);
 
+  const PageComponent = () => <>{page}</>;
+
   return (
     <CoveyAppContext.Provider value={appState}>
       <VideoContext.Provider value={Video.instance()}>
@@ -294,7 +303,11 @@ function App(props: { setOnDisconnect: Dispatch<SetStateAction<Callback | undefi
             <PlayersInTownContext.Provider value={playersInTown}>
               <NearbyPlayersContext.Provider value={nearbyPlayers}>
                 <ConversationAreasContext.Provider value={conversationAreas}>
-                  {page}
+                  <Switch>
+                    <Route path='/register' component={Register} />
+                    <Route component={PageComponent} />
+                  </Switch>
+                  {/* {page} */}
                 </ConversationAreasContext.Provider>
               </NearbyPlayersContext.Provider>
             </PlayersInTownContext.Provider>
@@ -320,8 +333,19 @@ function EmbeddedTwilioAppWrapper() {
 }
 
 export default function AppStateWrapper(): JSX.Element {
+  const authenticatedUserContext = useContext(AuthenticatedUserContext);
   return (
-    <BrowserRouter>
+    <>
+      {authenticatedUserContext && (
+        <button type='button' onClick={() => authenticatedUserContext.logout()}>
+          Logout
+        </button>
+      )}
+      <div>
+        {authenticatedUserContext?.email}
+        {authenticatedUserContext?.firstName}
+        {authenticatedUserContext?.lastName}
+      </div>
       <ChakraProvider>
         <MuiThemeProvider theme={theme}>
           <AppStateProvider>
@@ -329,6 +353,6 @@ export default function AppStateWrapper(): JSX.Element {
           </AppStateProvider>
         </MuiThemeProvider>
       </ChakraProvider>
-    </BrowserRouter>
+    </>
   );
 }
