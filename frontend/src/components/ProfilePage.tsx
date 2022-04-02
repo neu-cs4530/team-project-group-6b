@@ -1,4 +1,4 @@
-import { Box, Button, FormLabel, Heading, Input } from '@chakra-ui/react';
+import { Box, Button, FormLabel, Heading, Input, Textarea, useToast } from '@chakra-ui/react';
 import { Form, Formik } from 'formik';
 import React, { useContext, useState } from 'react';
 import ProfileServiceClient from '../classes/ProfileServiceClient';
@@ -11,6 +11,7 @@ interface FormValues {
   firstName: string;
   lastName: string;
   email: string;
+  bio: string;
 }
 
 // Aside: You may see InjectedFormikProps<OtherProps, FormValues> instead of what comes below in older code.. InjectedFormikProps was artifact of when Formik only exported a HoC. It is also less flexible as it MUST wrap all props (it passes them through).
@@ -19,6 +20,7 @@ const ProfileForm = () => {
   const [error, setError] = useState<string | undefined>(undefined);
   const [message, setMessage] = useState<string | undefined>(undefined);
   // https://chakra-ui.com/docs/components/feedback/toast
+  const toast = useToast();
   return (
     <Formik
       enableReinitialize
@@ -28,6 +30,7 @@ const ProfileForm = () => {
         firstName: authenticatedUser?.firstName || '',
         lastName: authenticatedUser?.lastName || '',
         email: authenticatedUser?.email || '',
+        bio: authenticatedUser?.bio || '',
       }}>
       {({ handleChange, handleBlur, values, isSubmitting }) => (
         <div style={{ display: 'flex', justifyContent: 'center' }}>
@@ -35,15 +38,8 @@ const ProfileForm = () => {
             {console.log('usercontextuser: ', authenticatedUser)}
             <Form>
               <Heading as='h2' size='lg'>
-                Edit your profile information
+                Hi {values.firstName}, edit your profile information
               </Heading>
-              <FormLabel>Username</FormLabel>
-              <Input
-                name='username'
-                onChange={handleChange}
-                onTouchStart={handleBlur}
-                value={values.username}
-              />
               <FormLabel>First Name</FormLabel>
               <Input
                 name='firstName'
@@ -58,6 +54,13 @@ const ProfileForm = () => {
                 onTouchStart={handleBlur}
                 value={values.lastName}
               />
+              <FormLabel>Username</FormLabel>
+              <Input
+                name='username'
+                onChange={handleChange}
+                onTouchStart={handleBlur}
+                value={values.username}
+              />
               <FormLabel>Email</FormLabel>
               <Input
                 name='email'
@@ -66,7 +69,35 @@ const ProfileForm = () => {
                 value={values.email}
                 disabled
               />
-              <Button type='submit' disabled={isSubmitting}>
+              <FormLabel>Bio</FormLabel>
+              <Textarea
+                name='bio'
+                onChange={handleChange}
+                onTouchStart={handleBlur}
+                placeholder='Give users a small bio about you'
+              />
+              <Button
+                // type='submit'
+                // disabled={isSubmitting}
+                onClick={() => {
+                  if (values.bio) {
+                    toast({
+                      title: 'Account updated.',
+                      description: "We've updated your account for you.",
+                      status: 'success',
+                      duration: 9000,
+                      isClosable: true,
+                    });
+                  } else {
+                    toast({
+                      title: 'Missing information.',
+                      description: 'Please fill out all text fields.',
+                      status: 'error',
+                      duration: 9000,
+                      isClosable: true,
+                    });
+                  }
+                }}>
                 Submit
               </Button>
             </Form>

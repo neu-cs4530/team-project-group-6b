@@ -55,6 +55,7 @@ export default function addTownRoutes(http: Server, app: Express): io.Server {
         lastName: req.body.lastName,
         email: req.body.email,
         username: req.body.username,
+        bio: '',
       });
       res.status(StatusCodes.OK).json(result);
     } catch (err) {
@@ -97,6 +98,31 @@ export default function addTownRoutes(http: Server, app: Express): io.Server {
       });
     }
   });
+
+  // // get a user
+  // app.patch('/api/v2/users/:id', express.json(), async (req, res) => {
+  //   try {
+  //     const result = await updateUser({
+  //       firstName: req.body.firstName,
+  //       lastName: req.body.lastName,
+  //       email: req.body.email,
+  //       username: req.body.username,
+  //       bio: req.body.bio,
+  //     });
+  //     if (result.isOK) {
+  //       res.status(StatusCodes.OK).json(result);
+  //     } else {
+  //       res.status(404).json({
+  //         message: 'profile not found',
+  //       });
+  //     }
+  //   } catch (err) {
+  //     logError(err);
+  //     res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+  //       message: 'Internal server error, please see log in server for more details',
+  //     });
+  //   }
+  // });
 
   /*
    * Create a new session (aka join a town)

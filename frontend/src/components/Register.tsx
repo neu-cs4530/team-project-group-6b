@@ -23,12 +23,12 @@ const InnerForm = (props: FormikProps<FormValues>) => {
           <Heading as='h2' size='lg'>
             Enter your registration information
           </Heading>
-          <FormLabel>Username</FormLabel>
-          <Input name='username' onChange={handleChange} onTouchStart={handleBlur} />
           <FormLabel>First Name</FormLabel>
           <Input name='firstName' onChange={handleChange} onTouchStart={handleBlur} />
           <FormLabel>Last Name</FormLabel>
           <Input name='lastName' onChange={handleChange} onTouchStart={handleBlur} />
+          <FormLabel>Username</FormLabel>
+          <Input name='username' onChange={handleChange} onTouchStart={handleBlur} />
 
           <Button type='submit' disabled={isSubmitting}>
             Submit

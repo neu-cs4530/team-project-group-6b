@@ -35,6 +35,7 @@ const AuthenticatedUserProvider: React.FC = ({ children }) => {
             username: profileResponse.username,
             firstName: profileResponse.firstName,
             lastName: profileResponse.lastName,
+            bio: profileResponse.bio,
             isAuthenticated: true,
             logout,
           });
