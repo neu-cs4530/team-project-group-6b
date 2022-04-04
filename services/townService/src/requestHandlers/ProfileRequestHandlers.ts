@@ -14,6 +14,8 @@ export interface IUserProfile {
   firstName: string;
   lastName: string;
   email: string;
+  username: string;
+  bio: string;
 }
 
 export async function createProfile(requestData: IUserProfile): Promise<ResponseEnvelope<string>> {
