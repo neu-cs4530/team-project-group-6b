@@ -1,3 +1,4 @@
+import { UpdateResult } from 'mongodb';
 import getProfileCollection from '../database/getProfileCollection';
 
 /**
@@ -34,4 +35,18 @@ export async function fetchProfile(email: string): Promise<ResponseEnvelope<IUse
   }
 
   return { isOK: false, message: 'profile not found' };
+}
+
+export async function updateUser(requestData: IUserProfile): Promise<ResponseEnvelope<UpdateResult>> {
+  const collection = await getProfileCollection();
+  const query = { email: requestData.email };
+  const update = { $set: requestData };
+  const options = {};
+
+  try {
+    const result: UpdateResult = await collection.updateOne(query, update, options);
+    return { isOK: true, response: result };
+  } catch (err) {
+    return { isOK: false, message: 'error has occured when updating document in database' };  
+  }
 }

@@ -16,8 +16,6 @@ import {
 import { createProfile, fetchProfile } from '../requestHandlers/ProfileRequestHandlers';
 import { logError } from '../Utils';
 
-// const port = process.env.PORT || 8080;
-
 const jwtCheck = jwt({
   secret: jwks.expressJwtSecret({
     cache: true,
