@@ -111,7 +111,7 @@ export default function addTownRoutes(http: Server, app: Express): io.Server {
       const result = await updateUser({
         firstName: req.body.firstName,
         lastName: req.body.lastName,
-        email: req.body.email,
+        email: req.params.id,
         username: req.body.username,
         bio: req.body.bio,
       });
