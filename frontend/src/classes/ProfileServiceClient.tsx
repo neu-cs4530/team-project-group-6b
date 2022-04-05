@@ -92,7 +92,7 @@ export default class ProfileServiceClient {
 
   async patchProfile(requestData: PatchProfileRequest): Promise<any> {
     const responseWrapper = await this._axios.patch<ResponseEnvelope<any>>(
-      `/api/v2/users/`,
+      `/api/v2/users/${requestData.email}`,
       requestData,
       {
         headers: { Authorization: `Bearer ${requestData.token}` },

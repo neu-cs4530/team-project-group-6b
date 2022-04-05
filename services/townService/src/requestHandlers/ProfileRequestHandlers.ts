@@ -31,7 +31,7 @@ export async function createProfile(requestData: IUserProfile): Promise<Response
       const result = await collection.insertOne(requestData);
       return { isOK: true, response: result.insertedId.toHexString() };
     }
-    
+
     return { isOK: false, message: 'username or email already exists' };
   } catch (err) {
     return { isOK: false, message: 'this did not work' };
@@ -49,7 +49,9 @@ export async function fetchProfile(email: string): Promise<ResponseEnvelope<IUse
   return { isOK: false, message: 'profile not found' };
 }
 
-export async function updateUser(requestData: IUserProfile): Promise<ResponseEnvelope<UpdateResult>> {
+export async function updateUser(
+  requestData: IUserProfile,
+): Promise<ResponseEnvelope<UpdateResult>> {
   const collection = await getProfileCollection();
   const query = { email: requestData.email };
   const update = { $set: requestData };
@@ -59,11 +61,13 @@ export async function updateUser(requestData: IUserProfile): Promise<ResponseEnv
     const result: UpdateResult = await collection.updateOne(query, update, options);
     return { isOK: true, response: result };
   } catch (err) {
-    return { isOK: false, message: 'error has occured when updating document in database' };  
+    return { isOK: false, message: 'error has occured when updating document in database' };
   }
 }
 
-export async function userDeleteHandler(requestData: UserDeleteRequest): Promise<ResponseEnvelope<DeleteResult>> {
+export async function userDeleteHandler(
+  requestData: UserDeleteRequest,
+): Promise<ResponseEnvelope<DeleteResult>> {
   const collection = await getProfileCollection();
   const query = { email: requestData.email };
 
@@ -71,6 +75,6 @@ export async function userDeleteHandler(requestData: UserDeleteRequest): Promise
     const result: DeleteResult = await collection.deleteOne(query);
     return { isOK: true, response: result };
   } catch (err) {
-    return { isOK: false, message: 'error has occured when deleting a document in database' };  
+    return { isOK: false, message: 'error has occured when deleting a document in database' };
   }
 }

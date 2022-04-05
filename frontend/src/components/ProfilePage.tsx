@@ -98,7 +98,8 @@ const ProfileForm = () => {
                       lastName: values.lastName,
                       bio: values.bio,
                     });
-                    if (result.isOk) {
+                    console.log(result);
+                    if (result.acknowledged) {
                       toast({
                         title: 'Account updated.',
                         description: "We've updated your account for you.",
@@ -119,10 +120,10 @@ const ProfileForm = () => {
                     setError('shit hit the fan');
                   }
                 }}>
-                Submit
+                Update
               </Button>
-              <Link to='/'>Update</Link>
             </Form>
+            <Link to='/'>Update</Link>
           </Box>
         </div>
       )}
