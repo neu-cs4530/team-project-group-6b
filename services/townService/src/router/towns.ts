@@ -13,7 +13,7 @@ import {
   townSubscriptionHandler,
   townUpdateHandler,
 } from '../requestHandlers/CoveyTownRequestHandlers';
-import { createProfile, fetchProfile, updateUser } from '../requestHandlers/ProfileRequestHandlers';
+import { createProfile, fetchProfile, updateUser, userDeleteHandler } from '../requestHandlers/ProfileRequestHandlers';
 import { logError } from '../Utils';
 
 const jwtCheck = jwt({
@@ -126,6 +126,23 @@ export default function addTownRoutes(http: Server, app: Express): io.Server {
       logError(err);
       res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
         message: 'Internal server error, please see log in server for more details',
+      });
+    }
+  });
+
+  /**
+   * Delete a user
+   */
+  app.delete('/api/v2/users/:id', express.json(), jwtCheck, async (req, res) => {
+    try {
+      const result = userDeleteHandler({
+        email: req.params.id, // is id email??
+      });
+      res.status(StatusCodes.OK).json(result);
+    } catch (err) {
+      logError(err);
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        message: 'Internal server error, please see log in server for details',
       });
     }
   });
