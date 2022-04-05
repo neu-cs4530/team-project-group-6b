@@ -1,4 +1,5 @@
-import { Box, Button, FormLabel, Heading, Input, Textarea, useToast } from '@chakra-ui/react';
+import { useAuth0 } from '@auth0/auth0-react';
+import { Box, Button, FormLabel, Heading, Input, Link, Textarea, useToast } from '@chakra-ui/react';
 import { Form, Formik } from 'formik';
 import React, { useContext, useState } from 'react';
 import ProfileServiceClient from '../classes/ProfileServiceClient';
@@ -19,6 +20,7 @@ const ProfileForm = () => {
   const authenticatedUser = useContext(AuthenticatedUserContext);
   const [error, setError] = useState<string | undefined>(undefined);
   const [message, setMessage] = useState<string | undefined>(undefined);
+  const { getAccessTokenSilently, user } = useAuth0();
   // https://chakra-ui.com/docs/components/feedback/toast
   const toast = useToast();
   return (
@@ -42,6 +44,7 @@ const ProfileForm = () => {
               </Heading>
               <FormLabel>First Name</FormLabel>
               <Input
+                id='firstName'
                 name='firstName'
                 onChange={handleChange}
                 onTouchStart={handleBlur}
@@ -49,6 +52,7 @@ const ProfileForm = () => {
               />
               <FormLabel>Last Name</FormLabel>
               <Input
+                id='lastName'
                 name='lastName'
                 onChange={handleChange}
                 onTouchStart={handleBlur}
@@ -56,6 +60,7 @@ const ProfileForm = () => {
               />
               <FormLabel>Username</FormLabel>
               <Input
+                id='username'
                 name='username'
                 onChange={handleChange}
                 onTouchStart={handleBlur}
@@ -79,27 +84,44 @@ const ProfileForm = () => {
               <Button
                 // type='submit'
                 // disabled={isSubmitting}
-                onClick={() => {
-                  if (values.bio) {
-                    toast({
-                      title: 'Account updated.',
-                      description: "We've updated your account for you.",
-                      status: 'success',
-                      duration: 9000,
-                      isClosable: true,
+                onClick={async () => {
+                  const token = await getAccessTokenSilently();
+                  if (!user || !user.email) {
+                    throw new Error('no user');
+                  }
+                  try {
+                    const result = await profileServiceClient.patchProfile({
+                      token,
+                      email: user.email,
+                      username: values.username,
+                      firstName: values.firstName,
+                      lastName: values.lastName,
+                      bio: values.bio,
                     });
-                  } else {
-                    toast({
-                      title: 'Missing information.',
-                      description: 'Please fill out all text fields.',
-                      status: 'error',
-                      duration: 9000,
-                      isClosable: true,
-                    });
+                    if (result.isOk) {
+                      toast({
+                        title: 'Account updated.',
+                        description: "We've updated your account for you.",
+                        status: 'success',
+                        duration: 9000,
+                        isClosable: true,
+                      });
+                    } else {
+                      toast({
+                        title: 'Missing information.',
+                        description: 'Please fill out all text fields.',
+                        status: 'error',
+                        duration: 9000,
+                        isClosable: true,
+                      });
+                    }
+                  } catch (err) {
+                    setError('shit hit the fan');
                   }
                 }}>
                 Submit
               </Button>
+              <Link to='/'>Update</Link>
             </Form>
           </Box>
         </div>

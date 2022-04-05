@@ -27,6 +27,13 @@ export interface PostProfileRequest extends AuthenticatedRequest {
   email: string;
 }
 
+export interface PatchProfileRequest extends AuthenticatedRequest {
+  username: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  bio: string;
+}
 /**
  * Envelope that wraps any response from the server
  */
@@ -74,6 +81,17 @@ export default class ProfileServiceClient {
 
   async postProfile(requestData: PostProfileRequest): Promise<any> {
     const responseWrapper = await this._axios.post<ResponseEnvelope<any>>(
+      `/api/v2/users/`,
+      requestData,
+      {
+        headers: { Authorization: `Bearer ${requestData.token}` },
+      },
+    );
+    return ProfileServiceClient.unwrapOrThrowError(responseWrapper);
+  }
+
+  async patchProfile(requestData: PatchProfileRequest): Promise<any> {
+    const responseWrapper = await this._axios.patch<ResponseEnvelope<any>>(
       `/api/v2/users/`,
       requestData,
       {

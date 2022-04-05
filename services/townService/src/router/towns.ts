@@ -13,7 +13,12 @@ import {
   townSubscriptionHandler,
   townUpdateHandler,
 } from '../requestHandlers/CoveyTownRequestHandlers';
-import { createProfile, fetchProfile, updateUser, userDeleteHandler } from '../requestHandlers/ProfileRequestHandlers';
+import {
+  createProfile,
+  fetchProfile,
+  updateUser,
+  userDeleteHandler,
+} from '../requestHandlers/ProfileRequestHandlers';
 import { logError } from '../Utils';
 
 const jwtCheck = jwt({

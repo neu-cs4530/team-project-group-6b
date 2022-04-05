@@ -308,7 +308,7 @@ function App(props: { setOnDisconnect: Dispatch<SetStateAction<Callback | undefi
                     <Route path='/register' component={Register} />
                     <Route path='/profile' component={AuthenticatedProfile} />
 
-                    <Route path='/home' element={<Login doLogin={setupGameController} />} />
+                    <Route path='/home' />
                     <Route component={PageComponent} />
                   </Switch>
                   {/* {page} */}
