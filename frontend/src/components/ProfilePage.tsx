@@ -1,7 +1,8 @@
 import { useAuth0 } from '@auth0/auth0-react';
-import { Box, Button, FormLabel, Heading, Input, Link, Textarea, useToast } from '@chakra-ui/react';
+import { Box, Button, FormLabel, Heading, Input, Textarea, useToast } from '@chakra-ui/react';
 import { Form, Formik } from 'formik';
 import React, { useContext, useState } from 'react';
+import { Link } from 'react-router-dom';
 import ProfileServiceClient from '../classes/ProfileServiceClient';
 import AuthenticatedUserContext from '../contexts/AuthenticatedUserContext';
 
@@ -122,8 +123,10 @@ const ProfileForm = () => {
                 }}>
                 Update
               </Button>
+              <Link to='/' style={{ paddingLeft: 20 }}>
+                Back to home
+              </Link>
             </Form>
-            <Link to='/'>Update</Link>
           </Box>
         </div>
       )}
