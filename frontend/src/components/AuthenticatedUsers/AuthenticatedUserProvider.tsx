@@ -44,6 +44,7 @@ const AuthenticatedUserProvider: React.FC = ({ children }) => {
         }
       }
       if (!isLoading && !isAuthenticated) {
+        // deploy netlify commit
         await loginWithRedirect({
           redirectUri: window.location.origin
         });
