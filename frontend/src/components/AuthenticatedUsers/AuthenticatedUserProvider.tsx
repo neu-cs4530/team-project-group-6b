@@ -16,6 +16,7 @@ const AuthenticatedUserProvider: React.FC = ({ children }) => {
     isLoading,
     logout,
     getAccessTokenSilently,
+    handleRedirectCallback,
   } = useAuth0();
   console.log('USER: ', user);
   const [shouldRegister, setShouldRegister] = useState(false);
@@ -46,8 +47,9 @@ const AuthenticatedUserProvider: React.FC = ({ children }) => {
       if (!isLoading && !isAuthenticated) {
         // deploy netlify commit
         await loginWithRedirect({
-          redirectUri: window.location.origin
+          appState: { target: 'redirectURL'}
         });
+        const appState = await handleRedirectCallback();
       }
     })();
   });
