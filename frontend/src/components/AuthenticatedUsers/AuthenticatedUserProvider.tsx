@@ -47,7 +47,7 @@ const AuthenticatedUserProvider: React.FC = ({ children }) => {
       if (!isLoading && !isAuthenticated) {
         // deploy netlify commit
         await loginWithRedirect({
-          appState: { target: 'redirectURL'}
+          appState: { target: window.location.origin }
         });
         const appState = await handleRedirectCallback();
       }
