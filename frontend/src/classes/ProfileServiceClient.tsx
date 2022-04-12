@@ -20,20 +20,16 @@ export interface GetProfileRequest extends AuthenticatedRequest {
   email: string;
 }
 
-export interface PostProfileRequest extends AuthenticatedRequest {
+export interface ProfileRequest extends AuthenticatedRequest {
   username: string;
   firstName: string;
   lastName: string;
   email: string;
-}
-
-export interface PatchProfileRequest extends AuthenticatedRequest {
-  username: string;
-  firstName: string;
-  lastName: string;
-  email: string;
+  pronouns: string;
+  occupation: string;
   bio: string;
 }
+
 /**
  * Envelope that wraps any response from the server
  */
@@ -79,7 +75,7 @@ export default class ProfileServiceClient {
     return ProfileServiceClient.unwrapOrThrowError(responseWrapper);
   }
 
-  async postProfile(requestData: PostProfileRequest): Promise<any> {
+  async postProfile(requestData: ProfileRequest): Promise<any> {
     const responseWrapper = await this._axios.post<ResponseEnvelope<any>>(
       `/api/v2/users/`,
       requestData,
@@ -90,7 +86,7 @@ export default class ProfileServiceClient {
     return ProfileServiceClient.unwrapOrThrowError(responseWrapper);
   }
 
-  async patchProfile(requestData: PatchProfileRequest): Promise<any> {
+  async patchProfile(requestData: ProfileRequest): Promise<any> {
     const responseWrapper = await this._axios.patch<ResponseEnvelope<any>>(
       `/api/v2/users/${requestData.email}`,
       requestData,
@@ -100,6 +96,4 @@ export default class ProfileServiceClient {
     );
     return ProfileServiceClient.unwrapOrThrowError(responseWrapper);
   }
-
-  // make a new request to PUT / PATCH a user profile (convo with miraj)
 }

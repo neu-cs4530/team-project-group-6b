@@ -1,5 +1,14 @@
 import { useAuth0 } from '@auth0/auth0-react';
-import { Box, Button, FormLabel, Heading, Input, Textarea, useToast } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  FormControl,
+  FormLabel,
+  Heading,
+  Input,
+  Textarea,
+  useToast,
+} from '@chakra-ui/react';
 import { Form, Formik } from 'formik';
 import React, { useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -13,6 +22,7 @@ interface FormValues {
   firstName: string;
   lastName: string;
   email: string;
+  pronouns: string;
   bio: string;
 }
 
@@ -33,6 +43,8 @@ const ProfileForm = () => {
         firstName: authenticatedUser?.firstName || '',
         lastName: authenticatedUser?.lastName || '',
         email: authenticatedUser?.email || '',
+        pronouns: authenticatedUser?.pronouns || '',
+        occupation: authenticatedUser?.occupation || '',
         bio: authenticatedUser?.bio || '',
       }}>
       {({ handleChange, handleBlur, values, isSubmitting }) => (
@@ -43,30 +55,36 @@ const ProfileForm = () => {
               <Heading as='h2' size='lg'>
                 Hi {values.firstName}, edit your profile information
               </Heading>
-              <FormLabel>First Name</FormLabel>
-              <Input
-                id='firstName'
-                name='firstName'
-                onChange={handleChange}
-                onTouchStart={handleBlur}
-                value={values.firstName}
-              />
-              <FormLabel>Last Name</FormLabel>
-              <Input
-                id='lastName'
-                name='lastName'
-                onChange={handleChange}
-                onTouchStart={handleBlur}
-                value={values.lastName}
-              />
-              <FormLabel>Username</FormLabel>
-              <Input
-                id='username'
-                name='username'
-                onChange={handleChange}
-                onTouchStart={handleBlur}
-                value={values.username}
-              />
+              <FormControl isRequired>
+                <FormLabel>First Name</FormLabel>
+                <Input
+                  id='firstName'
+                  name='firstName'
+                  onChange={handleChange}
+                  onTouchStart={handleBlur}
+                  value={values.firstName}
+                />
+              </FormControl>
+              <FormControl isRequired>
+                <FormLabel>Last Name</FormLabel>
+                <Input
+                  id='lastName'
+                  name='lastName'
+                  onChange={handleChange}
+                  onTouchStart={handleBlur}
+                  value={values.lastName}
+                />
+              </FormControl>
+              <FormControl isRequired>
+                <FormLabel>Username</FormLabel>
+                <Input
+                  id='username'
+                  name='username'
+                  onChange={handleChange}
+                  onTouchStart={handleBlur}
+                  value={values.username}
+                />
+              </FormControl>
               <FormLabel>Email</FormLabel>
               <Input
                 name='email'
@@ -75,11 +93,26 @@ const ProfileForm = () => {
                 value={values.email}
                 disabled
               />
+              <FormLabel>Pronouns</FormLabel>
+              <Input
+                name='pronouns'
+                onChange={handleChange}
+                onTouchStart={handleBlur}
+                value={values.pronouns}
+              />
+              <FormLabel>Occupation</FormLabel>
+              <Input
+                name='occupation'
+                onChange={handleChange}
+                onTouchStart={handleBlur}
+                value={values.occupation}
+              />
               <FormLabel>Bio</FormLabel>
               <Textarea
                 name='bio'
                 onChange={handleChange}
                 onTouchStart={handleBlur}
+                value={values.bio}
                 placeholder='Give users a small bio about you'
               />
               <Button
@@ -97,6 +130,8 @@ const ProfileForm = () => {
                       username: values.username,
                       firstName: values.firstName,
                       lastName: values.lastName,
+                      pronouns: values.pronouns,
+                      occupation: values.occupation,
                       bio: values.bio,
                     });
                     console.log(result);

@@ -30,6 +30,8 @@ export type AuthenticatedUser = {
   firstName: string;
   lastName: string;
   email: string;
+  pronouns: string;
+  occupation: string;
   bio: string;
   isAuthenticated: boolean;
   logout: () => void;

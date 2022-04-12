@@ -60,7 +60,9 @@ export default function addTownRoutes(http: Server, app: Express): io.Server {
         lastName: req.body.lastName,
         email: req.body.email,
         username: req.body.username,
-        bio: '',
+        pronouns: req.body.pronouns,
+        occupation: req.body.occupation,
+        bio: req.body.bio,
       });
       res.status(StatusCodes.OK).json(result);
     } catch (err) {
@@ -118,6 +120,8 @@ export default function addTownRoutes(http: Server, app: Express): io.Server {
         lastName: req.body.lastName,
         email: req.params.id,
         username: req.body.username,
+        pronouns: req.body.pronouns,
+        occupation: req.body.occupation,
         bio: req.body.bio,
       });
       if (result.isOK) {
