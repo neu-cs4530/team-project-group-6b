@@ -90,7 +90,7 @@ export default function addTownRoutes(http: Server, app: Express): io.Server {
   /**
    * Get a user by id (username)
    */
-  app.get('/api/v2/users/:id', express.json(), jwtCheck, async (req, res) => {
+  app.get('/api/v2/users/:id', express.json(), async (req, res) => {
     try {
       const result = await fetchProfileByUsername(req.params.id);
 
@@ -112,7 +112,7 @@ export default function addTownRoutes(http: Server, app: Express): io.Server {
   /**
   * Get a user by (email)
   */
-  app.get('/api/v2/users-by-email', express.json(), jwtCheck, async (req, res) => {
+  app.get('/api/v2/users-by-email', express.json(), async (req, res) => {
     try {
       const result = await fetchProfileByEmail(req.query.email as string);
       
@@ -134,7 +134,7 @@ export default function addTownRoutes(http: Server, app: Express): io.Server {
   /**
    * Update a user by id (email)
    */
-  app.patch('/api/v2/users/:id', express.json(), jwtCheck, async (req, res) => {
+  app.patch('/api/v2/users/:id', express.json(), async (req, res) => {
     try {
       const result = await updateUser({
         firstName: req.body.firstName,
