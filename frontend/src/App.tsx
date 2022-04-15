@@ -309,9 +309,9 @@ function App(props: { setOnDisconnect: Dispatch<SetStateAction<Callback | undefi
                     <Route path='/profile' component={AuthenticatedProfile} />
 
                     <Route path='/home' />
-                    <Route component={PageComponent} />
+                    {/* <Route component={PageComponent} /> */}
                   </Switch>
-                  {/* {page} */}
+                  {page}
                 </ConversationAreasContext.Provider>
               </NearbyPlayersContext.Provider>
             </PlayersInTownContext.Provider>

@@ -242,6 +242,7 @@ function townSocketAdapter(socket: Socket): CoveyTownListener {
       socket.emit('playerMoved', movedPlayer);
     },
     onPlayerDisconnected(removedPlayer: Player) {
+      console.log('player disconnected: ', removedPlayer);
       socket.emit('playerDisconnect', removedPlayer);
     },
     onPlayerJoined(newPlayer: Player) {
@@ -292,6 +293,7 @@ export function townSubscriptionHandler(socket: Socket): void {
   // clean up our listener adapter, and then let the CoveyTownController know that the
   // player's session is disconnected
   socket.on('disconnect', () => {
+    console.log('received socket disconnect');
     townController.removeTownListener(listener);
     townController.destroySession(s);
   });
