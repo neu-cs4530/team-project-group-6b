@@ -44,9 +44,7 @@ export default function addTownRoutes(http: Server, app: Express): io.Server {
 
   // This route needs authentication
   app.get('/api/private', express.json(), jwtCheck, (_req, res) => {
-    console.log((_req as any).user);
     res.json({
-      user: (_req as any).user,
       message: 'Hello from a private endpoint! You need to be authenticated to see this.',
     });
   });
