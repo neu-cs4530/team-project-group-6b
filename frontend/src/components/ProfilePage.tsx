@@ -145,8 +145,8 @@ const ProfileForm = () => {
                       });
                     } else {
                       toast({
-                        title: 'Missing information.',
-                        description: 'Please fill out all text fields.',
+                        title: 'Something went wrong.',
+                        description: 'Please try again in a bit.',
                         status: 'error',
                         duration: 9000,
                         isClosable: true,
