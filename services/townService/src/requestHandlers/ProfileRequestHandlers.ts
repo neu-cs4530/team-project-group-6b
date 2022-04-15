@@ -40,9 +40,20 @@ export async function createProfile(requestData: IUserProfile): Promise<Response
   }
 }
 
-export async function fetchProfile(email: string): Promise<ResponseEnvelope<IUserProfile>> {
+export async function fetchProfileByEmail(email: string): Promise<ResponseEnvelope<IUserProfile>> {
   const collection = await getProfileCollection();
   const result = await collection.findOne<IUserProfile>({ email });
+
+  if (result !== null && result !== undefined) {
+    return { isOK: true, response: result };
+  }
+
+  return { isOK: false, message: 'profile not found' };
+}
+
+export async function fetchProfileByUsername(username: string): Promise<ResponseEnvelope<IUserProfile>> {
+  const collection = await getProfileCollection();
+  const result = await collection.findOne<IUserProfile>({ username });
 
   if (result !== null && result !== undefined) {
     return { isOK: true, response: result };

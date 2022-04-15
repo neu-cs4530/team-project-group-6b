@@ -15,7 +15,8 @@ import {
 } from '../requestHandlers/CoveyTownRequestHandlers';
 import {
   createProfile,
-  fetchProfile,
+  fetchProfileByEmail,
+  fetchProfileByUsername,
   updateUser,
   userDeleteHandler,
 } from '../requestHandlers/ProfileRequestHandlers';
@@ -89,12 +90,34 @@ export default function addTownRoutes(http: Server, app: Express): io.Server {
   });
 
   /**
-   * Get a user by id (email)
+   * Get a user by id (username)
    */
   app.get('/api/v2/users/:id', express.json(), async (req, res) => {
     try {
-      const result = await fetchProfile(req.params.id);
+      const result = await fetchProfileByUsername(req.params.id);
 
+      if (result.isOK) {
+        res.status(StatusCodes.OK).json(result);
+      } else {
+        res.status(404).json({
+          message: 'profile not found',
+        });
+      }
+    } catch (err) {
+      logError(err);
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        message: 'Internal server error, please see log in server for more details',
+      });
+    }
+  });
+
+  /**
+  * Get a user by (email)
+  */
+  app.get('/api/v2/users-by-email', express.json(), async (req, res) => {
+    try {
+      const result = await fetchProfileByEmail(req.query.email as string);
+      
       if (result.isOK) {
         res.status(StatusCodes.OK).json(result);
       } else {

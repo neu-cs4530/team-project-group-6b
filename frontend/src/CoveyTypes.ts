@@ -36,3 +36,12 @@ export type AuthenticatedUser = {
   isAuthenticated: boolean;
   logout: () => void;
 };
+export interface IUserProfile {
+  firstName: string;
+  lastName: string;
+  email: string;
+  username: string;
+  pronouns: string;
+  occupation: string;
+  bio: string;
+}

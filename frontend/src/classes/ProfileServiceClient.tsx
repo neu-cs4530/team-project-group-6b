@@ -19,6 +19,9 @@ export interface AuthenticatedRequest {
 export interface GetProfileRequest extends AuthenticatedRequest {
   email: string;
 }
+export interface GetProfileRequestUsername extends AuthenticatedRequest {
+  username: string;
+}
 
 export interface ProfileRequest extends AuthenticatedRequest {
   username: string;
@@ -69,7 +72,16 @@ export default class ProfileServiceClient {
 
   async getProfile(requestData: GetProfileRequest): Promise<any> {
     const responseWrapper = await this._axios.get<ResponseEnvelope<any>>(
-      `/api/v2/users/${requestData.email}`,
+      `/api/v2/users-by-email`,
+      { headers: { Authentication: `Bearer ${requestData.token}` },
+        params: {email: requestData.email} },
+    );
+    return ProfileServiceClient.unwrapOrThrowError(responseWrapper);
+  }
+
+  async getProfileByUsername(requestData: GetProfileRequestUsername): Promise<any> {
+    const responseWrapper = await this._axios.get<ResponseEnvelope<any>>(
+      `/api/v2/users/${requestData.username}`,
       { headers: { Authentication: `Bearer ${requestData.token}` } },
     );
     return ProfileServiceClient.unwrapOrThrowError(responseWrapper);
