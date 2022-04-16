@@ -5,6 +5,7 @@ import { ChakraProvider } from '@chakra-ui/react'
 import { fireEvent, render, RenderResult, waitFor, within } from '@testing-library/react'
 import userEvent, { TargetElement } from '@testing-library/user-event'
 import { nanoid } from 'nanoid';
+import { BrowserRouter } from 'react-router-dom'
 import TownsServiceClient, { TownListResponse } from '../../classes/TownsServiceClient';
 import TownSelection from './TownSelection';
 import Video from '../../classes/Video/Video';
@@ -86,7 +87,7 @@ const listTowns = (suffix: string) => Promise.resolve({
 });
 
 function wrappedTownSelection() {
-  return <ChakraProvider><CoveyAppContext.Provider value={{
+  return <ChakraProvider><BrowserRouter><CoveyAppContext.Provider value={{
     myPlayerID: '',
     currentTownID: '',
     currentTownIsPubliclyListed: false,
@@ -98,7 +99,7 @@ function wrappedTownSelection() {
     },
     apiClient: new TownsServiceClient(),
   }}><ChatProvider>
-    <TownSelection doLogin={doLoginMock}/></ChatProvider></CoveyAppContext.Provider></ChakraProvider>;
+    <TownSelection doLogin={doLoginMock}/></ChatProvider></CoveyAppContext.Provider></BrowserRouter></ChakraProvider>;
 }
 
 describe('Town Selection - depends on Part 1 passing', () => {

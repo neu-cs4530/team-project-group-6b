@@ -4,6 +4,7 @@ import '@testing-library/jest-dom'
 import { ChakraProvider } from '@chakra-ui/react'
 import { render, waitFor, within } from '@testing-library/react'
 import { nanoid } from 'nanoid';
+import { BrowserRouter } from 'react-router-dom';
 import TownsServiceClient from '../../classes/TownsServiceClient';
 import TownSelection from './TownSelection';
 import Video from '../../classes/Video/Video';
@@ -81,7 +82,7 @@ const listTowns = (suffix: string) => Promise.resolve({
 });
 
 function wrappedTownSelection() {
-  return <ChakraProvider><CoveyAppContext.Provider value={{
+  return <ChakraProvider><BrowserRouter><CoveyAppContext.Provider value={{
     myPlayerID: '',
     currentTownID: '',
     currentTownIsPubliclyListed: false,
@@ -93,7 +94,7 @@ function wrappedTownSelection() {
     },
     apiClient: new TownsServiceClient(),
   }}><ChatProvider>
-    <TownSelection doLogin={doLoginMock}/></ChatProvider></CoveyAppContext.Provider></ChakraProvider>;
+    <TownSelection doLogin={doLoginMock}/></ChatProvider></CoveyAppContext.Provider></BrowserRouter></ChakraProvider>;
 }
 
 describe('Part 1 - Public town listing', () => {
