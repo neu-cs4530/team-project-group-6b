@@ -1,9 +1,10 @@
 import { useAuth0 } from '@auth0/auth0-react';
 import { Box, Button, FormLabel, Heading, Input, Text } from '@chakra-ui/react';
 import { Form, FormikProps, withFormik } from 'formik';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { Redirect } from 'react-router-dom';
 import ProfileServiceClient from '../classes/ProfileServiceClient';
+import AuthenticateduserContext from '../contexts/AuthenticatedUserContext';
 
 const profileServiceClient = new ProfileServiceClient();
 
@@ -42,6 +43,7 @@ const InnerForm = (props: FormikProps<FormValues>) => {
 // Wrap our form with the withFormik HoC
 const OuterForm = () => {
   const { getAccessTokenSilently, user } = useAuth0();
+  const { refresh } = useContext(AuthenticateduserContext);
   const [shouldRedirect, setShouldRedirect] = useState(false);
   const [error, setError] = useState<string | undefined>(undefined);
   const Wrapper = withFormik<any, FormValues>({
@@ -51,13 +53,15 @@ const OuterForm = () => {
         if (!user || !user.email) {
           throw new Error('no user');
         }
-        await profileServiceClient.postProfile({
+        const ppr = await profileServiceClient.postProfile({
           token,
           email: user.email,
           username: values.username,
           firstName: values.firstName,
           lastName: values.lastName,
         });
+        console.log('posted profile, refreshing, ', ppr);
+        await refresh();
         setShouldRedirect(true);
       } catch (err) {
         setError('something bad happened');

@@ -294,7 +294,6 @@ function App(props: { setOnDisconnect: Dispatch<SetStateAction<Callback | undefi
   }, [setupGameController, appState.sessionToken, videoInstance]);
 
   const PageComponent = () => <>{page}</>;
-
   return (
     <CoveyAppContext.Provider value={appState}>
       <VideoContext.Provider value={Video.instance()}>
@@ -342,9 +341,9 @@ export default function AppStateWrapper(): JSX.Element {
         </button>
       )}
       <div>
-        {authenticatedUserContext?.email}
-        {authenticatedUserContext?.firstName}
-        {authenticatedUserContext?.lastName}
+        {authenticatedUserContext.profile?.email}
+        {authenticatedUserContext.profile?.firstName}
+        {authenticatedUserContext.profile?.lastName}
       </div>
       <ChakraProvider>
         <MuiThemeProvider theme={theme}>

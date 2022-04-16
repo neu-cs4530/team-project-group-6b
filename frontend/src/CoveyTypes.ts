@@ -26,10 +26,8 @@ export type CoveyAppState = {
 
 export type AuthenticatedUser = {
   token: string;
-  username: string;
-  firstName: string;
-  lastName: string;
-  email: string;
+  profile?: { username: string; firstName: string; lastName: string; email: string };
   isAuthenticated: boolean;
   logout: () => void;
+  refresh: () => Promise<void>;
 };
