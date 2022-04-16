@@ -1,6 +1,7 @@
 import { useAuth0 } from '@auth0/auth0-react';
-import { Tooltip } from '@chakra-ui/react';
-import React, { useEffect, useState } from 'react';
+import { Modal, ModalCloseButton, ModalHeader, ModalOverlay, Tooltip, useDisclosure } from '@chakra-ui/react';
+import React, { JSXElementConstructor, useEffect, useState } from 'react';
+import { JsxElement } from 'typescript';
 import Player from '../../classes/Player';
 import ProfileServiceClient from '../../classes/ProfileServiceClient';
 import { IUserProfile } from '../../CoveyTypes';
@@ -41,3 +42,4 @@ export default function PlayerUserInfo({ player }: PlayerNameProps): JSX.Element
 
   return <Tooltip label={userInfo?.bio}>{userInfoString}</Tooltip>;
 }
+

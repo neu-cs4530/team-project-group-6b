@@ -108,4 +108,12 @@ export default class ProfileServiceClient {
     );
     return ProfileServiceClient.unwrapOrThrowError(responseWrapper);
   }
+
+  async getFieldReportByUsername(requestData: GetProfileRequestUsername): Promise<any> {
+        const responseWrapper = await this._axios.get<ResponseEnvelope<any>>(
+      `/api/v2/users/${requestData.username}/reports`,
+      { headers: { Authentication: `Bearer ${requestData.token}` } },
+    );
+    return ProfileServiceClient.unwrapOrThrowError(responseWrapper);
+  }
 }
