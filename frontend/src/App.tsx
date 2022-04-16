@@ -20,6 +20,7 @@ import ProfileServiceClient from './classes/ProfileServiceClient';
 import TownsServiceClient, { TownJoinResponse } from './classes/TownsServiceClient';
 import Video from './classes/Video/Video';
 import Login from './components/Login/Login';
+import AuthenticatedProfile from './components/ProfilePage';
 import Register from './components/Register';
 import { ChatProvider } from './components/VideoCall/VideoFrontend/components/ChatProvider';
 import ErrorDialog from './components/VideoCall/VideoFrontend/components/ErrorDialog/ErrorDialog';
@@ -305,9 +306,12 @@ function App(props: { setOnDisconnect: Dispatch<SetStateAction<Callback | undefi
                 <ConversationAreasContext.Provider value={conversationAreas}>
                   <Switch>
                     <Route path='/register' component={Register} />
-                    <Route component={PageComponent} />
+                    <Route path='/profile' component={AuthenticatedProfile} />
+
+                    <Route path='/home' />
+                    {/* <Route component={PageComponent} /> */}
                   </Switch>
-                  {/* {page} */}
+                  {page}
                 </ConversationAreasContext.Provider>
               </NearbyPlayersContext.Provider>
             </PlayersInTownContext.Provider>

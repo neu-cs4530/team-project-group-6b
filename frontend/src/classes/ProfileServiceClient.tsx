@@ -19,12 +19,18 @@ export interface AuthenticatedRequest {
 export interface GetProfileRequest extends AuthenticatedRequest {
   email: string;
 }
+export interface GetProfileRequestUsername extends AuthenticatedRequest {
+  username: string;
+}
 
-export interface PostProfileRequest extends AuthenticatedRequest {
+export interface ProfileRequest extends AuthenticatedRequest {
   username: string;
   firstName: string;
   lastName: string;
   email: string;
+  pronouns: string;
+  occupation: string;
+  bio: string;
 }
 
 /**
@@ -66,15 +72,35 @@ export default class ProfileServiceClient {
 
   async getProfile(requestData: GetProfileRequest): Promise<any> {
     const responseWrapper = await this._axios.get<ResponseEnvelope<any>>(
-      `/api/v2/users/${requestData.email}`,
+      `/api/v2/users-by-email`,
+      { headers: { Authentication: `Bearer ${requestData.token}` },
+        params: {email: requestData.email} },
+    );
+    return ProfileServiceClient.unwrapOrThrowError(responseWrapper);
+  }
+
+  async getProfileByUsername(requestData: GetProfileRequestUsername): Promise<any> {
+    const responseWrapper = await this._axios.get<ResponseEnvelope<any>>(
+      `/api/v2/users/${requestData.username}`,
       { headers: { Authentication: `Bearer ${requestData.token}` } },
     );
     return ProfileServiceClient.unwrapOrThrowError(responseWrapper);
   }
 
-  async postProfile(requestData: PostProfileRequest): Promise<any> {
+  async postProfile(requestData: ProfileRequest): Promise<any> {
     const responseWrapper = await this._axios.post<ResponseEnvelope<any>>(
       `/api/v2/users/`,
+      requestData,
+      {
+        headers: { Authorization: `Bearer ${requestData.token}` },
+      },
+    );
+    return ProfileServiceClient.unwrapOrThrowError(responseWrapper);
+  }
+
+  async patchProfile(requestData: ProfileRequest): Promise<any> {
+    const responseWrapper = await this._axios.patch<ResponseEnvelope<any>>(
+      `/api/v2/users/${requestData.email}`,
       requestData,
       {
         headers: { Authorization: `Bearer ${requestData.token}` },
