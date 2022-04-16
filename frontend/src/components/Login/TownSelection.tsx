@@ -40,7 +40,7 @@ export default function TownSelection({ doLogin }: TownSelectionProps): JSX.Elem
   const toast = useToast();
 
   const authenticatedUser = useContext(AuthenticatedUserContext);
-  const userName = authenticatedUser?.username;
+  const userName = authenticatedUser.profile?.username;
 
   const updateTownListings = useCallback(() => {
     // console.log(apiClient);
@@ -155,7 +155,7 @@ export default function TownSelection({ doLogin }: TownSelectionProps): JSX.Elem
         <Stack>
           <Box p='4' borderWidth='1px' borderRadius='lg'>
             <Heading as='h2' size='lg'>
-              Username: {authenticatedUser?.username}
+              Username: {authenticatedUser.profile?.username}
             </Heading>
             <Button>
               {' '}
