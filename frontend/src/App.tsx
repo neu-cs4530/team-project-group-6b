@@ -31,6 +31,7 @@ import theme from './components/VideoCall/VideoFrontend/theme';
 import { Callback } from './components/VideoCall/VideoFrontend/types';
 import useConnectionOptions from './components/VideoCall/VideoFrontend/utils/useConnectionOptions/useConnectionOptions';
 import VideoOverlay from './components/VideoCall/VideoOverlay/VideoOverlay';
+import FieldReportsNotepadDrawer from './components/world/FieldReportsNotepadDrawer';
 import WorldMap from './components/world/WorldMap';
 import AuthenticatedUserContext from './contexts/AuthenticatedUserContext';
 import ConversationAreasContext from './contexts/ConversationAreasContext';
@@ -294,7 +295,6 @@ function App(props: { setOnDisconnect: Dispatch<SetStateAction<Callback | undefi
     );
   }, [setupGameController, appState.sessionToken, videoInstance]);
   const url = useLocation();
-  const PageComponent = () => <>{page}</>;
   return (
     <CoveyAppContext.Provider value={appState}>
       <VideoContext.Provider value={Video.instance()}>
@@ -303,6 +303,7 @@ function App(props: { setOnDisconnect: Dispatch<SetStateAction<Callback | undefi
             <PlayersInTownContext.Provider value={playersInTown}>
               <NearbyPlayersContext.Provider value={nearbyPlayers}>
                 <ConversationAreasContext.Provider value={conversationAreas}>
+                  <FieldReportsNotepadDrawer />
                   {url.pathname !== '/register' ? (
                     page
                   ) : (
