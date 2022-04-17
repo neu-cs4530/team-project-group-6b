@@ -9,21 +9,21 @@ import React, { useState } from 'react';
 import Notepad from './FieldReportsNotepad'
 
 
-function FieldReportsNotepadDrawer() {
-  const [isNotepadOpen, setIsNotepadOpen] = useState(true);
-  // ReactDom.render(<ReactMarkdown children={inputText} />, document.getElementById('md_root'));
+function FieldReportsNotepadDrawer(props: {isOpen: boolean, onClose: () => void, onSubmit: (text: string) => any}) {
+  
+  const {isOpen, onClose, onSubmit} = props;
 
   return (
     <Drawer
-      isOpen={isNotepadOpen}
+      isOpen={isOpen}
       placement='bottom'
       size='xl'
-      onClose={() => setIsNotepadOpen(false)}>
+      onClose={onClose}>
       <DrawerOverlay />
-      <DrawerContent style={{ minHeight: '40vh' }}>
+      <DrawerContent style={{ minHeight: '50vh' }}>
         <DrawerCloseButton />
         <DrawerHeader>Notepad</DrawerHeader>
-        <Notepad onSubmit={(text: string) => console.log(text)} defaultText={`
+        <Notepad onSubmit={onSubmit} defaultText={`
 # Hello From markdown!
 These are your **notes** for the day
 |item|amount|cost|

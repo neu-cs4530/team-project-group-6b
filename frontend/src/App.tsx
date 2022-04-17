@@ -1,4 +1,4 @@
-import { ChakraProvider } from '@chakra-ui/react';
+import { ChakraProvider, Button } from '@chakra-ui/react';
 import { MuiThemeProvider } from '@material-ui/core/styles';
 import assert from 'assert';
 import React, {
@@ -31,6 +31,7 @@ import theme from './components/VideoCall/VideoFrontend/theme';
 import { Callback } from './components/VideoCall/VideoFrontend/types';
 import useConnectionOptions from './components/VideoCall/VideoFrontend/utils/useConnectionOptions/useConnectionOptions';
 import VideoOverlay from './components/VideoCall/VideoOverlay/VideoOverlay';
+import FieldReportCreator from './components/world/FieldReportCreator';
 import FieldReportsNotepadDrawer from './components/world/FieldReportsNotepadDrawer';
 import WorldMap from './components/world/WorldMap';
 import AuthenticatedUserContext from './contexts/AuthenticatedUserContext';
@@ -44,7 +45,6 @@ import { CoveyAppState } from './CoveyTypes';
 
 export const MOVEMENT_UPDATE_DELAY_MS = 0;
 export const CALCULATE_NEARBY_PLAYERS_MOVING_DELAY_MS = 300;
-const profileServiceClient = new ProfileServiceClient();
 type CoveyAppUpdate =
   | {
       action: 'doConnect';
@@ -272,6 +272,7 @@ function App(props: { setOnDisconnect: Dispatch<SetStateAction<Callback | undefi
   const videoInstance = Video.instance();
 
   const { setOnDisconnect } = props;
+  const [isNotepadOpen, setIsNotepadOpen] = useState(false)
   useEffect(() => {
     setOnDisconnect(() => async () => {
       // Here's a great gotcha: https://medium.com/swlh/how-to-store-a-function-with-the-usestate-hook-in-react-8a88dd4eede1
@@ -279,7 +280,6 @@ function App(props: { setOnDisconnect: Dispatch<SetStateAction<Callback | undefi
       return Video.teardown();
     });
   }, [dispatchAppUpdate, setOnDisconnect]);
-
   const page = useMemo(() => {
     if (!appState.sessionToken) {
       return <Login doLogin={setupGameController} />;
@@ -291,6 +291,7 @@ function App(props: { setOnDisconnect: Dispatch<SetStateAction<Callback | undefi
       <div>
         <WorldMap />
         <VideoOverlay preferredMode='fullwidth' />
+        <FieldReportCreator />
       </div>
     );
   }, [setupGameController, appState.sessionToken, videoInstance]);
@@ -303,8 +304,7 @@ function App(props: { setOnDisconnect: Dispatch<SetStateAction<Callback | undefi
             <PlayersInTownContext.Provider value={playersInTown}>
               <NearbyPlayersContext.Provider value={nearbyPlayers}>
                 <ConversationAreasContext.Provider value={conversationAreas}>
-                  <FieldReportsNotepadDrawer />
-                  {url.pathname !== '/register' ? (
+                  {url.pathname !== '/register' && url.pathname !== "/profile" ? (
                     page
                   ) : (
                     <div style={{ display: 'none' }}>{page}</div>

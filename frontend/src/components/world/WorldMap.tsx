@@ -1,3 +1,4 @@
+import { Button } from '@chakra-ui/react';
 import Phaser from 'phaser';
 import React, { useEffect, useMemo, useState } from 'react';
 import BoundingBox from '../../classes/BoundingBox';
@@ -740,14 +741,15 @@ export default function WorldMap(): JSX.Element {
     }
     return <></>;
   }, [video, newConversation, setNewConversation]);
+  const [isNotepadOpen, setIsNotepadOpen] = useState(false);
+
   return (
-    <div id='app-container'>
-      {newConversationModal}
-      <div id='map-container' />
-      <div id='social-container'>
-        <SocialSidebar />
+      <div id='app-container'>
+        {newConversationModal}
+        <div id='map-container' />
+        <div id='social-container'>
+          <SocialSidebar />
+        </div>
       </div>
-      <FieldReportsNotepadDrawer />
-    </div>
   );
 }
