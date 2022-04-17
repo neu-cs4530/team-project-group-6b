@@ -1,14 +1,35 @@
 import { useAuth0 } from '@auth0/auth0-react';
-import { Modal, ModalCloseButton, ModalHeader, ModalOverlay, Tooltip, useDisclosure } from '@chakra-ui/react';
-import React, { JSXElementConstructor, useEffect, useState } from 'react';
+import {
+  Icon,
+  IconButton,
+  Modal,
+  ModalCloseButton,
+  ModalHeader,
+  ModalOverlay,
+  Tooltip,
+  useDisclosure,
+} from '@chakra-ui/react';
+import { Card, CardHeader } from '@material-ui/core';
+import React, { JSXElementConstructor, useContext, useEffect, useState } from 'react';
+import { MdEdit } from 'react-icons/md';
 import { JsxElement } from 'typescript';
 import Player from '../../classes/Player';
 import ProfileServiceClient from '../../classes/ProfileServiceClient';
+import AuthenticatedUserContext from '../../contexts/AuthenticatedUserContext';
 import { IUserProfile } from '../../CoveyTypes';
+import MarkdownRenderer from '../MarkdownRenderer';
+import FieldReportsServiceClient from '../../classes/ReportServiceClient';
 
 type PlayerNameProps = {
   player: Player;
 };
+
+interface FieldReport {
+  username: string;
+  fieldReports: string;
+  sessionID: string;
+  time: string;
+}
 
 const profileServiceClient = new ProfileServiceClient();
 
@@ -42,21 +63,60 @@ export default function PlayerUserInfo({ player }: PlayerNameProps): JSX.Element
   return <Tooltip label={userInfo?.bio}>{userInfoString}</Tooltip>;
 }
 
-// export function PlayerReports({ player }: PlayerNameProps): JSX.Element {
-//   const [userReports, setUserReports] = useState<IUserProfile | null>(null);
-//   const { getAccessTokenSilently } = useAuth0();
-//   useEffect(() => {
-//     (async () => {
-//       const token = await getAccessTokenSilently();
-//       const playerReports = await profileServiceClient.getReportsByUsername({
-//         token,
-//         username: player.userName,
-//       });
-//       setUserReports(playerReports);
-//     })();
-//   }, [player, profileServiceClient, getAccessTokenSilently]);
+const reportService = new FieldReportsServiceClient();
 
-//   const userInfoString = '';
+export function RenderFieldReportByUser({ player }: PlayerNameProps) {
+  const [fieldReports, setFieldReports] = useState<FieldReport[]>([]);
+  const [didFetch, setDidFetch] = useState(false);
+  const { getAccessTokenSilently } = useAuth0();
+  const getFieldReports = async () => {
+    const token = await getAccessTokenSilently();
+    try {
+      const playerInfo = await profileServiceClient.getProfileByUsername({
+        token,
+        username: player.userName,
+      });
+      if (!playerInfo) {
+        console.log('no player');
+        return;
+      }
+      const reports = await reportService.listAllFieldReports({
+        username: playerInfo.email,
+        token,
+      });
+      setFieldReports(reports);
+      console.log(reports);
+    } catch (err) {
+      console.log('error getting field reports: ', err);
+    }
+  };
+  useEffect(() => {
+    if (!didFetch) {
+      getFieldReports();
+    }
+    setDidFetch(true);
+  });
 
-//   return <Tooltip>{userInfoString}</Tooltip>;
-// }
+  return (
+    <div>
+      {fieldReports.map(report => (
+        <Card
+          key={`${player.id}${report.sessionID}`}
+          variant='elevation'
+          elevation={3}
+          style={{ marginBottom: 30 }}>
+          <CardHeader
+            title={
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                {' '}
+                Report From: {report.time}
+              </div>
+            }
+          />
+          <MarkdownRenderer markdown={report.fieldReports} />
+          <CardHeader />
+        </Card>
+      ))}
+    </div>
+  );
+}

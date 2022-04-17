@@ -188,9 +188,9 @@ const ProfileForm = () => {
 // Use <MyForm /> wherevs
 const Wrapper = () => (
   <div>
-    <Heading>Profile</Heading>
+    <Heading>My App</Heading>
     <ProfileForm />
   </div>
 );
 
-export default Wrapper;
+export default ProfileForm;

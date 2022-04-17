@@ -47,6 +47,15 @@ export interface FieldReportUpdateRequest {
   sessionID: string;
 }
 
+export interface UserFieldReportRequest {
+  username: string;
+  token: string;
+}
+
+export interface UserFieldReportResponse {
+  reports: [];
+}
+
 export default class ReportServiceClient {
   private _axios: AxiosInstance;
 

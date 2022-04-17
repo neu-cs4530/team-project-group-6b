@@ -291,7 +291,7 @@ function App(props: { setOnDisconnect: Dispatch<SetStateAction<Callback | undefi
       <div>
         <WorldMap />
         <VideoOverlay preferredMode='fullwidth' />
-        <FieldReportCreator sessionId={appState.sessionToken} />
+        {/* <FieldReportCreator sessionId={appState.sessionToken} /> */}
       </div>
     );
   }, [setupGameController, appState.sessionToken, videoInstance]);

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Textarea, Icon } from '@chakra-ui/react';
+import { Button, Textarea, Icon, FormControl } from '@chakra-ui/react';
 import {
   MdStrikethroughS,
   MdOutlineFormatBold,
@@ -50,11 +50,13 @@ function Notepad(props: { defaultText: string; onSubmit: (text: string) => any }
       </div>
       <div style={{ display: 'flex' }}>
         <div style={{ width: '50%', paddingRight: 30 }}>
-          <Textarea
-            value={inputText}
-            onChange={e => setInputText(e.target.value)}
-            style={{ fontFamily: 'monospace', minHeight: '100%' }}
-          />
+          <FormControl>
+            <Textarea
+              value={inputText}
+              onChange={e => setInputText(e.target.value)}
+              style={{ fontFamily: 'monospace', minHeight: '100%' }}
+            />
+          </FormControl>
         </div>
         <MarkdownRenderer markdown={inputText} />
         {/* <ReactMarkdown>{inputText}</ReactMarkdown> */}
