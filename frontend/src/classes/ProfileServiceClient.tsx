@@ -33,6 +33,12 @@ export interface ProfileRequest extends AuthenticatedRequest {
   bio: string;
 }
 
+export interface FieldReportRequest extends AuthenticatedRequest {
+  text: string;
+  token: string;
+  sessionId: string;
+}
+
 /**
  * Envelope that wraps any response from the server
  */
@@ -71,11 +77,10 @@ export default class ProfileServiceClient {
   }
 
   async getProfile(requestData: GetProfileRequest): Promise<any> {
-    const responseWrapper = await this._axios.get<ResponseEnvelope<any>>(
-      `/api/v2/users-by-email`,
-      { headers: { Authentication: `Bearer ${requestData.token}` },
-        params: {email: requestData.email} },
-    );
+    const responseWrapper = await this._axios.get<ResponseEnvelope<any>>(`/api/v2/users-by-email`, {
+      headers: { Authentication: `Bearer ${requestData.token}` },
+      params: { email: requestData.email },
+    });
     return ProfileServiceClient.unwrapOrThrowError(responseWrapper);
   }
 
@@ -105,6 +110,15 @@ export default class ProfileServiceClient {
       {
         headers: { Authorization: `Bearer ${requestData.token}` },
       },
+    );
+    return ProfileServiceClient.unwrapOrThrowError(responseWrapper);
+  }
+
+  async postFieldReport(requestData: FieldReportRequest): Promise<any> {
+    const responseWrapper = await this._axios.put<ResponseEnvelope<any>>(
+      `/api/v2/report`,
+      requestData,
+      { headers: { Authorization: `Bearer ${requestData.token}` } },
     );
     return ProfileServiceClient.unwrapOrThrowError(responseWrapper);
   }
