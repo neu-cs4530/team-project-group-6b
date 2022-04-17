@@ -4,6 +4,7 @@ import FieldReportsNotepadDrawer from './FieldReportsNotepadDrawer';
 import CoveyAppContext from '../../contexts/CoveyAppContext';
 import AuthenticatedUserContext from '../../contexts/AuthenticatedUserContext';
 import ProfileServiceClient from '../../classes/ProfileServiceClient';
+import useMaybeVideo from '../../hooks/useMaybeVideo';
 
 const profileServiceClient = new ProfileServiceClient();
 
@@ -12,6 +13,7 @@ function FieldReportCreator() {
   const appContext = useContext(CoveyAppContext);
   const userContext = useContext(AuthenticatedUserContext);
   const toast = useToast();
+  const video = useMaybeVideo();
   const handleSubmit = async (text: string) => {
     if (!appContext) {
       return;
@@ -43,10 +45,19 @@ function FieldReportCreator() {
     <>
       <FieldReportsNotepadDrawer
         onSubmit={handleSubmit}
-        onClose={() => setIsNotepadOpen(false)}
+        onClose={() => {
+          video?.unPauseGame();
+          setIsNotepadOpen(false);
+        }}
         isOpen={isNotepadOpen}
       />
-      <Button colorScheme='blue' onClick={() => setIsNotepadOpen(!isNotepadOpen)}>
+      <Button
+        colorScheme='blue'
+        onClick={() => {
+          console.log(video);
+          video?.pauseGame();
+          setIsNotepadOpen(true);
+        }}>
         Field Report
       </Button>
     </>
