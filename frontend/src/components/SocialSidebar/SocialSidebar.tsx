@@ -11,17 +11,14 @@ import {
   useDisclosure,
   VStack,
 } from '@chakra-ui/react';
-import React from 'react';
-import FieldReportListRender from '../world/FieldReportListRender';
+import React, { useContext } from 'react';
+import FieldReportCreator from '../world/FieldReportCreator';
 import ConversationAreasList from './ConversationAreasList';
 import PlayersList from './PlayersList';
+import CoveyAppContext from '../../contexts/CoveyAppContext';
 
 export default function SocialSidebar(): JSX.Element {
-  const {
-    isOpen: isOpenViewModal,
-    onOpen: onOpenViewModal,
-    onClose: onCloseViewModal,
-  } = useDisclosure();
+  const coveyAppContext = useContext(CoveyAppContext);
   return (
     <>
       <VStack
@@ -39,20 +36,8 @@ export default function SocialSidebar(): JSX.Element {
         </Heading>
         <PlayersList />
         <ConversationAreasList />
-        <Button onClick={onOpenViewModal} style={{ marginRight: '10px' }}>
-          View Reports
-        </Button>
+        {coveyAppContext ? <FieldReportCreator sessionId={coveyAppContext.sessionToken} /> : ''}
       </VStack>
-      <Modal isOpen={isOpenViewModal} onClose={onCloseViewModal} scrollBehavior='inside'>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Field reports:</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <FieldReportListRender />
-          </ModalBody>
-        </ModalContent>
-      </Modal>
     </>
   );
 }

@@ -1,11 +1,11 @@
 import { Card, CardHeader } from '@material-ui/core';
 import React, { useContext, useEffect, useState } from 'react';
+import { IconButton, Icon } from '@chakra-ui/react';
+import { MdEdit } from 'react-icons/md';
 import AuthenticatedUserContext from '../contexts/AuthenticatedUserContext';
 import FieldReportsServiceClient from '../classes/ReportServiceClient';
 import MarkdownRenderer from './MarkdownRenderer';
 import FieldReportCreator from './world/FieldReportCreator';
-import { IconButton, Icon } from '@chakra-ui/react';
-import { MdEdit } from 'react-icons/md';
 
 const reportService = new FieldReportsServiceClient();
 
@@ -56,10 +56,12 @@ function EditFieldReports() {
                 <IconButton
                   aria-label='edit'
                   icon={<Icon as={MdEdit} />}
+                  style={{ marginLeft: '50px' }}
                   onClick={() => {
                     setIsEditing(true);
                     setCurrentEditingSession(report.sessionID);
-                  }}></IconButton>
+                  }}
+                />
               </div>
             }
           />

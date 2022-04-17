@@ -32,8 +32,8 @@ import Video from '../../classes/Video/Video';
 import AuthenticatedUserContext from '../../contexts/AuthenticatedUserContext';
 import useCoveyAppState from '../../hooks/useCoveyAppState';
 import useVideoContext from '../VideoCall/VideoFrontend/hooks/useVideoContext/useVideoContext';
-import ProfileForm from '../ProfilePage';
-import FieldReportListRender from '../world/FieldReportListRender';
+import ProfileForm from '../EditProfilePage';
+import EditFieldReports from '../EditFieldReports';
 
 interface TownSelectionProps {
   doLogin: (initData: TownJoinResponse) => Promise<boolean>;
@@ -42,21 +42,13 @@ interface TownSelectionProps {
 export default function TownSelection({ doLogin }: TownSelectionProps): JSX.Element {
   const [newTownName, setNewTownName] = useState<string>('');
   const [newTownIsPublic, setNewTownIsPublic] = useState<boolean>(true);
+  const [isFieldReportsOpen, setIsFieldReportsOpen] = useState(false);
   const [townIDToJoin, setTownIDToJoin] = useState<string>('');
   const [currentPublicTowns, setCurrentPublicTowns] = useState<CoveyTownInfo[]>();
   const { connect: videoConnect } = useVideoContext();
   const { apiClient } = useCoveyAppState();
   const toast = useToast();
-  const {
-    isOpen: isOpenEditModal,
-    onOpen: onOpenEditModal,
-    onClose: onCloseEditModal,
-  } = useDisclosure();
-  const {
-    isOpen: isOpenViewModal,
-    onOpen: onOpenViewModal,
-    onClose: onCloseViewModal,
-  } = useDisclosure();
+  const { onOpen, isOpen, onClose } = useDisclosure();
   const authenticatedUser = useContext(AuthenticatedUserContext);
   const userName = authenticatedUser.profile?.username;
 
@@ -175,13 +167,15 @@ export default function TownSelection({ doLogin }: TownSelectionProps): JSX.Elem
             <Heading as='h2' size='lg'>
               Username: {userName}
             </Heading>
-            <Button onClick={onOpenViewModal} style={{ marginRight: '10px' }}>
-              View Reports
-            </Button>
-            <Button onClick={onOpenEditModal}>
+            <Button onClick={onOpen}>
               {/* {' '}
         <Link to='/profile'>Edit Profile</Link>{' '} */}
               Edit Profile
+            </Button>
+            <Button onClick={() => setIsFieldReportsOpen(true)}>
+              {/* {' '}
+        <Link to='/profile'>Edit Profile</Link>{' '} */}
+              View/Edit Field Reports
             </Button>
 
             {/* <FormControl>
@@ -287,7 +281,7 @@ export default function TownSelection({ doLogin }: TownSelectionProps): JSX.Elem
           </Box>
         </Stack>
       </form>
-      <Modal isOpen={isOpenEditModal} onClose={onCloseEditModal} scrollBehavior='inside'>
+      <Modal isOpen={isOpen} onClose={onClose} scrollBehavior='inside'>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>
@@ -299,13 +293,19 @@ export default function TownSelection({ doLogin }: TownSelectionProps): JSX.Elem
           </ModalBody>
         </ModalContent>
       </Modal>
-      <Modal isOpen={isOpenViewModal} onClose={onCloseViewModal} scrollBehavior='inside'>
+      <Modal
+        isOpen={isFieldReportsOpen}
+        onClose={() => setIsFieldReportsOpen(false)}
+        scrollBehavior='inside'
+        size='4xl'>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Field reports:</ModalHeader>
+          <ModalHeader>
+            Hi {authenticatedUser.profile?.firstName}, edit your field reports below
+          </ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <FieldReportListRender />
+            <EditFieldReports />
           </ModalBody>
         </ModalContent>
       </Modal>
