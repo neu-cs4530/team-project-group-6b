@@ -9,3 +9,29 @@ body {
 code {
     font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
 }
+
+
+.markdown-renderer > h1 {
+  font-size: 2em;
+  font-weight: bold;
+}
+.markdown-renderer > h2 {
+  font-size: 1.7em;
+}
+
+.markdown-renderer > h3 {
+  font-size: 1.5em;
+}
+.markdown-renderer > h4 {
+  font-size: 1.4em;
+}
+.markdown-renderer > h5 {
+  font-size: 1.3em;
+}
+.markdown-renderer > td {
+}
+.markdown-renderer > table, th, td {
+  padding: 8px 16px;
+  border: 1px solid gray;
+  border-collapse: collapse;
+}

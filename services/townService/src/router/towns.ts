@@ -14,13 +14,20 @@ import {
   townUpdateHandler,
 } from '../requestHandlers/CoveyTownRequestHandlers';
 import {
+  fieldReportCreateHandler,
+  fieldReportDeleteHandler,
+  fieldReportListHandler,
+  fieldReportUpdateHandler,
+  fieldReportListAllHandler,
+} from '../requestHandlers/fieldReportRequestHandler';
+import {
   createProfile,
   fetchProfileByEmail,
   fetchProfileByUsername,
   updateUser,
   userDeleteHandler,
 } from '../requestHandlers/ProfileRequestHandlers';
-import { logError } from '../Utils';
+import { logError, getEmailForRequest } from '../Utils';
 
 const jwtCheck = jwt({
   secret: jwks.expressJwtSecret({
@@ -35,6 +42,136 @@ const jwtCheck = jwt({
 });
 
 export default function addTownRoutes(http: Server, app: Express): io.Server {
+  /**
+   * Create a field report
+   */
+  app.post('/fieldReport', express.json(), async (req, res) => {
+    let email = '';
+    try {
+      email = getEmailForRequest(req);
+    } catch (err) {
+      res.status(StatusCodes.BAD_REQUEST).json({ message: 'bad token' });
+    }
+    try {
+      console.log('req body: ', req.body);
+      const result = await fieldReportCreateHandler({
+        username: email,
+        fieldReports: req.body.fieldReports,
+        sessionID: req.body.sessionID,
+        time: req.body.time,
+      });
+      res.status(StatusCodes.OK).json(result);
+    } catch (err) {
+      logError(err);
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        message: 'Internal server error, please see log in server for more details',
+      });
+    }
+  });
+
+  /**
+   * Get a field report for the specified username created in the specified sessionID
+   */
+  app.get('/fieldReport/:username/:sessionID', express.json(), async (req, res) => {
+    let email = '';
+    try {
+      email = getEmailForRequest(req);
+    } catch (err) {
+      res.status(StatusCodes.BAD_REQUEST).json({ message: 'bad token' });
+    }
+    try {
+      console.log('email: ', email);
+      const result = await fieldReportListHandler({
+        username: req.params.username,
+        sessionID: req.params.sessionID,
+      });
+      if (result.isOK) {
+        res.status(StatusCodes.OK).json(result);
+      } else {
+        res.status(404).json({
+          message: 'field report not found',
+        });
+      }
+    } catch (err) {
+      logError(err);
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        message: 'Internal server error, please see log in server for more details',
+      });
+    }
+  });
+
+  /**
+   * Get all field reports for user
+   */
+  app.get('/fieldReport/:username/', express.json(), async (req, res) => {
+    try {
+      const { user } = req as any;
+      console.log(user);
+      const result = await fieldReportListAllHandler(req.params.username);
+      if (result.isOK) {
+        res.status(StatusCodes.OK).json(result);
+      } else {
+        res.status(404).json({
+          message: 'field report not found',
+        });
+      }
+    } catch (err) {
+      logError(err);
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        message: 'Internal server error, please see log in server for more details',
+      });
+    }
+  });
+
+  /**
+   * Update a field report for the specified username created in the specified sessionID
+   */
+  app.patch('/fieldReport/:username/:sessionID', express.json(), async (req, res) => {
+    try {
+      const result = await fieldReportUpdateHandler({
+        username: req.params.username,
+        fieldReports: req.body.fieldReports,
+        sessionID: req.params.sessionID,
+      });
+      if (result.isOK) {
+        res.status(StatusCodes.OK).json(result);
+      } else {
+        res.status(404).json({
+          message: 'field report not found',
+        });
+      }
+    } catch (err) {
+      logError(err);
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        message: 'Internal server error, please see log in server for more details',
+      });
+    }
+  });
+
+  /**
+   * Delete a field report for the specified username created in the specified sessionID
+   */
+  app.delete('/fieldReport/:username/:sessionID', express.json(), async (req, res) => {
+    try {
+      const result = await fieldReportDeleteHandler({
+        username: req.params.username,
+        sessionID: req.params.sessionID,
+      });
+      if (result.isOK) {
+        res.status(StatusCodes.OK).json(result);
+      } else {
+        res.status(404).json({
+          message: 'field report not found',
+        });
+      }
+    } catch (err) {
+      logError(err);
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        message: 'Internal server error, please see log in server for more details',
+      });
+    }
+  });
+
   // This route doesn't need authentication
   app.get('/api/public', express.json(), (_req, res) => {
     res.json({
@@ -110,12 +247,12 @@ export default function addTownRoutes(http: Server, app: Express): io.Server {
   });
 
   /**
-  * Get a user by (email)
-  */
+   * Get a user by (email)
+   */
   app.get('/api/v2/users-by-email', express.json(), async (req, res) => {
     try {
       const result = await fetchProfileByEmail(req.query.email as string);
-      
+
       if (result.isOK) {
         res.status(StatusCodes.OK).json(result);
       } else {
