@@ -50,6 +50,7 @@ export default function addTownRoutes(http: Server, app: Express): io.Server {
         username: req.body.username,
         fieldReports: req.body.fieldReports,
         sessionID: req.body.sessionID,
+        time: req.body.time,
       });
       res.status(StatusCodes.OK).json(result);
     } catch (err) {
