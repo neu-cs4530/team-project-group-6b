@@ -19,11 +19,11 @@ function FieldReportListRender(): JSX.Element {
       return;
     }
     try {
-      const list = await reportServiceClient.getAllReportsByUser({
+      const list = await reportServiceClient.listAllFieldReports({
         token: userContext.token,
         username: userContext.profile.email,
       });
-      setReportList(list);
+      //setReportList(list);
     } catch (err) {
       console.log('no field reports');
     }
