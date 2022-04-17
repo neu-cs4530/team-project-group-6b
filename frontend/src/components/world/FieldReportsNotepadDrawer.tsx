@@ -6,38 +6,12 @@ import {
   DrawerOverlay,
   Textarea,
 } from '@chakra-ui/react';
-import DOMPurify from 'dompurify';
-import hljs from 'highlight.js';
 import React, { useState } from 'react';
-import { Remarkable } from 'remarkable';
+import Notepad from './FieldReportsNotepad'
 
-function highlight (str: any, lang: any) {
-  if (lang && hljs.getLanguage(lang)) {
-    try {
-      return hljs.highlight(lang, str).value;
-    } catch (err) {
-      console.log("error highlighting", err);
-    }
-  }
-
-  try {
-    return hljs.highlightAuto(str).value;
-  } catch (err) {
-    console.log("error highlighting", err)
-  }
-
-  return ''; // use external default escaping
-}
-
-
-const md = new Remarkable({
-  highlight
-});
 
 function FieldReportsNotepadDrawer() {
   const [isNotepadOpen, setIsNotepadOpen] = useState(true);
-  const [inputText, setInputText] = useState('');
-  const sanitizedMarkdown = DOMPurify.sanitize(md.render(inputText)); //  (marked.parse(inputText));
   // ReactDom.render(<ReactMarkdown children={inputText} />, document.getElementById('md_root'));
 
   return (
@@ -50,20 +24,20 @@ function FieldReportsNotepadDrawer() {
       <DrawerContent style={{ minHeight: '40vh' }}>
         <DrawerCloseButton />
         <DrawerHeader>Notepad</DrawerHeader>
-        <div style={{ display: 'flex' }}>
-          <div style={{ width: '50%', paddingRight: 30 }}>
-            <Textarea
-              onChange={e => setInputText(e.target.value)}
-              style={{ fontFamily: 'monospace', minHeight: '25vh' }}
-            />
-          </div>
-          <div
-            className='markdown-renderer'
-            style={{ width: '50%', paddingLeft: 30 }}
-            dangerouslySetInnerHTML={{ __html: sanitizedMarkdown }}
-          />
-          {/* <ReactMarkdown>{inputText}</ReactMarkdown> */}
-        </div>
+        <Notepad onSubmit={(text: string) => console.log(text)} defaultText={`
+# Hello From markdown!
+These are your **notes** for the day
+|item|amount|cost|
+|-|-|-|
+|bread|1 loaf|$2|
+|milk|1 gallon|$3.50|
+|eggs|1 dozen| $8.35|
+*you can even code in your favorite language!*
+\`\`\`javascript
+const message = "hello coveytown";
+console.log(message);
+\`\`\`
+        `} />
       </DrawerContent>
     </Drawer>
   );
