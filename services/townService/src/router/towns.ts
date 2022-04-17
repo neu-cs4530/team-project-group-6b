@@ -46,10 +46,16 @@ export default function addTownRoutes(http: Server, app: Express): io.Server {
    * Create a field report
    */
   app.post('/fieldReport', express.json(), async (req, res) => {
+    let email = '';
+    try {
+      email = getEmailForRequest(req);
+    } catch (err) {
+      res.status(StatusCodes.BAD_REQUEST).json({ message: 'bad token' });
+    }
     try {
       console.log('req body: ', req.body);
       const result = await fieldReportCreateHandler({
-        username: req.body.username,
+        username: email,
         fieldReports: req.body.fieldReports,
         sessionID: req.body.sessionID,
         time: req.body.time,
