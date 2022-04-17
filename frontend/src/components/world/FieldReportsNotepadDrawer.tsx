@@ -4,7 +4,6 @@ import {
   DrawerContent,
   DrawerHeader,
   DrawerOverlay,
-  Textarea,
 } from '@chakra-ui/react';
 import React, { useState } from 'react';
 import Notepad from './FieldReportsNotepad'
@@ -37,7 +36,7 @@ These are your **notes** for the day
 const message = "hello coveytown";
 console.log(message);
 \`\`\`
-        `} />
+`} />
       </DrawerContent>
     </Drawer>
   );
