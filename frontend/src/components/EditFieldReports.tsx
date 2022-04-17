@@ -4,7 +4,7 @@ import AuthenticatedUserContext from '../contexts/AuthenticatedUserContext';
 import FieldReportsServiceClient from '../classes/ReportServiceClient';
 import MarkdownRenderer from './MarkdownRenderer';
 import FieldReportCreator from './world/FieldReportCreator';
-import { Button, Icon } from '@chakra-ui/react';
+import { IconButton, Icon } from '@chakra-ui/react';
 import { MdEdit } from 'react-icons/md';
 
 const reportService = new FieldReportsServiceClient();
@@ -48,14 +48,23 @@ function EditFieldReports() {
     <div>
       {fieldReports.map(report => (
         <Card key={report.sessionID} variant='elevation' elevation={3} style={{ marginBottom: 30 }}>
-          <CardHeader title={`Report From: ${report.time}`} />
+          <CardHeader
+            title={
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                {' '}
+                Report From: {report.time}
+                <IconButton
+                  aria-label='edit'
+                  icon={<Icon as={MdEdit} />}
+                  onClick={() => {
+                    setIsEditing(true);
+                    setCurrentEditingSession(report.sessionID);
+                  }}></IconButton>
+              </div>
+            }
+          />
           <MarkdownRenderer markdown={report.fieldReports} />
-          <Button
-            leftIcon={<Icon as={MdEdit} />}
-            onClick={() => {
-              setIsEditing(true);
-              setCurrentEditingSession(report.sessionID);
-            }}></Button>
+
           <CardHeader />
         </Card>
       ))}
