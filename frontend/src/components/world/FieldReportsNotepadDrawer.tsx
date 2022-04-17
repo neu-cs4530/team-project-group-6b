@@ -9,11 +9,12 @@ import React, { useState } from 'react';
 import Notepad from './FieldReportsNotepad';
 
 function FieldReportsNotepadDrawer(props: {
+  fieldReports: string | undefined;
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (text: string) => any;
 }) {
-  const { isOpen, onClose, onSubmit } = props;
+  const { isOpen, onClose, onSubmit, fieldReports } = props;
   return (
     <Drawer isOpen={isOpen} placement='bottom' size='xl' onClose={onClose}>
       <DrawerOverlay />
@@ -22,7 +23,9 @@ function FieldReportsNotepadDrawer(props: {
         <DrawerHeader>Notepad</DrawerHeader>
         <Notepad
           onSubmit={onSubmit}
-          defaultText={`
+          defaultText={
+            fieldReports ||
+            `
 # Hello From markdown!
 These are your **notes** for the day
 |item|amount|cost|
@@ -35,7 +38,8 @@ These are your **notes** for the day
 const message = "hello coveytown";
 console.log(message);
 \`\`\`
-`}
+`
+          }
         />
       </DrawerContent>
     </Drawer>

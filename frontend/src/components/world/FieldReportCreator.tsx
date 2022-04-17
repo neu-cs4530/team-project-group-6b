@@ -1,12 +1,18 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Button, useToast } from '@chakra-ui/react';
 import FieldReportsNotepadDrawer from './FieldReportsNotepadDrawer';
 import CoveyAppContext from '../../contexts/CoveyAppContext';
 import AuthenticatedUserContext from '../../contexts/AuthenticatedUserContext';
-import ProfileServiceClient from '../../classes/ProfileServiceClient';
 import useMaybeVideo from '../../hooks/useMaybeVideo';
+import ReportServiceClient from '../../classes/ReportServiceClient';
 
-const profileServiceClient = new ProfileServiceClient();
+const reportServiceClient = new ReportServiceClient();
+interface FieldReport {
+  username: string;
+  fieldReports: string;
+  sessionID: string;
+  time: number;
+}
 
 function FieldReportCreator() {
   const [isNotepadOpen, setIsNotepadOpen] = useState(false);
@@ -14,16 +20,53 @@ function FieldReportCreator() {
   const userContext = useContext(AuthenticatedUserContext);
   const toast = useToast();
   const video = useMaybeVideo();
-  const handleSubmit = async (text: string) => {
-    if (!appContext) {
+  const [isLoading, setIsLoading] = useState(false);
+  const [currentReport, setCurrentReport] = useState<FieldReport | null>(null);
+  const fetchReport = async () => {
+    if (!userContext.profile || !appContext) {
+      console.log('returning');
       return;
     }
     try {
-      await profileServiceClient.postFieldReport({
-        token: userContext.token,
-        text,
-        sessionId: appContext.sessionToken,
+      setIsLoading(true);
+      const report = await reportServiceClient.listFieldReport({
+        username: userContext.profile.email,
+        sessionID: appContext?.sessionToken,
       });
+      setCurrentReport(report);
+      setIsLoading(false);
+    } catch (err) {
+      if (err.message.includes('404')) {
+        setIsLoading(false);
+        console.log('no field report');
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (!currentReport) fetchReport();
+  });
+
+  const handleSubmit = async (text: string) => {
+    if (!appContext || !userContext.profile) {
+      return;
+    }
+    try {
+      if (!currentReport) {
+        await reportServiceClient.createFieldReport({
+          // token: userContext.token,
+          fieldReports: text,
+          sessionID: appContext.sessionToken,
+          username: userContext.profile.email,
+          time: new Date().getUTCDate(),
+        });
+      } else {
+        await reportServiceClient.updateFieldReport({
+          username: userContext.profile.email,
+          sessionID: appContext.sessionToken,
+          fieldReports: text,
+        });
+      }
       toast({
         title: 'Successfully Saved Field Report',
         description: 'Successfully saved field report',
@@ -44,6 +87,7 @@ function FieldReportCreator() {
   return (
     <>
       <FieldReportsNotepadDrawer
+        fieldReports={currentReport?.fieldReports}
         onSubmit={handleSubmit}
         onClose={() => {
           video?.unPauseGame();
@@ -52,13 +96,15 @@ function FieldReportCreator() {
         isOpen={isNotepadOpen}
       />
       <Button
+        disabled={isLoading}
         colorScheme='blue'
-        onClick={() => {
+        onClick={async () => {
           console.log(video);
           video?.pauseGame();
+          await fetchReport();
           setIsNotepadOpen(true);
         }}>
-        Field Report
+        {isLoading ? 'Loading...' : 'Field Report'}
       </Button>
     </>
   );

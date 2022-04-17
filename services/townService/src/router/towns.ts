@@ -13,9 +13,9 @@ import {
   townSubscriptionHandler,
   townUpdateHandler,
 } from '../requestHandlers/CoveyTownRequestHandlers';
-import { 
-  fieldReportCreateHandler, 
-  fieldReportDeleteHandler, 
+import {
+  fieldReportCreateHandler,
+  fieldReportDeleteHandler,
   fieldReportListHandler,
   fieldReportUpdateHandler,
 } from '../requestHandlers/fieldReportRequestHandler';
@@ -46,6 +46,7 @@ export default function addTownRoutes(http: Server, app: Express): io.Server {
    */
   app.post('/fieldReport', express.json(), async (req, res) => {
     try {
+      console.log('req body: ', req.body);
       const result = await fieldReportCreateHandler({
         username: req.body.username,
         fieldReports: req.body.fieldReports,
@@ -209,12 +210,12 @@ export default function addTownRoutes(http: Server, app: Express): io.Server {
   });
 
   /**
-  * Get a user by (email)
-  */
+   * Get a user by (email)
+   */
   app.get('/api/v2/users-by-email', express.json(), async (req, res) => {
     try {
       const result = await fetchProfileByEmail(req.query.email as string);
-      
+
       if (result.isOK) {
         res.status(StatusCodes.OK).json(result);
       } else {

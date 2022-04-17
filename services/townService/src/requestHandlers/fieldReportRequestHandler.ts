@@ -39,7 +39,10 @@ export interface FieldReportUpdateRequest {
   sessionID: string;
 }
 
-export async function fieldReportCreateHandler(requestData: FieldReportCreateRequest): Promise<ResponseEnvelope<Record<string, null>>> {
+export async function fieldReportCreateHandler(
+  requestData: FieldReportCreateRequest,
+): Promise<ResponseEnvelope<Record<string, null>>> {
+  console.log('saving field report: ', requestData);
   const collection = await getFieldReportCollection();
   const result = await collection.insertOne(requestData);
   const success = result.acknowledged;
@@ -52,27 +55,31 @@ export async function fieldReportCreateHandler(requestData: FieldReportCreateReq
   };
 }
 
-export async function fieldReportListHandler(requestData: FieldReportListRequest): Promise<ResponseEnvelope<FieldReportListResponse>> {
+export async function fieldReportListHandler(
+  requestData: FieldReportListRequest,
+): Promise<ResponseEnvelope<FieldReportListResponse>> {
   const collection = await getFieldReportCollection();
-  const result = await collection.findOne<FieldReportListResponse>({ 
-    username: requestData.username, 
-    sessionID: requestData.sessionID, 
+  const result = await collection.findOne<FieldReportListResponse>({
+    username: requestData.username,
+    sessionID: requestData.sessionID,
   });
 
   if (result !== null) {
-    return ({
+    return {
       isOK: true,
       response: result,
-    });
+    };
   }
 
-  return ({
+  return {
     isOK: false,
     message: 'Field report by user with the sessionID cannot be found.',
-  });
+  };
 }
 
-export async function fieldReportUpdateHandler(requestData: FieldReportUpdateRequest): Promise<ResponseEnvelope<Record<string, null>>> {
+export async function fieldReportUpdateHandler(
+  requestData: FieldReportUpdateRequest,
+): Promise<ResponseEnvelope<Record<string, null>>> {
   const collection = await getFieldReportCollection();
   const query = { username: requestData.username, sessionID: requestData.sessionID };
   const update = { $set: { fieldReports: requestData.fieldReports } };
@@ -89,19 +96,19 @@ export async function fieldReportUpdateHandler(requestData: FieldReportUpdateReq
   };
 }
 
-export async function fieldReportDeleteHandler(requestData: FieldReportDeleteRequest): Promise<ResponseEnvelope<Record<string, null>>> {
+export async function fieldReportDeleteHandler(
+  requestData: FieldReportDeleteRequest,
+): Promise<ResponseEnvelope<Record<string, null>>> {
   const collection = await getFieldReportCollection();
-  const result = await collection.deleteOne({ 
-    username: requestData.username, 
-    sessionID: requestData.sessionID, 
+  const result = await collection.deleteOne({
+    username: requestData.username,
+    sessionID: requestData.sessionID,
   });
   const success = result.acknowledged;
 
   return {
     isOK: success,
     response: {},
-    message: !success
-      ? 'Document could not be deleted from the database'
-      : undefined,
+    message: !success ? 'Document could not be deleted from the database' : undefined,
   };
 }
