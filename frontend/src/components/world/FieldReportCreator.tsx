@@ -84,7 +84,7 @@ function FieldReportCreator(props: {
         duration: 9000,
         isClosable: true,
       });
-      onSaveSuccess && onSaveSuccess(text);
+      if (onSaveSuccess) onSaveSuccess(text);
     } catch (err) {
       toast({
         title: 'Error Posting Field Report',

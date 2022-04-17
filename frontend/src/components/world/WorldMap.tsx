@@ -361,10 +361,10 @@ class CoveyGameScene extends Phaser.Scene {
 
     // Object layers in Tiled let you embed extra info into a map - like a spawn point or custom
     // collision shapes. In the tmx file, there's an object layer with a point named "Spawn Point"
-    const spawnPoint = (map.findObject(
+    const spawnPoint = map.findObject(
       'Objects',
       obj => obj.name === 'Spawn Point',
-    ) as unknown) as Phaser.GameObjects.Components.Transform;
+    ) as unknown as Phaser.GameObjects.Components.Transform;
 
     // Find all of the transporters, add them to the physics engine
     const transporters = map.createFromObjects('Objects', { name: 'transporter' });
@@ -492,7 +492,7 @@ class CoveyGameScene extends Phaser.Scene {
         const transportTargetID = transporter.getData('target') as number;
         const target = map.findObject(
           'Objects',
-          obj => ((obj as unknown) as Phaser.Types.Tilemaps.TiledObject).id === transportTargetID,
+          obj => (obj as unknown as Phaser.Types.Tilemaps.TiledObject).id === transportTargetID,
         );
         if (target && target.x && target.y && this.lastLocation) {
           // Move the player to the target, update lastLocation and send it to other players
@@ -744,12 +744,12 @@ export default function WorldMap(): JSX.Element {
   const [isNotepadOpen, setIsNotepadOpen] = useState(false);
 
   return (
-      <div id='app-container'>
-        {newConversationModal}
-        <div id='map-container' />
-        <div id='social-container'>
-          <SocialSidebar />
-        </div>
+    <div id='app-container'>
+      {newConversationModal}
+      <div id='map-container' />
+      <div id='social-container'>
+        <SocialSidebar />
       </div>
+    </div>
   );
 }

@@ -50,13 +50,11 @@ function Notepad(props: { defaultText: string; onSubmit: (text: string) => any }
       </div>
       <div style={{ display: 'flex' }}>
         <div style={{ width: '50%', paddingRight: 30 }}>
-          <FormControl>
-            <Textarea
-              value={inputText}
-              onChange={e => setInputText(e.target.value)}
-              style={{ fontFamily: 'monospace', minHeight: '100%' }}
-            />
-          </FormControl>
+          <Textarea
+            value={inputText}
+            onChange={e => setInputText(e.target.value)}
+            style={{ fontFamily: 'monospace', height: '100%' }}
+          />
         </div>
         <MarkdownRenderer markdown={inputText} />
         {/* <ReactMarkdown>{inputText}</ReactMarkdown> */}

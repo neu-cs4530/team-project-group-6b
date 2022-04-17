@@ -11,7 +11,7 @@ import {
   useDisclosure,
   VStack,
 } from '@chakra-ui/react';
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import FieldReportCreator from '../world/FieldReportCreator';
 import ConversationAreasList from './ConversationAreasList';
 import PlayersList from './PlayersList';
@@ -19,6 +19,7 @@ import CoveyAppContext from '../../contexts/CoveyAppContext';
 
 export default function SocialSidebar(): JSX.Element {
   const coveyAppContext = useContext(CoveyAppContext);
+  const [isOpen, setIsOpen] = useState(false);
   return (
     <>
       <VStack
