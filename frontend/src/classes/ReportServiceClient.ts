@@ -21,17 +21,22 @@ export interface FieldReportListRequest {
   sessionID: string;
 }
 
+export interface FieldReportListAllRequest {
+  token: string;
+  username: string;
+}
+
 export interface FieldReportListResponse {
   username: string;
   fieldReports: string;
   sessionID: string;
-  time: number;
+  time: string;
 }
 
 export interface FieldReportCreateRequest {
   fieldReports: string;
   sessionID: string;
-  time: number;
+  time: string;
   token: string;
 }
 
@@ -110,8 +115,10 @@ export default class ReportServiceClient {
     return ReportServiceClient.unwrapOrThrowError(responseWrapper);
   }
 
-  async getAllReportsByUser(requestData: UserFieldReportRequest): Promise<UserFieldReportRequest> {
-    const responseWrapper = await this._axios.get<ResponseEnvelope<UserFieldReportRequest>>(
+  async listAllFieldReports(
+    requestData: FieldReportListAllRequest,
+  ): Promise<FieldReportListResponse[]> {
+    const responseWrapper = await this._axios.get<ResponseEnvelope<FieldReportListResponse[]>>(
       `/fieldReport/${requestData.username}`,
       { headers: { Authentication: `Bearer ${requestData.token}` } },
     );

@@ -176,8 +176,6 @@ export default function TownSelection({ doLogin }: TownSelectionProps): JSX.Elem
               Username: {userName}
             </Heading>
             <Button onClick={onOpenViewModal} style={{ marginRight: '10px' }}>
-              {/* {' '}
-        <Link to='/profile'>Edit Profile</Link>{' '} */}
               View Reports
             </Button>
             <Button onClick={onOpenEditModal}>

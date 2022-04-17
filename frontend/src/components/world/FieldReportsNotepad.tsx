@@ -1,7 +1,4 @@
 import React, { useState } from 'react';
-import DOMPurify from 'dompurify';
-import hljs from 'highlight.js';
-import { Remarkable } from 'remarkable';
 import { Button, Textarea, Icon } from '@chakra-ui/react';
 import {
   MdStrikethroughS,
@@ -11,34 +8,12 @@ import {
   MdOutlineImage,
   MdOutlineTableChart,
 } from 'react-icons/md';
-
-function highlight(str: any, lang: any) {
-  if (lang && hljs.getLanguage(lang)) {
-    try {
-      return hljs.highlight(lang, str).value;
-    } catch (err) {
-      console.log('error highlighting', err);
-    }
-  }
-
-  try {
-    return hljs.highlightAuto(str).value;
-  } catch (err) {
-    console.log('error highlighting', err);
-  }
-
-  return ''; // use external default escaping
-}
-
-const md = new Remarkable({
-  highlight,
-});
+import MarkdownRenderer from '../MarkdownRenderer';
 
 function Notepad(props: { defaultText: string; onSubmit: (text: string) => any }) {
   const { defaultText, onSubmit } = props;
   const [defaultTextAreaValue, setDefaultTextAreaValue] = useState(defaultText);
   const [inputText, setInputText] = useState(defaultTextAreaValue);
-  const sanitizedMarkdown = DOMPurify.sanitize(md.render(inputText)); //  (marked.parse(inputText));
   const formattingButtons = [
     { name: 'Code', print: '`your text here`', icon: MdOutlineCode },
     { name: 'Strikethrough', print: '~~your text here~~', icon: MdStrikethroughS },
@@ -81,11 +56,7 @@ function Notepad(props: { defaultText: string; onSubmit: (text: string) => any }
             style={{ fontFamily: 'monospace', minHeight: '100%' }}
           />
         </div>
-        <div
-          className='markdown-renderer'
-          style={{ width: '50%', paddingLeft: 30 }}
-          dangerouslySetInnerHTML={{ __html: sanitizedMarkdown }}
-        />
+        <MarkdownRenderer markdown={inputText} />
         {/* <ReactMarkdown>{inputText}</ReactMarkdown> */}
       </div>
       <div style={{ display: 'flex', justifyContent: 'right', paddingRight: 30 }}>
