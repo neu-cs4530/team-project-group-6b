@@ -10,12 +10,15 @@ export interface ResponseEnvelope<T> {
     response?: T;
 }
 
-export interface FieldReportDeleteRequest {
+export interface AuthenticatedRequest {
+    token: string;
+  }
+export interface FieldReportDeleteRequest extends AuthenticatedRequest {
     username: string;
     sessionID: string;
 }
 
-export interface FieldReportListRequest {
+export interface FieldReportListRequest extends AuthenticatedRequest {
     username: string;
     sessionID: string;
 }
@@ -27,14 +30,14 @@ export interface FieldReportListResponse {
     time: number;
 }
 
-export interface FieldReportCreateRequest {
+export interface FieldReportCreateRequest extends AuthenticatedRequest {
     username: string;
     fieldReports: string;
     sessionID: string;
     time: number;
 }
 
-export interface FieldReportUpdateRequest {
+export interface FieldReportUpdateRequest extends AuthenticatedRequest {
     username: string;
     fieldReports: string;
     sessionID: string;
@@ -69,22 +72,36 @@ export default class ReportServiceClient {
     }
     
     async createFieldReport(requestData: FieldReportCreateRequest): Promise<void> {
-        const responseWrapper = await this._axios.post<ResponseEnvelope<void>>(`/fieldReport`, requestData);
+        const responseWrapper = await this._axios.post<ResponseEnvelope<void>>(
+            `/fieldReport`, 
+            requestData,
+            { headers: { Authentication: `Bearer ${requestData.token}` } },
+        );
         return ReportServiceClient.unwrapOrThrowError(responseWrapper);
     }
 
     async deleteFieldReport(requestData: FieldReportDeleteRequest): Promise<void> {
-        const responseWrapper = await this._axios.delete<ResponseEnvelope<void>>(`/fieldReport/${requestData.username}/${requestData.sessionID}`);
+        const responseWrapper = await this._axios.delete<ResponseEnvelope<void>>(
+            `/fieldReport/${requestData.username}/${requestData.sessionID}`,
+            { headers: { Authentication: `Bearer ${requestData.token}` } },
+        );
         return ReportServiceClient.unwrapOrThrowError(responseWrapper);
     }
 
     async updateFieldReport(requestData: FieldReportUpdateRequest): Promise<void> {
-        const responseWrapper = await this._axios.patch<ResponseEnvelope<void>>(`/fieldReport/${requestData.username}/${requestData.sessionID}`, requestData);
+        const responseWrapper = await this._axios.patch<ResponseEnvelope<void>>(
+            `/fieldReport/${requestData.username}/${requestData.sessionID}`, 
+            requestData,
+            { headers: { Authentication: `Bearer ${requestData.token}` } },
+        );
         return ReportServiceClient.unwrapOrThrowError(responseWrapper);
     }
 
     async listFieldReport(requestData: FieldReportListRequest): Promise<FieldReportListResponse> {
-        const responseWrapper = await this._axios.get<ResponseEnvelope<FieldReportListResponse>>(`/fieldReport/${requestData.username}/${requestData.sessionID}`);
+        const responseWrapper = await this._axios.get<ResponseEnvelope<FieldReportListResponse>>(
+            `/fieldReport/${requestData.username}/${requestData.sessionID}`,
+            { headers: { Authentication: `Bearer ${requestData.token}` } },
+        );
         return ReportServiceClient.unwrapOrThrowError(responseWrapper);
     }
 }
