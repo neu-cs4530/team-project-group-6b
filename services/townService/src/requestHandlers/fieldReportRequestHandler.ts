@@ -1,4 +1,4 @@
-import { DeleteResult, InsertOneResult, Timestamp, UpdateResult } from 'mongodb';
+import { Timestamp } from 'mongodb';
 import getFieldReportCollection from '../database/getFieldReportCollection';
 
 /**
@@ -28,21 +28,17 @@ export interface FieldReportAccessRequest {
   sessionID: string;
 }
 
-export async function fieldReportCreateHandler(requestData: FieldReport): Promise<ResponseEnvelope<InsertOneResult>> {
+export async function fieldReportCreateHandler(requestData: FieldReport): Promise<ResponseEnvelope<Record<string, null>>> {
   const collection = await getFieldReportCollection();
   const result = await collection.insertOne(requestData);
-
-  if (result.acknowledged) {
-    return ({
-      isOK: true,
-      response: result,
-    });
-  }
-
-  return ({
-    isOK: false,
-    message: 'Field report could not be inserted into the field report database.',
-  });
+  const success = result.acknowledged;
+  return {
+    isOK: success,
+    response: {},
+    message: !success
+      ? 'Field report could not be inserted into the field report database.'
+      : undefined,
+  };
 }
 
 export async function fieldReportListHandler(requestData: FieldReportAccessRequest): Promise<ResponseEnvelope<FieldReportResponse>> {
@@ -65,42 +61,36 @@ export async function fieldReportListHandler(requestData: FieldReportAccessReque
   });
 }
 
-export async function fieldReportUpdateHandler(requestData: FieldReport): Promise<ResponseEnvelope<UpdateResult>> {
+export async function fieldReportUpdateHandler(requestData: FieldReport): Promise<ResponseEnvelope<Record<string, null>>> {
   const collection = await getFieldReportCollection();
   const query = { username: requestData.username, sessionID: requestData.sessionID };
   const update = { $set: { fieldReports: requestData.fieldReports } };
   const options = {};
   const result = await collection.updateOne(query, update, options);
+  const success = result.acknowledged;
 
-  if (result.acknowledged) {
-    return ({
-      isOK: true,
-      response: result,
-    });
-  }
-
-  return ({ 
-    isOK: false, 
-    message: 'error has occured when updating document in database', 
-  });
+  return {
+    isOK: success,
+    response: {},
+    message: !success
+      ? 'Field report could not be updated into the field report database.'
+      : undefined,
+  };
 }
 
-export async function fieldReportDeleteHandler(requestData: FieldReportAccessRequest): Promise<ResponseEnvelope<DeleteResult>> {
+export async function fieldReportDeleteHandler(requestData: FieldReportAccessRequest): Promise<ResponseEnvelope<Record<string, null>>> {
   const collection = await getFieldReportCollection();
   const result = await collection.deleteOne({ 
     username: requestData.username, 
     sessionID: requestData.sessionID, 
   });
+  const success = result.acknowledged;
 
-  if (result.acknowledged) {
-    return ({
-      isOK: true,
-      response: result,
-    });
-  }
-
-  return ({
-    isOK: false,
-    message: 'Document could not be deleted from the database',
-  });
+  return {
+    isOK: success,
+    response: {},
+    message: !success
+      ? 'Document could not be deleted from the database'
+      : undefined,
+  };
 }
