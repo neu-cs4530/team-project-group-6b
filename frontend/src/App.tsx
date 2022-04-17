@@ -20,7 +20,7 @@ import ProfileServiceClient from './classes/ProfileServiceClient';
 import TownsServiceClient, { TownJoinResponse } from './classes/TownsServiceClient';
 import Video from './classes/Video/Video';
 import Login from './components/Login/Login';
-import AuthenticatedProfile from './components/ProfilePage';
+import AuthenticatedProfile from './components/EditProfilePage';
 import Register from './components/Register';
 import { ChatProvider } from './components/VideoCall/VideoFrontend/components/ChatProvider';
 import ErrorDialog from './components/VideoCall/VideoFrontend/components/ErrorDialog/ErrorDialog';
@@ -272,7 +272,7 @@ function App(props: { setOnDisconnect: Dispatch<SetStateAction<Callback | undefi
   const videoInstance = Video.instance();
 
   const { setOnDisconnect } = props;
-  const [isNotepadOpen, setIsNotepadOpen] = useState(false)
+  const [isNotepadOpen, setIsNotepadOpen] = useState(false);
   useEffect(() => {
     setOnDisconnect(() => async () => {
       // Here's a great gotcha: https://medium.com/swlh/how-to-store-a-function-with-the-usestate-hook-in-react-8a88dd4eede1
@@ -291,7 +291,7 @@ function App(props: { setOnDisconnect: Dispatch<SetStateAction<Callback | undefi
       <div>
         <WorldMap />
         <VideoOverlay preferredMode='fullwidth' />
-        <FieldReportCreator />
+        <FieldReportCreator sessionId={appState.sessionToken} />
       </div>
     );
   }, [setupGameController, appState.sessionToken, videoInstance]);
@@ -304,7 +304,7 @@ function App(props: { setOnDisconnect: Dispatch<SetStateAction<Callback | undefi
             <PlayersInTownContext.Provider value={playersInTown}>
               <NearbyPlayersContext.Provider value={nearbyPlayers}>
                 <ConversationAreasContext.Provider value={conversationAreas}>
-                  {url.pathname !== '/register' && url.pathname !== "/profile" ? (
+                  {url.pathname !== '/register' && url.pathname !== '/profile' ? (
                     page
                   ) : (
                     <div style={{ display: 'none' }}>{page}</div>

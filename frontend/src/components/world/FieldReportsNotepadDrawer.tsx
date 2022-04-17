@@ -15,10 +15,11 @@ function FieldReportsNotepadDrawer(props: {
   onSubmit: (text: string) => any;
 }) {
   const { isOpen, onClose, onSubmit, fieldReports } = props;
+
   return (
     <Drawer isOpen={isOpen} placement='bottom' size='xl' onClose={onClose}>
       <DrawerOverlay />
-      <DrawerContent style={{ minHeight: '50vh' }}>
+      <DrawerContent key={fieldReports} style={{ minHeight: '50vh' }}>
         <DrawerCloseButton />
         <DrawerHeader>Notepad</DrawerHeader>
         <Notepad
