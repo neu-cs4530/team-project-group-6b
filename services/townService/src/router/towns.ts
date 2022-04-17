@@ -18,6 +18,7 @@ import {
   fieldReportDeleteHandler,
   fieldReportListHandler,
   fieldReportUpdateHandler,
+  fieldReportListAllHandler,
 } from '../requestHandlers/fieldReportRequestHandler';
 import {
   createProfile,
@@ -26,7 +27,7 @@ import {
   updateUser,
   userDeleteHandler,
 } from '../requestHandlers/ProfileRequestHandlers';
-import { logError } from '../Utils';
+import { logError, getEmailForRequest } from '../Utils';
 
 const jwtCheck = jwt({
   secret: jwks.expressJwtSecret({
@@ -66,11 +67,41 @@ export default function addTownRoutes(http: Server, app: Express): io.Server {
    * Get a field report for the specified username created in the specified sessionID
    */
   app.get('/fieldReport/:username/:sessionID', express.json(), async (req, res) => {
+    let email = '';
     try {
+      email = getEmailForRequest(req);
+    } catch (err) {
+      res.status(StatusCodes.BAD_REQUEST).json({ message: 'bad token' });
+    }
+    try {
+      console.log('email: ', email);
       const result = await fieldReportListHandler({
         username: req.params.username,
         sessionID: req.params.sessionID,
       });
+      if (result.isOK) {
+        res.status(StatusCodes.OK).json(result);
+      } else {
+        res.status(404).json({
+          message: 'field report not found',
+        });
+      }
+    } catch (err) {
+      logError(err);
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        message: 'Internal server error, please see log in server for more details',
+      });
+    }
+  });
+
+  /**
+   * Get all field reports for user
+   */
+  app.get('/fieldReport/:username/', express.json(), async (req, res) => {
+    try {
+      const { user } = req as any;
+      console.log(user);
+      const result = await fieldReportListAllHandler(req.params.username);
       if (result.isOK) {
         res.status(StatusCodes.OK).json(result);
       } else {

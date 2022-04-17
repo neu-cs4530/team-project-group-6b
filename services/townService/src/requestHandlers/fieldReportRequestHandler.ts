@@ -26,6 +26,8 @@ export interface FieldReportListResponse {
   time: number;
 }
 
+export type FieldReportListAllResponse = FieldReportListResponse[];
+
 export interface FieldReportCreateRequest {
   username: string;
   fieldReports: string;
@@ -68,6 +70,27 @@ export async function fieldReportListHandler(
     return {
       isOK: true,
       response: result,
+    };
+  }
+
+  return {
+    isOK: false,
+    message: 'Field report by user with the sessionID cannot be found.',
+  };
+}
+
+export async function fieldReportListAllHandler(
+  username: string,
+): Promise<ResponseEnvelope<FieldReportListAllResponse>> {
+  const collection = await getFieldReportCollection();
+  const result = await collection.find<FieldReportListResponse>({
+    username,
+  });
+
+  if (result !== null) {
+    return {
+      isOK: true,
+      response: await result.toArray(),
     };
   }
 
