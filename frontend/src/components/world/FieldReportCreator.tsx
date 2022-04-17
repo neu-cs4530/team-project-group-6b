@@ -22,6 +22,7 @@ function FieldReportCreator() {
   const video = useMaybeVideo();
   const [isLoading, setIsLoading] = useState(false);
   const [currentReport, setCurrentReport] = useState<FieldReport | null>(null);
+  const [gotReport, setGotReport] = useState(false);
   const fetchReport = async () => {
     if (!userContext.profile || !appContext) {
       console.log('returning');
@@ -30,6 +31,7 @@ function FieldReportCreator() {
     try {
       setIsLoading(true);
       const report = await reportServiceClient.listFieldReport({
+        token: userContext.token,
         username: userContext.profile.email,
         sessionID: appContext?.sessionToken,
       });
@@ -44,7 +46,10 @@ function FieldReportCreator() {
   };
 
   useEffect(() => {
-    if (!currentReport) fetchReport();
+    if (!gotReport) {
+      fetchReport();
+      setGotReport(true);
+    }
   });
 
   const handleSubmit = async (text: string) => {
@@ -54,10 +59,9 @@ function FieldReportCreator() {
     try {
       if (!currentReport) {
         await reportServiceClient.createFieldReport({
-          // token: userContext.token,
+          token: userContext.token,
           fieldReports: text,
           sessionID: appContext.sessionToken,
-          username: userContext.profile.email,
           time: new Date().getUTCDate(),
         });
       } else {
