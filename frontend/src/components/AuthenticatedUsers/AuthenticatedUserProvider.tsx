@@ -8,7 +8,6 @@ import { AuthenticatedUser } from '../../CoveyTypes';
 const profileServiceClient = new ProfileServiceClient();
 
 const AuthenticatedUserProvider: React.FC = ({ children }) => {
-  const [userInfo, setUserInfo] = useState<AuthenticatedUser | null>(null);
   const {
     user,
     loginWithRedirect,
@@ -17,13 +16,55 @@ const AuthenticatedUserProvider: React.FC = ({ children }) => {
     logout,
     getAccessTokenSilently,
   } = useAuth0();
+  const [userInfo, setUserInfo] = useState<AuthenticatedUser>({
+    isAuthenticated: false,
+    token: '',
+    logout: () => {},
+    refresh: async () => {
+      console.log('old refresh');
+    },
+  });
   console.log('USER: ', user);
+  const [gotProfile, setGotProfile] = useState(false);
   const [shouldRegister, setShouldRegister] = useState(false);
+  const refresh = async () => {
+    const token = await getAccessTokenSilently();
+    console.log('refresh 1');
+    if (!isAuthenticated || !user || !user.email) {
+      return;
+    }
+    console.log('refresh 2');
+    try {
+      const profileResponse = await profileServiceClient.getProfile({
+        token,
+        email: user.email || '',
+      });
+      console.log(profileResponse);
+      setUserInfo({
+        token,
+        profile: {
+          email: user.email,
+          username: profileResponse.username,
+          firstName: profileResponse.firstName,
+          lastName: profileResponse.lastName,
+          occupation: profileResponse.occupation,
+          pronouns: profileResponse.pronouns,
+          bio: profileResponse.bio,
+        },
+        isAuthenticated: true,
+        logout,
+        refresh,
+      });
+    } catch (err) {
+      console.log('refresh failed with error');
+    }
+  };
   useEffect(() => {
     (async () => {
-      if (isAuthenticated && user && user.email && !userInfo) {
+      if (isAuthenticated && user && user.email && !user.profile && !gotProfile) {
         const token = await getAccessTokenSilently();
         try {
+          setGotProfile(true);
           const profileResponse = await profileServiceClient.getProfile({
             token,
             email: user.email || '',
@@ -31,19 +72,25 @@ const AuthenticatedUserProvider: React.FC = ({ children }) => {
           console.log(profileResponse);
           setUserInfo({
             token,
-            email: user.email,
-            username: profileResponse.username,
-            firstName: profileResponse.firstName,
-            lastName: profileResponse.lastName,
-            pronouns: profileResponse.pronouns,
-            occupation: profileResponse.occupation,
-            bio: profileResponse.bio,
+            profile: {
+              email: user.email,
+              username: profileResponse.username,
+              firstName: profileResponse.firstName,
+              lastName: profileResponse.lastName,
+              occupation: profileResponse.occupation,
+              pronouns: profileResponse.pronouns,
+              bio: profileResponse.bio,
+            },
             isAuthenticated: true,
             logout,
+            refresh,
           });
         } catch (err) {
           console.log('getprofile failed with error: ', err);
-          setShouldRegister(true);
+          if (err.message.includes('404')) {
+            setUserInfo({ ...userInfo, refresh });
+            setShouldRegister(true);
+          }
         }
       }
       if (!isLoading && !isAuthenticated) {

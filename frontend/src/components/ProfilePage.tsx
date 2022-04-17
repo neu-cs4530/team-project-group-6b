@@ -32,7 +32,7 @@ const ProfileForm = () => {
   const [error, setError] = useState<string | undefined>(undefined);
   const [message, setMessage] = useState<string | undefined>(undefined);
   const { getAccessTokenSilently, user } = useAuth0();
-  console.log(authenticatedUser?.bio);
+
   // https://chakra-ui.com/docs/components/feedback/toast
   const toast = useToast();
   return (
@@ -40,13 +40,13 @@ const ProfileForm = () => {
       enableReinitialize
       onSubmit={(values: FormValues) => {}}
       initialValues={{
-        username: authenticatedUser?.username || '',
-        firstName: authenticatedUser?.firstName || '',
-        lastName: authenticatedUser?.lastName || '',
-        email: authenticatedUser?.email || '',
-        pronouns: authenticatedUser?.pronouns || '',
-        occupation: authenticatedUser?.occupation || '',
-        bio: authenticatedUser?.bio || '',
+        username: authenticatedUser.profile?.username || '',
+        firstName: authenticatedUser.profile?.firstName || '',
+        lastName: authenticatedUser.profile?.lastName || '',
+        email: authenticatedUser.profile?.email || '',
+        pronouns: authenticatedUser.profile?.pronouns || '',
+        occupation: authenticatedUser.profile?.occupation || '',
+        bio: authenticatedUser.profile?.bio || '',
       }}>
       {({ handleChange, handleBlur, values, isSubmitting }) => (
         <div style={{ display: 'flex', justifyContent: 'center' }}>
@@ -141,6 +141,7 @@ const ProfileForm = () => {
                         duration: 9000,
                         isClosable: true,
                       });
+                      authenticatedUser.refresh();
                     } else {
                       toast({
                         title: 'Missing information.',

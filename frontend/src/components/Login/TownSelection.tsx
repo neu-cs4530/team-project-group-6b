@@ -48,8 +48,8 @@ export default function TownSelection({ doLogin }: TownSelectionProps): JSX.Elem
   const toast = useToast();
   const { onOpen, isOpen, onClose } = useDisclosure();
   const authenticatedUser = useContext(AuthenticatedUserContext);
-  const userName = authenticatedUser?.username;
-  
+  const userName = authenticatedUser.profile?.username;
+
   const updateTownListings = useCallback(() => {
     // console.log(apiClient);
     apiClient.listTowns().then(towns => {
@@ -163,7 +163,7 @@ export default function TownSelection({ doLogin }: TownSelectionProps): JSX.Elem
           <Stack>
           <Box p='4' borderWidth='1px' borderRadius='lg'>
           <Heading as='h2' size='lg'>
-          Username: {authenticatedUser?.username}
+          Username: {userName}
           </Heading>
           <Button onClick={onOpen}>
           {/* {' '}
@@ -278,7 +278,7 @@ export default function TownSelection({ doLogin }: TownSelectionProps): JSX.Elem
         scrollBehavior='inside'>
         <ModalOverlay />
         <ModalContent>
-        <ModalHeader>Hi {authenticatedUser?.firstName}, edit your profile below</ModalHeader>
+        <ModalHeader>Hi {authenticatedUser.profile?.firstName}, edit your profile below</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
         <ProfileForm />

@@ -26,15 +26,18 @@ export type CoveyAppState = {
 
 export type AuthenticatedUser = {
   token: string;
-  username: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  pronouns: string;
-  occupation: string;
-  bio: string;
+  profile?: {
+    username: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    pronouns: string;
+    occupation: string;
+    bio: string;
+  };
   isAuthenticated: boolean;
   logout: () => void;
+  refresh: () => Promise<void>;
 };
 export interface IUserProfile {
   firstName: string;

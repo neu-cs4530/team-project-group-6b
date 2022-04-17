@@ -18,14 +18,13 @@ export default function PlayerUserInfo({ player }: PlayerNameProps): JSX.Element
   useEffect(() => {
     (async () => {
       const token = await getAccessTokenSilently();
-      console.log('getting profile');
       const playerInfo = await profileServiceClient.getProfileByUsername({
         token,
         username: player.userName,
       });
       setUserInfo(playerInfo);
     })();
-  }, [player, profileServiceClient, getAccessTokenSilently]);
+  }, [setUserInfo, player, getAccessTokenSilently]);
 
   let userInfoString = '';
   if (userInfo !== null) {

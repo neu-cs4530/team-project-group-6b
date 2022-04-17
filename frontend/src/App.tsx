@@ -11,7 +11,7 @@ import React, {
   useReducer,
   useState,
 } from 'react';
-import { Route, Switch } from 'react-router-dom';
+import { Route, Switch, useLocation } from 'react-router-dom';
 import { io, Socket } from 'socket.io-client';
 import './App.css';
 import ConversationArea, { ServerConversationArea } from './classes/ConversationArea';
@@ -293,9 +293,8 @@ function App(props: { setOnDisconnect: Dispatch<SetStateAction<Callback | undefi
       </div>
     );
   }, [setupGameController, appState.sessionToken, videoInstance]);
-
+  const url = useLocation();
   const PageComponent = () => <>{page}</>;
-
   return (
     <CoveyAppContext.Provider value={appState}>
       <VideoContext.Provider value={Video.instance()}>
@@ -304,14 +303,26 @@ function App(props: { setOnDisconnect: Dispatch<SetStateAction<Callback | undefi
             <PlayersInTownContext.Provider value={playersInTown}>
               <NearbyPlayersContext.Provider value={nearbyPlayers}>
                 <ConversationAreasContext.Provider value={conversationAreas}>
+                  {url.pathname !== '/register' ? (
+                    page
+                  ) : (
+                    <div style={{ display: 'none' }}>{page}</div>
+                  )}
+
+                  {/* <Login doLogin={setupGameController} /> */}
                   <Switch>
-                    <Route path='/register' component={Register} />
+                    <Route path='/register'>
+                      {/* <div style={{ display: 'none' }}> */}
+                      {/* xxx */}
+                      {/* </div> */}
+                      <Register />
+                      <div style={{ display: 'none' }}>{page} </div>
+                    </Route>
                     <Route path='/profile' component={AuthenticatedProfile} />
 
                     <Route path='/home' />
                     {/* <Route component={PageComponent} /> */}
                   </Switch>
-                  {page}
                 </ConversationAreasContext.Provider>
               </NearbyPlayersContext.Provider>
             </PlayersInTownContext.Provider>
@@ -346,9 +357,9 @@ export default function AppStateWrapper(): JSX.Element {
         </button>
       )}
       <div>
-        {authenticatedUserContext?.email}
-        {authenticatedUserContext?.firstName}
-        {authenticatedUserContext?.lastName}
+        {authenticatedUserContext.profile?.email}
+        {authenticatedUserContext.profile?.firstName}
+        {authenticatedUserContext.profile?.lastName}
       </div>
       <ChakraProvider>
         <MuiThemeProvider theme={theme}>
