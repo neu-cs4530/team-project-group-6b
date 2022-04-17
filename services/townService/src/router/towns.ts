@@ -44,7 +44,7 @@ export default function addTownRoutes(http: Server, app: Express): io.Server {
   /**
    * Create a field report
    */
-  app.post('/fieldReport', express.json(), async (req, res) => {
+  app.post('/fieldReport', express.json(), jwtCheck, async (req, res) => {
     try {
       const result = await fieldReportCreateHandler({
         username: req.body.username,
@@ -64,7 +64,7 @@ export default function addTownRoutes(http: Server, app: Express): io.Server {
   /**
    * Get a field report for the specified username created in the specified sessionID
    */
-  app.get('/fieldReport/:username/:sessionID', express.json(), async (req, res) => {
+  app.get('/fieldReport/:username/:sessionID', express.json(), jwtCheck, async (req, res) => {
     try {
       const result = await fieldReportListHandler({
         username: req.params.username,
@@ -88,7 +88,7 @@ export default function addTownRoutes(http: Server, app: Express): io.Server {
   /**
    * Update a field report for the specified username created in the specified sessionID
    */
-  app.patch('/fieldReport/:username/:sessionID', express.json(), async (req, res) => {
+  app.patch('/fieldReport/:username/:sessionID', express.json(), jwtCheck, async (req, res) => {
     try {
       const result = await fieldReportUpdateHandler({
         username: req.params.username,
@@ -113,7 +113,7 @@ export default function addTownRoutes(http: Server, app: Express): io.Server {
   /**
    * Delete a field report for the specified username created in the specified sessionID
    */
-  app.delete('/fieldReport/:username/:sessionID', express.json(), async (req, res) => {
+  app.delete('/fieldReport/:username/:sessionID', express.json(), jwtCheck, async (req, res) => {
     try {
       const result = await fieldReportDeleteHandler({
         username: req.params.username,
