@@ -43,3 +43,21 @@ export default function PlayerUserInfo({ player }: PlayerNameProps): JSX.Element
   return <Tooltip label={userInfo?.bio}>{userInfoString}</Tooltip>;
 }
 
+// export function PlayerReports({ player }: PlayerNameProps): JSX.Element {
+//   const [userReports, setUserReports] = useState<IUserProfile | null>(null);
+//   const { getAccessTokenSilently } = useAuth0();
+//   useEffect(() => {
+//     (async () => {
+//       const token = await getAccessTokenSilently();
+//       const playerReports = await profileServiceClient.getReportsByUsername({
+//         token,
+//         username: player.userName,
+//       });
+//       setUserReports(playerReports);
+//     })();
+//   }, [player, profileServiceClient, getAccessTokenSilently]);
+
+//   const userInfoString = '';
+
+//   return <Tooltip>{userInfoString}</Tooltip>;
+// }

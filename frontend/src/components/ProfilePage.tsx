@@ -32,6 +32,7 @@ const ProfileForm = () => {
   const [error, setError] = useState<string | undefined>(undefined);
   const [message, setMessage] = useState<string | undefined>(undefined);
   const { getAccessTokenSilently, user } = useAuth0();
+  console.log(authenticatedUser?.bio);
   // https://chakra-ui.com/docs/components/feedback/toast
   const toast = useToast();
   return (
@@ -52,9 +53,6 @@ const ProfileForm = () => {
           <Box p='4' borderWidth='1px' borderRadius='lg' maxWidth='800'>
             {console.log('usercontextuser: ', authenticatedUser)}
             <Form>
-              <Heading as='h2' size='lg'>
-                Hi {values.firstName}, edit your profile information
-              </Heading>
               <FormControl isRequired>
                 <FormLabel>First Name</FormLabel>
                 <Input
@@ -194,4 +192,4 @@ const Wrapper = () => (
   </div>
 );
 
-export default Wrapper;
+export default ProfileForm;
