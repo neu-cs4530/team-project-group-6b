@@ -5,6 +5,7 @@ import { fireEvent, render, RenderResult, waitFor } from '@testing-library/react
 import userEvent, { TargetElement } from '@testing-library/user-event';
 import { nanoid } from 'nanoid';
 import React from 'react';
+import { BrowserRouter } from 'react-router-dom';
 import TownsServiceClient from '../../classes/TownsServiceClient';
 import Video from '../../classes/Video/Video';
 import CoveyAppContext from '../../contexts/CoveyAppContext';
@@ -86,6 +87,7 @@ const listTowns = (suffix: string) =>
 function wrappedTownSelection() {
   return (
     <ChakraProvider>
+      <BrowserRouter>
       <CoveyAppContext.Provider
         value={{
           myPlayerID: '',
@@ -102,6 +104,7 @@ function wrappedTownSelection() {
           <TownSelection doLogin={doLoginMock} />
         </ChatProvider>
       </CoveyAppContext.Provider>
+      </BrowserRouter>
     </ChakraProvider>
   );
 }

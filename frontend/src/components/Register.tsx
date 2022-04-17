@@ -11,9 +11,10 @@ import {
   useToast,
 } from '@chakra-ui/react';
 import { Form, FormikProps, withFormik } from 'formik';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { Redirect } from 'react-router-dom';
 import ProfileServiceClient from '../classes/ProfileServiceClient';
+import AuthenticateduserContext from '../contexts/AuthenticatedUserContext';
 
 const profileServiceClient = new ProfileServiceClient();
 
@@ -71,6 +72,7 @@ const InnerForm = (props: FormikProps<FormValues>) => {
 // Wrap our form with the withFormik HoC
 const OuterForm = () => {
   const { getAccessTokenSilently, user } = useAuth0();
+  const { refresh } = useContext(AuthenticateduserContext);
   const [shouldRedirect, setShouldRedirect] = useState(false);
   const [error, setError] = useState<string | undefined>(undefined);
   const toast = useToast();
@@ -108,6 +110,7 @@ const OuterForm = () => {
             duration: 9000,
             isClosable: true,
           });
+          await refresh();
           setShouldRedirect(true);
         }
       } catch (err) {

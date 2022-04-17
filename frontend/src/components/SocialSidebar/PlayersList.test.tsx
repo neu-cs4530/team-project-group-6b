@@ -1,3 +1,4 @@
+import { Auth0Provider } from '@auth0/auth0-react';
 import { ChakraProvider } from '@chakra-ui/react';
 import '@testing-library/jest-dom';
 import '@testing-library/jest-dom/extend-expect';
@@ -13,6 +14,19 @@ import * as usePlayersInTown from '../../hooks/usePlayersInTown';
 import * as PlayerName from './PlayerName';
 import PlayersList from './PlayersList';
 
+jest.mock('@auth0/auth0-react', () => ({
+  Auth0Provider: ({ children }: any) => children,
+  withAuthenticationRequired: ((component: any) => component),
+  useAuth0: () => ({
+      isLoading: false,
+      user: { sub: "foobar" },
+      isAuthenticated: true,
+      loginWithRedirect: jest.fn(),
+      getAccessTokenSilently: jest.fn(),
+    }) 
+}));
+
+jest.mock('../../classes/ProfileServiceClient');
 describe('PlayersInTownList', () => {
   const randomLocation = (): UserLocation => ({
     moving: Math.random() < 0.5,
@@ -22,9 +36,17 @@ describe('PlayersInTownList', () => {
   });
   const wrappedPlayersListComponent = () => (
     <ChakraProvider>
+      <Auth0Provider
+        cacheLocation='memory'
+        audience='https://coveytown.com/api'
+        domain='harrymerzin.auth0.com'
+        clientId='cEVvHBp7TMMUFxSr0PQWvkuhZkV9Tzxf'
+        scope='profile email'
+        redirectUri='http://localhost:3000'>
       <React.StrictMode>
         <PlayersList />
       </React.StrictMode>
+      </Auth0Provider>
     </ChakraProvider>
   );
   const renderPlayersList = () => render(wrappedPlayersListComponent());

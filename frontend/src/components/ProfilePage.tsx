@@ -39,13 +39,13 @@ const ProfileForm = () => {
       enableReinitialize
       onSubmit={(values: FormValues) => {}}
       initialValues={{
-        username: authenticatedUser?.username || '',
-        firstName: authenticatedUser?.firstName || '',
-        lastName: authenticatedUser?.lastName || '',
-        email: authenticatedUser?.email || '',
-        pronouns: authenticatedUser?.pronouns || '',
-        occupation: authenticatedUser?.occupation || '',
-        bio: authenticatedUser?.bio || '',
+        username: authenticatedUser.profile?.username || '',
+        firstName: authenticatedUser.profile?.firstName || '',
+        lastName: authenticatedUser.profile?.lastName || '',
+        email: authenticatedUser.profile?.email || '',
+        pronouns: authenticatedUser.profile?.pronouns || '',
+        occupation: authenticatedUser.profile?.occupation || '',
+        bio: authenticatedUser.profile?.bio || '',
       }}>
       {({ handleChange, handleBlur, values, isSubmitting }) => (
         <div style={{ display: 'flex', justifyContent: 'center' }}>
