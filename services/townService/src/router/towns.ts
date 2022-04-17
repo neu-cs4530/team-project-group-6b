@@ -69,7 +69,13 @@ export default function addTownRoutes(http: Server, app: Express): io.Server {
         username: req.params.username,
         sessionID: req.params.sessionID,
       });
-      res.status(StatusCodes.OK).json(result);
+      if (result.isOK) {
+        res.status(StatusCodes.OK).json(result);
+      } else {
+        res.status(404).json({
+          message: 'field report not found',
+        });
+      }
     } catch (err) {
       logError(err);
       res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
@@ -88,7 +94,13 @@ export default function addTownRoutes(http: Server, app: Express): io.Server {
         fieldReports: req.body.fieldReports,
         sessionID: req.params.sessionID,
       });
-      res.status(StatusCodes.OK).json(result);
+      if (result.isOK) {
+        res.status(StatusCodes.OK).json(result);
+      } else {
+        res.status(404).json({
+          message: 'field report not found',
+        });
+      }
     } catch (err) {
       logError(err);
       res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
@@ -106,7 +118,13 @@ export default function addTownRoutes(http: Server, app: Express): io.Server {
         username: req.params.username,
         sessionID: req.params.sessionID,
       });
-      res.status(StatusCodes.OK).json(result);
+      if (result.isOK) {
+        res.status(StatusCodes.OK).json(result);
+      } else {
+        res.status(404).json({
+          message: 'field report not found',
+        });
+      }
     } catch (err) {
       logError(err);
       res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
