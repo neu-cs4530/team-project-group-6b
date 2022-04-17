@@ -6,24 +6,26 @@ import {
   DrawerOverlay,
 } from '@chakra-ui/react';
 import React, { useState } from 'react';
-import Notepad from './FieldReportsNotepad'
+import Notepad from './FieldReportsNotepad';
 
-
-function FieldReportsNotepadDrawer(props: {isOpen: boolean, onClose: () => void, onSubmit: (text: string) => any}) {
-  
-  const {isOpen, onClose, onSubmit} = props;
-
+function FieldReportsNotepadDrawer(props: {
+  fieldReports: string | undefined;
+  isOpen: boolean;
+  onClose: () => void;
+  onSubmit: (text: string) => any;
+}) {
+  const { isOpen, onClose, onSubmit, fieldReports } = props;
   return (
-    <Drawer
-      isOpen={isOpen}
-      placement='bottom'
-      size='xl'
-      onClose={onClose}>
+    <Drawer isOpen={isOpen} placement='bottom' size='xl' onClose={onClose}>
       <DrawerOverlay />
       <DrawerContent style={{ minHeight: '50vh' }}>
         <DrawerCloseButton />
         <DrawerHeader>Notepad</DrawerHeader>
-        <Notepad onSubmit={onSubmit} defaultText={`
+        <Notepad
+          onSubmit={onSubmit}
+          defaultText={
+            fieldReports ||
+            `
 # Hello From markdown!
 These are your **notes** for the day
 |item|amount|cost|
@@ -36,7 +38,9 @@ These are your **notes** for the day
 const message = "hello coveytown";
 console.log(message);
 \`\`\`
-`} />
+`
+          }
+        />
       </DrawerContent>
     </Drawer>
   );

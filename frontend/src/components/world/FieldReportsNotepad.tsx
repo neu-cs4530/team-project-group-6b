@@ -36,7 +36,8 @@ const md = new Remarkable({
 
 function Notepad(props: { defaultText: string; onSubmit: (text: string) => any }) {
   const { defaultText, onSubmit } = props;
-  const [inputText, setInputText] = useState(defaultText);
+  const [defaultTextAreaValue, setDefaultTextAreaValue] = useState(defaultText);
+  const [inputText, setInputText] = useState(defaultTextAreaValue);
   const sanitizedMarkdown = DOMPurify.sanitize(md.render(inputText)); //  (marked.parse(inputText));
   const formattingButtons = [
     { name: 'Code', print: '`your text here`', icon: MdOutlineCode },
@@ -88,10 +89,15 @@ function Notepad(props: { defaultText: string; onSubmit: (text: string) => any }
         {/* <ReactMarkdown>{inputText}</ReactMarkdown> */}
       </div>
       <div style={{ display: 'flex', justifyContent: 'right', paddingRight: 30 }}>
-        <Button style={{ marginRight: 15 }} onClick={() => onSubmit(inputText)}>
+        <Button
+          style={{ marginRight: 15 }}
+          onClick={() => {
+            setDefaultTextAreaValue(inputText);
+            onSubmit(inputText);
+          }}>
           Submit
         </Button>
-        <Button onClick={() => setInputText(defaultText)}>Reset</Button>
+        <Button onClick={() => setInputText(defaultTextAreaValue)}>Reset</Button>
       </div>
     </div>
   );
