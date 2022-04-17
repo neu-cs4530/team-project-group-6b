@@ -1,11 +1,23 @@
+import {
+  IconButton,
+  Icon,
+  PopoverTrigger,
+  Popover,
+  PopoverContent,
+  PopoverArrow,
+  PopoverCloseButton,
+  PopoverHeader,
+  PopoverBody,
+  Button,
+  useToast,
+} from '@chakra-ui/react';
+import { MdEdit, MdDeleteOutline } from 'react-icons/md';
 import { Card, CardHeader } from '@material-ui/core';
 import React, { useContext, useEffect, useState } from 'react';
 import AuthenticatedUserContext from '../contexts/AuthenticatedUserContext';
 import FieldReportsServiceClient from '../classes/ReportServiceClient';
 import MarkdownRenderer from './MarkdownRenderer';
 import FieldReportCreator from './world/FieldReportCreator';
-import { IconButton, Icon } from '@chakra-ui/react';
-import { MdEdit } from 'react-icons/md';
 
 const reportService = new FieldReportsServiceClient();
 
@@ -42,8 +54,39 @@ function EditFieldReports() {
     }
     setDidFetch(true);
   });
+
+  const toast = useToast();
+  const handleDelete = async (sessionId: string) => {
+    try {
+      await reportService.deleteFieldReport({
+        sessionID: sessionId,
+        token: userContext.token,
+        username: userContext.profile?.email || '',
+      });
+      toast({
+        title: 'Successfully Deleted Field Report',
+        description: 'Successfully deleted field report',
+        status: 'success',
+        duration: 9000,
+        isClosable: true,
+      });
+    } catch (err) {
+      toast({
+        title: 'Error Deleting Field Report',
+        description: 'There was an error deleting your field report, please try again',
+        status: 'error',
+        duration: 9000,
+        isClosable: true,
+      });
+    }
+    setFieldReports(fieldReports.filter(fr => fr.sessionID !== sessionId));
+    console.log('deleting session: ', sessionId);
+  };
+
   const [isEditing, setIsEditing] = useState(false);
   const [currentEditingSession, setCurrentEditingSession] = useState('');
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [currentDeletingSelection, setCurrentDeletingSelection] = useState('');
   return (
     <div>
       {fieldReports.map(report => (
@@ -53,13 +96,34 @@ function EditFieldReports() {
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 {' '}
                 Report From: {report.time}
-                <IconButton
-                  aria-label='edit'
-                  icon={<Icon as={MdEdit} />}
-                  onClick={() => {
-                    setIsEditing(true);
-                    setCurrentEditingSession(report.sessionID);
-                  }}></IconButton>
+                <div>
+                  <IconButton
+                    aria-label='edit'
+                    icon={<Icon as={MdEdit} />}
+                    onClick={() => {
+                      setIsEditing(true);
+                      setCurrentEditingSession(report.sessionID);
+                    }}
+                  />
+                  <Popover>
+                    <PopoverTrigger>
+                      <IconButton
+                        aria-label='delete'
+                        icon={<Icon as={MdDeleteOutline} color='red' />}
+                      />
+                    </PopoverTrigger>
+                    <PopoverContent>
+                      <PopoverArrow />
+                      <PopoverCloseButton />
+                      <PopoverHeader>Delete this field report?</PopoverHeader>
+                      <PopoverBody>
+                        <Button onClick={() => handleDelete(report.sessionID)} color='red'>
+                          Delete
+                        </Button>
+                      </PopoverBody>
+                    </PopoverContent>
+                  </Popover>
+                </div>
               </div>
             }
           />

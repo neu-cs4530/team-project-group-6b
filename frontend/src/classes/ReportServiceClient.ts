@@ -11,6 +11,7 @@ export interface ResponseEnvelope<T> {
 }
 
 export interface FieldReportDeleteRequest {
+  token: string;
   username: string;
   sessionID: string;
 }
