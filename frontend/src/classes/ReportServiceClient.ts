@@ -41,6 +41,15 @@ export interface FieldReportUpdateRequest {
   sessionID: string;
 }
 
+export interface UserFieldReportRequest {
+  username: string;
+  token: string;
+}
+
+export interface UserFieldReportResponse {
+  reports: [];
+}
+
 export default class ReportServiceClient {
   private _axios: AxiosInstance;
 
@@ -96,6 +105,14 @@ export default class ReportServiceClient {
   async listFieldReport(requestData: FieldReportListRequest): Promise<FieldReportListResponse> {
     const responseWrapper = await this._axios.get<ResponseEnvelope<FieldReportListResponse>>(
       `/fieldReport/${requestData.username}/${requestData.sessionID}`,
+      { headers: { Authentication: `Bearer ${requestData.token}` } },
+    );
+    return ReportServiceClient.unwrapOrThrowError(responseWrapper);
+  }
+
+  async getAllReportsByUser(requestData: UserFieldReportRequest): Promise<UserFieldReportRequest> {
+    const responseWrapper = await this._axios.get<ResponseEnvelope<UserFieldReportRequest>>(
+      `/fieldReport/${requestData.username}`,
       { headers: { Authentication: `Bearer ${requestData.token}` } },
     );
     return ReportServiceClient.unwrapOrThrowError(responseWrapper);
