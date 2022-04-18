@@ -32,6 +32,7 @@ export interface FieldReportListResponse {
   fieldReports: string;
   sessionID: string;
   time: string;
+  isPrivate: boolean;
 }
 
 export interface FieldReportCreateRequest {
@@ -43,7 +44,8 @@ export interface FieldReportCreateRequest {
 
 export interface FieldReportUpdateRequest {
   username: string;
-  fieldReports: string;
+  fieldReports?: string;
+  isPrivate?: boolean;
   sessionID: string;
   token: string;
 }

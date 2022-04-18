@@ -24,6 +24,7 @@ export interface FieldReportListResponse {
   username: string;
   fieldReports: string;
   sessionID: string;
+  isPrivate: boolean;
   time: number;
 }
 
@@ -48,7 +49,7 @@ export async function fieldReportCreateHandler(
 ): Promise<ResponseEnvelope<Record<string, null>>> {
   console.log('saving field report: ', requestData);
   const collection = await getFieldReportCollection();
-  const result = await collection.insertOne(requestData);
+  const result = await collection.insertOne({ ...requestData, isPrivate: false });
   const success = result.acknowledged;
   return {
     isOK: success,
@@ -106,21 +107,27 @@ export async function fieldReportUpdateHandler(
   requestData: FieldReportUpdateRequest,
 ): Promise<ResponseEnvelope<Record<string, null>>> {
   const collection = await getFieldReportCollection();
+  console.log('request data: ', requestData);
   const query = {
     username: requestData.username,
     sessionID: requestData.sessionID,
   };
-  if (!requestData.isPrivate && !requestData.fieldReports) {
+  if (
+    (requestData.isPrivate === null || requestData.isPrivate === undefined) &&
+    !requestData.fieldReports
+  ) {
     return { isOK: true };
   }
   const updates: { [key: string]: unknown } = {};
-  if (requestData.isPrivate) {
+  if (requestData.isPrivate !== undefined) {
     updates.isPrivate = requestData.isPrivate;
   }
   if (requestData.fieldReports) {
     updates.fieldReports = requestData.fieldReports;
   }
   const update = { $set: updates };
+  console.log('querying report with query: ', JSON.stringify(query));
+  console.log('updating report with update: ', JSON.stringify(update));
   const options = {};
   const result = await collection.updateOne(query, update, options);
   const success = result.acknowledged;

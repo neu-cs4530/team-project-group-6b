@@ -85,6 +85,12 @@ export default function addTownRoutes(http: Server, app: Express): io.Server {
         username: req.params.username,
         sessionID: req.params.sessionID,
       });
+      if (result.response?.isPrivate && email !== req.params.username) {
+        res
+          .status(403)
+          .json({ message: 'this report is private, you are not authorized to view it' });
+        return;
+      }
       if (result.isOK) {
         res.status(StatusCodes.OK).json(result);
       } else {
@@ -104,12 +110,24 @@ export default function addTownRoutes(http: Server, app: Express): io.Server {
    * Get all field reports for user
    */
   app.get('/fieldReport/:username/', express.json(), jwtCheck, async (req, res) => {
+    let email = '';
     try {
-      const { user } = req as any;
-      console.log(user);
+      email = getEmailForRequest(req);
+    } catch (err) {
+      res.status(StatusCodes.BAD_REQUEST).json({ message: 'bad token' });
+    }
+    try {
       const result = await fieldReportListAllHandler(req.params.username);
       if (result.isOK) {
-        res.status(StatusCodes.OK).json(result);
+        if (req.params.username === email) {
+          console.log('same user');
+          res.status(StatusCodes.OK).json(result);
+          return;
+        }
+        console.log('not same user');
+        res
+          .status(StatusCodes.OK)
+          .json({ ...result, response: result.response?.filter(item => !item.isPrivate) });
       } else {
         res.status(404).json({
           message: 'field report not found',
@@ -127,9 +145,15 @@ export default function addTownRoutes(http: Server, app: Express): io.Server {
    * Update a field report for the specified username created in the specified sessionID
    */
   app.patch('/fieldReport/:sessionID', express.json(), jwtCheck, async (req, res) => {
+    let email = '';
+    try {
+      email = getEmailForRequest(req);
+    } catch (err) {
+      res.status(StatusCodes.BAD_REQUEST).json({ message: 'bad token' });
+    }
     try {
       const result = await fieldReportUpdateHandler({
-        username: req.params.username,
+        username: email,
         fieldReports: req.body.fieldReports,
         sessionID: req.params.sessionID,
         isPrivate: req.body.isPrivate,
