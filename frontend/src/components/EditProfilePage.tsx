@@ -132,6 +132,7 @@ const ProfileForm = () => {
                       occupation: values.occupation,
                       bio: values.bio,
                     });
+                    authenticatedUser.refresh();
                     console.log(result);
                     if (result.acknowledged) {
                       toast({
