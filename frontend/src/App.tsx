@@ -1,4 +1,4 @@
-import { ChakraProvider, Button } from '@chakra-ui/react';
+import { ChakraProvider } from '@chakra-ui/react';
 import { MuiThemeProvider } from '@material-ui/core/styles';
 import assert from 'assert';
 import React, {
@@ -16,7 +16,6 @@ import { io, Socket } from 'socket.io-client';
 import './App.css';
 import ConversationArea, { ServerConversationArea } from './classes/ConversationArea';
 import Player, { ServerPlayer, UserLocation } from './classes/Player';
-import ProfileServiceClient from './classes/ProfileServiceClient';
 import TownsServiceClient, { TownJoinResponse } from './classes/TownsServiceClient';
 import Video from './classes/Video/Video';
 import Login from './components/Login/Login';
@@ -31,8 +30,6 @@ import theme from './components/VideoCall/VideoFrontend/theme';
 import { Callback } from './components/VideoCall/VideoFrontend/types';
 import useConnectionOptions from './components/VideoCall/VideoFrontend/utils/useConnectionOptions/useConnectionOptions';
 import VideoOverlay from './components/VideoCall/VideoOverlay/VideoOverlay';
-import FieldReportCreator from './components/world/FieldReportCreator';
-import FieldReportsNotepadDrawer from './components/world/FieldReportsNotepadDrawer';
 import WorldMap from './components/world/WorldMap';
 import AuthenticatedUserContext from './contexts/AuthenticatedUserContext';
 import ConversationAreasContext from './contexts/ConversationAreasContext';
@@ -272,7 +269,6 @@ function App(props: { setOnDisconnect: Dispatch<SetStateAction<Callback | undefi
   const videoInstance = Video.instance();
 
   const { setOnDisconnect } = props;
-  const [isNotepadOpen, setIsNotepadOpen] = useState(false);
   useEffect(() => {
     setOnDisconnect(() => async () => {
       // Here's a great gotcha: https://medium.com/swlh/how-to-store-a-function-with-the-usestate-hook-in-react-8a88dd4eede1
@@ -291,7 +287,6 @@ function App(props: { setOnDisconnect: Dispatch<SetStateAction<Callback | undefi
       <div>
         <WorldMap />
         <VideoOverlay preferredMode='fullwidth' />
-        {/* <FieldReportCreator sessionId={appState.sessionToken} /> */}
       </div>
     );
   }, [setupGameController, appState.sessionToken, videoInstance]);
@@ -310,19 +305,14 @@ function App(props: { setOnDisconnect: Dispatch<SetStateAction<Callback | undefi
                     <div style={{ display: 'none' }}>{page}</div>
                   )}
 
-                  {/* <Login doLogin={setupGameController} /> */}
                   <Switch>
                     <Route path='/register'>
-                      {/* <div style={{ display: 'none' }}> */}
-                      {/* xxx */}
-                      {/* </div> */}
                       <Register />
                       <div style={{ display: 'none' }}>{page} </div>
                     </Route>
                     <Route path='/profile' component={AuthenticatedProfile} />
 
                     <Route path='/home' />
-                    {/* <Route component={PageComponent} /> */}
                   </Switch>
                 </ConversationAreasContext.Provider>
               </NearbyPlayersContext.Provider>

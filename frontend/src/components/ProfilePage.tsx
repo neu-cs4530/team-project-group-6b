@@ -33,7 +33,6 @@ const ProfileForm = () => {
   const [message, setMessage] = useState<string | undefined>(undefined);
   const { getAccessTokenSilently, user } = useAuth0();
 
-  // https://chakra-ui.com/docs/components/feedback/toast
   const toast = useToast();
   return (
     <Formik
@@ -48,7 +47,7 @@ const ProfileForm = () => {
         occupation: authenticatedUser.profile?.occupation || '',
         bio: authenticatedUser.profile?.bio || '',
       }}>
-      {({ handleChange, handleBlur, values, isSubmitting }) => (
+      {({ handleChange, handleBlur, values }) => (
         <div style={{ display: 'flex', justifyContent: 'center' }}>
           <Box p='4' borderWidth='1px' borderRadius='lg' maxWidth='800'>
             {console.log('usercontextuser: ', authenticatedUser)}
@@ -114,8 +113,6 @@ const ProfileForm = () => {
                 placeholder='Give users a small bio about you'
               />
               <Button
-                // type='submit'
-                // disabled={isSubmitting}
                 onClick={async () => {
                   const token = await getAccessTokenSilently();
                   if (!user || !user.email) {
@@ -157,9 +154,6 @@ const ProfileForm = () => {
                 }}>
                 Update
               </Button>
-              {/* <Link to='/' style={{ paddingLeft: 20 }}>
-                Back to home
-              </Link> */}
             </Form>
           </Box>
         </div>
@@ -168,24 +162,6 @@ const ProfileForm = () => {
   );
 };
 
-// // Wrap our form with the withFormik HoC
-// const OuterForm = () => {
-//   const { getAccessTokenSilently, user } = useAuth0();
-//   const [shouldRedirect, setShouldRedirect] = useState(false);
-//   const [error, setError] = useState<string | undefined>(undefined);
-//   const Wrapper = withFormik<any, FormValues>({
-
-//   })(InnerForm);
-//   return (
-//     <>
-//       {error && <Text>{error}</Text>}
-//       {shouldRedirect && <Redirect to='/' />}
-//       <Wrapper />
-//     </>
-//   );
-// };
-
-// Use <MyForm /> wherevs
 const Wrapper = () => (
   <div>
     <Heading>My App</Heading>

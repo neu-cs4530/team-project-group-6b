@@ -1,16 +1,4 @@
-import {
-  Button,
-  Heading,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalHeader,
-  ModalOverlay,
-  StackDivider,
-  useDisclosure,
-  VStack,
-} from '@chakra-ui/react';
+import { Heading, StackDivider, VStack } from '@chakra-ui/react';
 import React, { useContext } from 'react';
 import FieldReportCreator from '../world/FieldReportCreator';
 import ConversationAreasList from './ConversationAreasList';
