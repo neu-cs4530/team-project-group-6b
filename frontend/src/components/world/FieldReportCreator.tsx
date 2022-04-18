@@ -75,6 +75,7 @@ function FieldReportCreator(props: {
           username: userContext.profile.email,
           sessionID: sessionId,
           fieldReports: text,
+          token: userContext.token,
         });
       }
       toast({

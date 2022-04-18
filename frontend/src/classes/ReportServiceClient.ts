@@ -45,6 +45,7 @@ export interface FieldReportUpdateRequest {
   username: string;
   fieldReports: string;
   sessionID: string;
+  token: string;
 }
 
 export interface UserFieldReportRequest {
@@ -88,7 +89,7 @@ export default class ReportServiceClient {
     const responseWrapper = await this._axios.post<ResponseEnvelope<void>>(
       `/fieldReport`,
       requestData,
-      { headers: { Authentication: `Bearer ${requestData.token}` } },
+      { headers: { Authorization: `Bearer ${requestData.token}` } },
     );
     return ReportServiceClient.unwrapOrThrowError(responseWrapper);
   }
@@ -96,14 +97,16 @@ export default class ReportServiceClient {
   async deleteFieldReport(requestData: FieldReportDeleteRequest): Promise<void> {
     const responseWrapper = await this._axios.delete<ResponseEnvelope<void>>(
       `/fieldReport/${requestData.username}/${requestData.sessionID}`,
+      { headers: { Authorization: `Bearer ${requestData.token}` } },
     );
     return ReportServiceClient.unwrapOrThrowError(responseWrapper);
   }
 
   async updateFieldReport(requestData: FieldReportUpdateRequest): Promise<void> {
     const responseWrapper = await this._axios.patch<ResponseEnvelope<void>>(
-      `/fieldReport/${requestData.username}/${requestData.sessionID}`,
+      `/fieldReport/${requestData.sessionID}`,
       requestData,
+      { headers: { Authorization: `Bearer ${requestData.token}` } },
     );
     return ReportServiceClient.unwrapOrThrowError(responseWrapper);
   }
@@ -111,7 +114,7 @@ export default class ReportServiceClient {
   async listFieldReport(requestData: FieldReportListRequest): Promise<FieldReportListResponse> {
     const responseWrapper = await this._axios.get<ResponseEnvelope<FieldReportListResponse>>(
       `/fieldReport/${requestData.username}/${requestData.sessionID}`,
-      { headers: { Authentication: `Bearer ${requestData.token}` } },
+      { headers: { Authorization: `Bearer ${requestData.token}` } },
     );
     return ReportServiceClient.unwrapOrThrowError(responseWrapper);
   }
@@ -121,7 +124,7 @@ export default class ReportServiceClient {
   ): Promise<FieldReportListResponse[]> {
     const responseWrapper = await this._axios.get<ResponseEnvelope<FieldReportListResponse[]>>(
       `/fieldReport/${requestData.username}`,
-      { headers: { Authentication: `Bearer ${requestData.token}` } },
+      { headers: { Authorization: `Bearer ${requestData.token}` } },
     );
     return ReportServiceClient.unwrapOrThrowError(responseWrapper);
   }

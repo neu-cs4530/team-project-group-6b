@@ -78,7 +78,7 @@ export default class ProfileServiceClient {
 
   async getProfile(requestData: GetProfileRequest): Promise<any> {
     const responseWrapper = await this._axios.get<ResponseEnvelope<any>>(`/api/v2/users-by-email`, {
-      headers: { Authentication: `Bearer ${requestData.token}` },
+      headers: { Authorization: `Bearer ${requestData.token}` },
       params: { email: requestData.email },
     });
     return ProfileServiceClient.unwrapOrThrowError(responseWrapper);
@@ -87,7 +87,7 @@ export default class ProfileServiceClient {
   async getProfileByUsername(requestData: GetProfileRequestUsername): Promise<any> {
     const responseWrapper = await this._axios.get<ResponseEnvelope<any>>(
       `/api/v2/users/${requestData.username}`,
-      { headers: { Authentication: `Bearer ${requestData.token}` } },
+      { headers: { Authorization: `Bearer ${requestData.token}` } },
     );
     return ProfileServiceClient.unwrapOrThrowError(responseWrapper);
   }

@@ -20,9 +20,8 @@ export function logError(err: any): void {
 
 export function getEmailForRequest(req: Request): string {
   const tokenKey = 'https://example.com/email';
-  const { authentication } = req.headers;
-  const token =
-    authentication && typeof authentication === 'string' && authentication.split(' ')[1];
+  const { authorization } = req.headers;
+  const token = authorization && typeof authorization === 'string' && authorization.split(' ')[1];
   if (!token) {
     throw new Error('bad token');
   }

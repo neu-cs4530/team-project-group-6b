@@ -45,7 +45,7 @@ export default function addTownRoutes(http: Server, app: Express): io.Server {
   /**
    * Create a field report
    */
-  app.post('/fieldReport', express.json(), async (req, res) => {
+  app.post('/fieldReport', express.json(), jwtCheck, async (req, res) => {
     let email = '';
     try {
       email = getEmailForRequest(req);
@@ -72,7 +72,7 @@ export default function addTownRoutes(http: Server, app: Express): io.Server {
   /**
    * Get a field report for the specified username created in the specified sessionID
    */
-  app.get('/fieldReport/:username/:sessionID', express.json(), async (req, res) => {
+  app.get('/fieldReport/:username/:sessionID', express.json(), jwtCheck, async (req, res) => {
     let email = '';
     try {
       email = getEmailForRequest(req);
@@ -103,7 +103,7 @@ export default function addTownRoutes(http: Server, app: Express): io.Server {
   /**
    * Get all field reports for user
    */
-  app.get('/fieldReport/:username/', express.json(), async (req, res) => {
+  app.get('/fieldReport/:username/', express.json(), jwtCheck, async (req, res) => {
     try {
       const { user } = req as any;
       console.log(user);
@@ -126,7 +126,7 @@ export default function addTownRoutes(http: Server, app: Express): io.Server {
   /**
    * Update a field report for the specified username created in the specified sessionID
    */
-  app.patch('/fieldReport/:username/:sessionID', express.json(), async (req, res) => {
+  app.patch('/fieldReport/:sessionID', express.json(), jwtCheck, async (req, res) => {
     try {
       const result = await fieldReportUpdateHandler({
         username: req.params.username,
@@ -151,10 +151,16 @@ export default function addTownRoutes(http: Server, app: Express): io.Server {
   /**
    * Delete a field report for the specified username created in the specified sessionID
    */
-  app.delete('/fieldReport/:username/:sessionID', express.json(), async (req, res) => {
+  app.delete('/fieldReport/:sessionID', express.json(), jwtCheck, async (req, res) => {
+    let email = '';
+    try {
+      email = getEmailForRequest(req);
+    } catch (err) {
+      res.status(StatusCodes.BAD_REQUEST).json({ message: 'bad token' });
+    }
     try {
       const result = await fieldReportDeleteHandler({
-        username: req.params.username,
+        username: email,
         sessionID: req.params.sessionID,
       });
       if (result.isOK) {
