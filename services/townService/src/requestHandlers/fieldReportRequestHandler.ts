@@ -1,3 +1,4 @@
+import { request } from 'http';
 import getFieldReportCollection from '../database/getFieldReportCollection';
 
 /**
@@ -37,8 +38,9 @@ export interface FieldReportCreateRequest {
 
 export interface FieldReportUpdateRequest {
   username: string;
-  fieldReports: string;
+  fieldReports?: string;
   sessionID: string;
+  isPrivate?: string;
 }
 
 export async function fieldReportCreateHandler(
@@ -104,8 +106,21 @@ export async function fieldReportUpdateHandler(
   requestData: FieldReportUpdateRequest,
 ): Promise<ResponseEnvelope<Record<string, null>>> {
   const collection = await getFieldReportCollection();
-  const query = { username: requestData.username, sessionID: requestData.sessionID };
-  const update = { $set: { fieldReports: requestData.fieldReports } };
+  const query = {
+    username: requestData.username,
+    sessionID: requestData.sessionID,
+  };
+  if (!requestData.isPrivate && !requestData.fieldReports) {
+    return { isOK: true };
+  }
+  const updates: { [key: string]: unknown } = {};
+  if (requestData.isPrivate) {
+    updates.isPrivate = requestData.isPrivate;
+  }
+  if (requestData.fieldReports) {
+    updates.fieldReports = requestData.fieldReports;
+  }
+  const update = { $set: updates };
   const options = {};
   const result = await collection.updateOne(query, update, options);
   const success = result.acknowledged;

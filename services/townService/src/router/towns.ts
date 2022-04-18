@@ -132,6 +132,7 @@ export default function addTownRoutes(http: Server, app: Express): io.Server {
         username: req.params.username,
         fieldReports: req.body.fieldReports,
         sessionID: req.params.sessionID,
+        isPrivate: req.body.isPrivate,
       });
       if (result.isOK) {
         res.status(StatusCodes.OK).json(result);
