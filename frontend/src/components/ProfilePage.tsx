@@ -124,18 +124,25 @@ const ProfileForm = () => {
                     throw new Error('no user');
                   }
                   try {
-                    const result = await profileServiceClient.patchProfile({
-                      token,
-                      email: user.email,
-                      username: values.username,
-                      firstName: values.firstName,
-                      lastName: values.lastName,
-                      pronouns: values.pronouns,
-                      occupation: values.occupation,
-                      bio: values.bio,
-                    });
-                    console.log(result);
-                    if (result.acknowledged) {
+                    if (values.firstName === '' || values.lastName === '' || values.username === '') {
+                      toast({
+                        title: 'Incomplete information.',
+                        description: 'Please fill in the required fields.',
+                        status: 'error',
+                        duration: 9000,
+                        isClosable: true,
+                      });
+                    } else {
+                      await profileServiceClient.patchProfile({
+                        token,
+                        email: user.email,
+                        username: values.username,
+                        firstName: values.firstName,
+                        lastName: values.lastName,
+                        pronouns: values.pronouns,
+                        occupation: values.occupation,
+                        bio: values.bio,
+                      });
                       toast({
                         title: 'Account updated.',
                         description: "We've updated your account for you.",
@@ -143,17 +150,15 @@ const ProfileForm = () => {
                         duration: 9000,
                         isClosable: true,
                       });
-                    } else {
-                      toast({
-                        title: 'Missing information.',
-                        description: 'Please fill out all text fields.',
-                        status: 'error',
-                        duration: 9000,
-                        isClosable: true,
-                      });
                     }
                   } catch (err) {
-                    setError('shit hit the fan');
+                    toast({
+                      title: 'Username already exists.',
+                      description: (err as Error).message,
+                      status: 'error',
+                      duration: 9000,
+                      isClosable: true,
+                    });
                   }
                 }}>
                 Update
