@@ -68,7 +68,7 @@ function FieldReportCreator(props: {
           token: userContext.token,
           fieldReports: text,
           sessionID: sessionId,
-          time: new Date().toDateString(),
+          time: new Date().toUTCString(),
         });
       } else {
         await reportServiceClient.updateFieldReport({

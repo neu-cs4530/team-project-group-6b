@@ -10,6 +10,8 @@ import {
   PopoverBody,
   Button,
   useToast,
+  Divider,
+  Heading,
 } from '@chakra-ui/react';
 import { MdEdit, MdDeleteOutline } from 'react-icons/md';
 import { Card, CardHeader } from '@material-ui/core';
@@ -82,56 +84,79 @@ function EditFieldReports() {
     setFieldReports(fieldReports.filter(fr => fr.sessionID !== sessionId));
     console.log('deleting session: ', sessionId);
   };
-
+  const [sortNewest, setSortNewest] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [currentEditingSession, setCurrentEditingSession] = useState('');
   const [isDeleting, setIsDeleting] = useState(false);
   const [currentDeletingSelection, setCurrentDeletingSelection] = useState('');
   return (
     <div>
-      {fieldReports.map(report => (
-        <Card key={report.sessionID} variant='elevation' elevation={3} style={{ marginBottom: 30 }}>
-          <CardHeader
-            title={
-              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                {' '}
-                Report From: {report.time}
-                <div>
-                  <IconButton
-                    aria-label='edit'
-                    icon={<Icon as={MdEdit} />}
-                    onClick={() => {
-                      setIsEditing(true);
-                      setCurrentEditingSession(report.sessionID);
-                    }}
-                  />
-                  <Popover>
-                    <PopoverTrigger>
-                      <IconButton
-                        aria-label='delete'
-                        icon={<Icon as={MdDeleteOutline} color='red' />}
-                      />
-                    </PopoverTrigger>
-                    <PopoverContent>
-                      <PopoverArrow />
-                      <PopoverCloseButton />
-                      <PopoverHeader>Delete this field report?</PopoverHeader>
-                      <PopoverBody>
-                        <Button onClick={() => handleDelete(report.sessionID)} color='red'>
-                          Delete
-                        </Button>
-                      </PopoverBody>
-                    </PopoverContent>
-                  </Popover>
+      <Button onClick={() => setSortNewest(!sortNewest)}>
+        Sorting By: {sortNewest ? 'Newest' : 'Oldest'}
+      </Button>
+      {fieldReports
+        .sort((a, b) => {
+          const bdate = Date.parse(b.time);
+          const adate = Date.parse(a.time);
+          console.log(adate, bdate, bdate - adate);
+          return sortNewest ? bdate - adate : adate - bdate;
+        })
+        .map(report => (
+          <Card
+            key={report.sessionID}
+            variant='elevation'
+            elevation={3}
+            style={{ marginBottom: 30 }}>
+            <CardHeader
+              title={
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    fontSize: '1em',
+                    fontWeight: 'lighter',
+                  }}>
+                  {' '}
+                  <Heading size='sm' style={{ lineHeight: 2.5 }}>
+                    Report From: {new Date(report.time).toLocaleString('en-US')}
+                  </Heading>
+                  <div>
+                    <IconButton
+                      aria-label='edit'
+                      icon={<Icon as={MdEdit} />}
+                      onClick={() => {
+                        setIsEditing(true);
+                        setCurrentEditingSession(report.sessionID);
+                      }}
+                    />
+                    <Popover>
+                      <PopoverTrigger>
+                        <IconButton
+                          aria-label='delete'
+                          icon={<Icon as={MdDeleteOutline} color='red' />}
+                        />
+                      </PopoverTrigger>
+                      <PopoverContent>
+                        <PopoverArrow />
+                        <PopoverCloseButton />
+                        <PopoverHeader>Delete this field report?</PopoverHeader>
+                        <PopoverBody>
+                          <Button onClick={() => handleDelete(report.sessionID)} color='red'>
+                            Delete
+                          </Button>
+                        </PopoverBody>
+                      </PopoverContent>
+                    </Popover>
+                  </div>
                 </div>
-              </div>
-            }
-          />
-          <MarkdownRenderer markdown={report.fieldReports} />
+              }
+            />
+            <Divider />
+            <MarkdownRenderer markdown={report.fieldReports} />
 
-          <CardHeader />
-        </Card>
-      ))}
+            <CardHeader />
+          </Card>
+        ))}
       {isEditing && (
         <FieldReportCreator
           onSaveSuccess={(text: string) => {
