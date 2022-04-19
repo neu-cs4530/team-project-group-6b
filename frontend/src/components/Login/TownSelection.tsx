@@ -162,11 +162,15 @@ export default function TownSelection({ doLogin }: TownSelectionProps): JSX.Elem
       <form>
         <Stack>
           <Box p='4' borderWidth='1px' borderRadius='lg'>
-            <Heading as='h2' size='lg'>
+            <Heading as='h2' size='lg' style={{ marginBottom: '10px' }}>
               Username: {userName}
             </Heading>
-            <Button onClick={onOpen}>Edit Profile</Button>
-            <Button onClick={() => setIsFieldReportsOpen(true)}>View/Edit Field Reports</Button>
+            <Button onClick={onOpen} style={{ marginRight: '20px' }}>
+              Edit Profile
+            </Button>
+            <Button onClick={() => setIsFieldReportsOpen(true)} style={{ marginRight: '20px' }}>
+              View/Edit Field Reports
+            </Button>
             <Link to='/profiles'>
               <Button>View Profiles</Button>
             </Link>
@@ -189,7 +193,9 @@ export default function TownSelection({ doLogin }: TownSelectionProps): JSX.Elem
               </Box>
               <Box>
                 <FormControl>
-                  <FormLabel htmlFor='isPublic'>Publicly Listed</FormLabel>
+                  <FormLabel htmlFor='isPublic' style={{ marginLeft: '5px' }}>
+                    Publicly Listed
+                  </FormLabel>
                   <Checkbox
                     id='isPublic'
                     name='isPublic'
@@ -197,11 +203,15 @@ export default function TownSelection({ doLogin }: TownSelectionProps): JSX.Elem
                     onChange={e => {
                       setNewTownIsPublic(e.target.checked);
                     }}
+                    style={{ marginTop: '10px', marginLeft: '55px' }}
                   />
                 </FormControl>
               </Box>
               <Box>
-                <Button data-testid='newTownButton' onClick={handleCreate}>
+                <Button
+                  data-testid='newTownButton'
+                  onClick={handleCreate}
+                  style={{ marginTop: '32px' }}>
                   Create
                 </Button>
               </Box>
@@ -226,7 +236,10 @@ export default function TownSelection({ doLogin }: TownSelectionProps): JSX.Elem
                     onChange={event => setTownIDToJoin(event.target.value)}
                   />
                 </FormControl>
-                <Button data-testid='joinTownByIDButton' onClick={() => handleJoin(townIDToJoin)}>
+                <Button
+                  data-testid='joinTownByIDButton'
+                  onClick={() => handleJoin(townIDToJoin)}
+                  style={{ marginTop: '32px', marginLeft: '20px' }}>
                   Connect
                 </Button>
               </Flex>

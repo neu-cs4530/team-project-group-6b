@@ -76,7 +76,7 @@ const OuterForm = () => {
   const [shouldRedirect, setShouldRedirect] = useState(false);
   const [error, setError] = useState<string | undefined>(undefined);
   const toast = useToast();
-  const Wrapper = withFormik<string, FormValues>({
+  const Wrapper = withFormik<any, FormValues>({
     handleSubmit: async values => {
       const token = await getAccessTokenSilently();
       try {
@@ -135,8 +135,7 @@ const OuterForm = () => {
 
 // Use <MyForm /> wherevs
 const Wrapper = () => (
-  <div>
-    <Heading>My App</Heading>
+  <div style={{ paddingTop: '20px' }}>
     <OuterForm />
   </div>
 );
