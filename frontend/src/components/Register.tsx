@@ -113,7 +113,13 @@ const OuterForm = () => {
           setShouldRedirect(true);
         }
       } catch (err) {
-        setError('something bad happened');
+        toast({
+          title: 'Username already exists.',
+          description: (err as Error).message,
+          status: 'error',
+          duration: 9000,
+          isClosable: true,
+        });
       }
     },
   })(InnerForm);

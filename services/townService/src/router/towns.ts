@@ -20,14 +20,14 @@ import {
   fieldReportUpdateHandler,
   fieldReportListAllHandler,
   fieldReportsCollectionDump,
-} from '../requestHandlers/fieldReportRequestHandler';
+} from '../requestHandlers/FieldReportRequestHandlers';
 import {
-  createProfile,
-  fetchProfileByEmail,
-  fetchProfileByUsername,
+  profileCreateHandler,
+  profileDeleteHandler,
+  profileFetchByEmailHandler,
+  profileFetchByUsernameHandler,
+  profileUpdateHandler,
   getAllProfiles,
-  updateUser,
-  userDeleteHandler,
 } from '../requestHandlers/ProfileRequestHandlers';
 import { logError, getEmailForRequest } from '../Utils';
 
@@ -55,7 +55,6 @@ export default function addTownRoutes(http: Server, app: Express): io.Server {
       res.status(StatusCodes.BAD_REQUEST).json({ message: 'bad token' });
     }
     try {
-      console.log('req body: ', req.body);
       const result = await fieldReportCreateHandler({
         username: email,
         fieldReports: req.body.fieldReports,
@@ -77,12 +76,11 @@ export default function addTownRoutes(http: Server, app: Express): io.Server {
   app.get('/fieldReport/:username/:sessionID', express.json(), jwtCheck, async (req, res) => {
     let email = '';
     try {
-      email = getEmailForRequest(req);
+      email = await getEmailForRequest(req);
     } catch (err) {
       res.status(StatusCodes.BAD_REQUEST).json({ message: 'bad token' });
     }
     try {
-      console.log('email: ', email);
       const result = await fieldReportListHandler({
         username: req.params.username,
         sessionID: req.params.sessionID,
@@ -260,7 +258,7 @@ export default function addTownRoutes(http: Server, app: Express): io.Server {
    */
   app.post('/api/v2/users', express.json(), jwtCheck, async (req, res) => {
     try {
-      const result = await createProfile({
+      const result = await profileCreateHandler({
         firstName: req.body.firstName,
         lastName: req.body.lastName,
         email: req.body.email,
@@ -297,8 +295,9 @@ export default function addTownRoutes(http: Server, app: Express): io.Server {
    * Get a user by id (username)
    */
   app.get('/api/v2/users/:id', express.json(), async (req, res) => {
+    console.log(req.params.id);
     try {
-      const result = await fetchProfileByUsername(req.params.id);
+      const result = await profileFetchByUsernameHandler(req.params.id);
 
       if (result.isOK) {
         res.status(StatusCodes.OK).json(result);
@@ -320,7 +319,7 @@ export default function addTownRoutes(http: Server, app: Express): io.Server {
    */
   app.get('/api/v2/users-by-email', express.json(), async (req, res) => {
     try {
-      const result = await fetchProfileByEmail(req.query.email as string);
+      const result = await profileFetchByEmailHandler(req.query.email as string);
 
       if (result.isOK) {
         res.status(StatusCodes.OK).json(result);
@@ -342,7 +341,7 @@ export default function addTownRoutes(http: Server, app: Express): io.Server {
    */
   app.patch('/api/v2/users/:id', express.json(), async (req, res) => {
     try {
-      const result = await updateUser({
+      const result = await profileUpdateHandler({
         firstName: req.body.firstName,
         lastName: req.body.lastName,
         email: req.params.id,
@@ -351,6 +350,8 @@ export default function addTownRoutes(http: Server, app: Express): io.Server {
         occupation: req.body.occupation,
         bio: req.body.bio,
       });
+      res.status(StatusCodes.OK).json(result);
+      /*
       if (result.isOK) {
         res.status(StatusCodes.OK).json(result);
       } else {
@@ -358,6 +359,7 @@ export default function addTownRoutes(http: Server, app: Express): io.Server {
           message: 'profile not found',
         });
       }
+      */
     } catch (err) {
       logError(err);
       res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
@@ -371,8 +373,8 @@ export default function addTownRoutes(http: Server, app: Express): io.Server {
    */
   app.delete('/api/v2/users/:id', express.json(), jwtCheck, async (req, res) => {
     try {
-      const result = userDeleteHandler({
-        email: req.params.id, // is id email??
+      const result = profileDeleteHandler({
+        email: req.params.id,
       });
       res.status(StatusCodes.OK).json(result);
     } catch (err) {

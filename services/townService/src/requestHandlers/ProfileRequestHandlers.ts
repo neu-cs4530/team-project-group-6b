@@ -1,5 +1,4 @@
-import { DeleteResult, UpdateResult } from 'mongodb';
-import getProfileCollection from '../database/getProfileCollection';
+import getProfileCollection from '../database/ProfileCollection';
 
 /**
  * Envelope that wraps any response from the server
@@ -24,23 +23,28 @@ export interface UserDeleteRequest {
   email: string;
 }
 
-export async function createProfile(requestData: IUserProfile): Promise<ResponseEnvelope<string>> {
-  try {
-    const collection = await getProfileCollection();
-    const emails = await collection.findOne({ email: requestData.email });
-    const usernames = await collection.findOne({ username: requestData.username });
-    if (emails === null && usernames == null) {
-      const result = await collection.insertOne(requestData);
-      return { isOK: true, response: result.insertedId.toHexString() };
-    }
-
-    return { isOK: false, message: 'username or email already exists' };
-  } catch (err) {
-    return { isOK: false, message: 'this did not work' };
+export async function profileCreateHandler(
+  requestData: IUserProfile,
+): Promise<ResponseEnvelope<string>> {
+  const collection = await getProfileCollection();
+  const emails = await collection.findOne({ email: requestData.email });
+  const usernames = await collection.findOne({ username: requestData.username });
+  if (emails === null && usernames == null) {
+    const result = await collection.insertOne(requestData);
+    const success = result.acknowledged;
+    return {
+      isOK: success,
+      response: !success ? '' : result.insertedId.toHexString(),
+      message: !success ? 'Profile could not be inserted into the profile database.' : undefined,
+    };
   }
+
+  return { isOK: false, message: 'that username already exists' };
 }
 
-export async function fetchProfileByEmail(email: string): Promise<ResponseEnvelope<IUserProfile>> {
+export async function profileFetchByEmailHandler(
+  email: string,
+): Promise<ResponseEnvelope<IUserProfile>> {
   const collection = await getProfileCollection();
   const result = await collection.findOne<IUserProfile>({ email });
 
@@ -51,7 +55,7 @@ export async function fetchProfileByEmail(email: string): Promise<ResponseEnvelo
   return { isOK: false, message: 'profile not found' };
 }
 
-export async function fetchProfileByUsername(
+export async function profileFetchByUsernameHandler(
   username: string,
 ): Promise<ResponseEnvelope<IUserProfile>> {
   const collection = await getProfileCollection();
@@ -75,32 +79,42 @@ export async function getAllProfiles(): Promise<ResponseEnvelope<IUserProfile[]>
   return { isOK: false, message: 'profile not found' };
 }
 
-export async function updateUser(
+export async function profileUpdateHandler(
   requestData: IUserProfile,
-): Promise<ResponseEnvelope<UpdateResult>> {
+): Promise<ResponseEnvelope<Record<string, null>>> {
   const collection = await getProfileCollection();
+  const userProfile = await collection.findOne<IUserProfile>({ username: requestData.username });
+  if (userProfile !== null && userProfile.email !== requestData.email) {
+    return {
+      isOK: false,
+      response: {},
+      message: 'that username already exists',
+    };
+  }
   const query = { email: requestData.email };
   const update = { $set: requestData };
   const options = {};
+  const result = await collection.updateOne(query, update, options);
+  const success = result.acknowledged;
 
-  try {
-    const result: UpdateResult = await collection.updateOne(query, update, options);
-    return { isOK: true, response: result };
-  } catch (err) {
-    return { isOK: false, message: 'error has occured when updating document in database' };
-  }
+  return {
+    isOK: success,
+    response: {},
+    message: !success ? 'Profile could not be updated in the profile database.' : undefined,
+  };
 }
 
-export async function userDeleteHandler(
+export async function profileDeleteHandler(
   requestData: UserDeleteRequest,
-): Promise<ResponseEnvelope<DeleteResult>> {
+): Promise<ResponseEnvelope<Record<string, null>>> {
   const collection = await getProfileCollection();
   const query = { email: requestData.email };
+  const result = await collection.deleteOne(query);
+  const success = result.acknowledged;
 
-  try {
-    const result: DeleteResult = await collection.deleteOne(query);
-    return { isOK: true, response: result };
-  } catch (err) {
-    return { isOK: false, message: 'error has occured when deleting a document in database' };
-  }
+  return {
+    isOK: success,
+    response: {},
+    message: !success ? 'Profile could not be deleted in the profile database.' : undefined,
+  };
 }

@@ -29,6 +29,16 @@ export interface AuthenticatedRequest {
 export interface GetProfileRequest extends AuthenticatedRequest {
   email: string;
 }
+
+export interface GetProfileResponse {
+  firstName: string;
+  lastName: string;
+  email: string;
+  username: string;
+  pronouns: string;
+  occupation: string;
+  bio: string;
+}
 export interface GetProfileRequestUsername extends AuthenticatedRequest {
   username: string;
 }
@@ -86,11 +96,14 @@ export default class ProfileServiceClient {
     throw new Error(`Error processing request: ${response.data.message}`);
   }
 
-  async getProfile(requestData: GetProfileRequest): Promise<any> {
-    const responseWrapper = await this._axios.get<ResponseEnvelope<any>>(`/api/v2/users-by-email`, {
-      headers: { Authorization: `Bearer ${requestData.token}` },
-      params: { email: requestData.email },
-    });
+  async getProfile(requestData: GetProfileRequest): Promise<GetProfileResponse> {
+    const responseWrapper = await this._axios.get<ResponseEnvelope<GetProfileResponse>>(
+      `/api/v2/users-by-email`,
+      {
+        headers: { Authentication: `Bearer ${requestData.token}` },
+        params: { email: requestData.email },
+      },
+    );
     return ProfileServiceClient.unwrapOrThrowError(responseWrapper);
   }
 
@@ -102,16 +115,16 @@ export default class ProfileServiceClient {
     return ProfileServiceClient.unwrapOrThrowError(responseWrapper);
   }
 
-  async getProfileByUsername(requestData: GetProfileRequestUsername): Promise<any> {
-    const responseWrapper = await this._axios.get<ResponseEnvelope<any>>(
+  async getProfileByUsername(requestData: GetProfileRequestUsername): Promise<GetProfileResponse> {
+    const responseWrapper = await this._axios.get<ResponseEnvelope<GetProfileResponse>>(
       `/api/v2/users/${requestData.username}`,
       { headers: { Authorization: `Bearer ${requestData.token}` } },
     );
     return ProfileServiceClient.unwrapOrThrowError(responseWrapper);
   }
 
-  async postProfile(requestData: ProfileRequest): Promise<any> {
-    const responseWrapper = await this._axios.post<ResponseEnvelope<any>>(
+  async postProfile(requestData: ProfileRequest): Promise<void> {
+    const responseWrapper = await this._axios.post<ResponseEnvelope<void>>(
       `/api/v2/users/`,
       requestData,
       {
@@ -121,22 +134,13 @@ export default class ProfileServiceClient {
     return ProfileServiceClient.unwrapOrThrowError(responseWrapper);
   }
 
-  async patchProfile(requestData: ProfileRequest): Promise<any> {
-    const responseWrapper = await this._axios.patch<ResponseEnvelope<any>>(
+  async patchProfile(requestData: ProfileRequest): Promise<void> {
+    const responseWrapper = await this._axios.patch<ResponseEnvelope<void>>(
       `/api/v2/users/${requestData.email}`,
       requestData,
       {
         headers: { Authorization: `Bearer ${requestData.token}` },
       },
-    );
-    return ProfileServiceClient.unwrapOrThrowError(responseWrapper);
-  }
-
-  async postFieldReport(requestData: FieldReportRequest): Promise<any> {
-    const responseWrapper = await this._axios.put<ResponseEnvelope<any>>(
-      `/api/v2/report`,
-      requestData,
-      { headers: { Authorization: `Bearer ${requestData.token}` } },
     );
     return ProfileServiceClient.unwrapOrThrowError(responseWrapper);
   }

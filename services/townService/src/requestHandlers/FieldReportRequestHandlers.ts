@@ -1,5 +1,4 @@
-import { request } from 'http';
-import getFieldReportCollection from '../database/getFieldReportCollection';
+import getFieldReportCollection from '../database/FieldReportCollection';
 
 /**
  * Envelope that wraps any response from the server
@@ -47,7 +46,6 @@ export interface FieldReportUpdateRequest {
 export async function fieldReportCreateHandler(
   requestData: FieldReportCreateRequest,
 ): Promise<ResponseEnvelope<Record<string, null>>> {
-  console.log('saving field report: ', requestData);
   const collection = await getFieldReportCollection();
   const result = await collection.insertOne({ ...requestData, isPrivate: false });
   const success = result.acknowledged;
@@ -86,7 +84,7 @@ export async function fieldReportListAllHandler(
   username: string,
 ): Promise<ResponseEnvelope<FieldReportListAllResponse>> {
   const collection = await getFieldReportCollection();
-  const result = await collection.find<FieldReportListResponse>({
+  const result = collection.find<FieldReportListResponse>({
     username,
   });
 
