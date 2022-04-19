@@ -104,8 +104,7 @@ const OuterForm = () => {
           });
           toast({
             title: 'Registration Complete.',
-            description:
-              'Profile successfully created, please refresh and relogin to complete registration.',
+            description: 'Profile successfully created.',
             status: 'success',
             duration: 9000,
             isClosable: true,

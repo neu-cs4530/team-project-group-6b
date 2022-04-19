@@ -7,6 +7,12 @@ import {
   FormLabel,
   Heading,
   Input,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalHeader,
+  ModalOverlay,
   Stack,
   Table,
   TableCaption,
@@ -15,6 +21,7 @@ import {
   Th,
   Thead,
   Tr,
+  useDisclosure,
   useToast,
 } from '@chakra-ui/react';
 import assert from 'assert';
@@ -25,6 +32,8 @@ import Video from '../../classes/Video/Video';
 import AuthenticatedUserContext from '../../contexts/AuthenticatedUserContext';
 import useCoveyAppState from '../../hooks/useCoveyAppState';
 import useVideoContext from '../VideoCall/VideoFrontend/hooks/useVideoContext/useVideoContext';
+import ProfileForm from '../EditProfilePage';
+import EditFieldReports from '../EditFieldReports';
 
 interface TownSelectionProps {
   doLogin: (initData: TownJoinResponse) => Promise<boolean>;
@@ -33,12 +42,13 @@ interface TownSelectionProps {
 export default function TownSelection({ doLogin }: TownSelectionProps): JSX.Element {
   const [newTownName, setNewTownName] = useState<string>('');
   const [newTownIsPublic, setNewTownIsPublic] = useState<boolean>(true);
+  const [isFieldReportsOpen, setIsFieldReportsOpen] = useState(false);
   const [townIDToJoin, setTownIDToJoin] = useState<string>('');
   const [currentPublicTowns, setCurrentPublicTowns] = useState<CoveyTownInfo[]>();
   const { connect: videoConnect } = useVideoContext();
   const { apiClient } = useCoveyAppState();
   const toast = useToast();
-
+  const { onOpen, isOpen, onClose } = useDisclosure();
   const authenticatedUser = useContext(AuthenticatedUserContext);
   const userName = authenticatedUser.profile?.username;
 
@@ -155,20 +165,28 @@ export default function TownSelection({ doLogin }: TownSelectionProps): JSX.Elem
         <Stack>
           <Box p='4' borderWidth='1px' borderRadius='lg'>
             <Heading as='h2' size='lg'>
-              Username: {authenticatedUser.profile?.username}
+              Username: {userName}
             </Heading>
-            <Button>
-              {' '}
-              <Link to='/profile'>Edit Profile</Link>{' '}
+            <Button onClick={onOpen}>
+              {/* {' '}
+        <Link to='/profile'>Edit Profile</Link>{' '} */}
+              Edit Profile
             </Button>
-
+            <Button onClick={() => setIsFieldReportsOpen(true)}>
+              {/* {' '}
+        <Link to='/profile'>Edit Profile</Link>{' '} */}
+              View/Edit Field Reports
+            </Button>
+            <Link to='/profiles'>
+              <Button>View Profiles</Button>
+            </Link>
             {/* <FormControl>
-              <FormLabel htmlFor="name">Name</FormLabel>
-              <Input autoFocus name="name" placeholder="Your name"
-                     value={userName}
-                     onChange={event => setUserName(event.target.value)}
-              />
-            </FormControl> */}
+        <FormLabel htmlFor="name">Name</FormLabel>
+        <Input autoFocus name="name" placeholder="Your name"
+        value={userName}
+        onChange={event => setUserName(event.target.value)}
+        />
+      </FormControl> */}
           </Box>
           <Box borderWidth='1px' borderRadius='lg'>
             <Heading p='4' as='h2' size='lg'>
@@ -265,6 +283,34 @@ export default function TownSelection({ doLogin }: TownSelectionProps): JSX.Elem
           </Box>
         </Stack>
       </form>
+      <Modal isOpen={isOpen} onClose={onClose} scrollBehavior='inside'>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>
+            Hi {authenticatedUser.profile?.firstName}, edit your profile below
+          </ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <ProfileForm />
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+      <Modal
+        isOpen={isFieldReportsOpen}
+        onClose={() => setIsFieldReportsOpen(false)}
+        scrollBehavior='inside'
+        size='4xl'>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>
+            Hi {authenticatedUser.profile?.firstName}, edit your field reports below
+          </ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <EditFieldReports />
+          </ModalBody>
+        </ModalContent>
+      </Modal>
     </>
   );
 }

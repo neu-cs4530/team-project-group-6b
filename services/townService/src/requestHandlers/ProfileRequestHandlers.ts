@@ -68,6 +68,17 @@ export async function profileFetchByUsernameHandler(
   return { isOK: false, message: 'profile not found' };
 }
 
+export async function getAllProfiles(): Promise<ResponseEnvelope<IUserProfile[]>> {
+  const collection = await getProfileCollection();
+  const result = await collection.find<IUserProfile>({});
+
+  if (result !== null && result !== undefined) {
+    return { isOK: true, response: await result.toArray() };
+  }
+
+  return { isOK: false, message: 'profile not found' };
+}
+
 export async function profileUpdateHandler(
   requestData: IUserProfile,
 ): Promise<ResponseEnvelope<Record<string, null>>> {

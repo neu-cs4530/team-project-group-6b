@@ -1,4 +1,5 @@
 import { useAuth0 } from '@auth0/auth0-react';
+import { useToast } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { Redirect } from 'react-router-dom';
 import ProfileServiceClient from '../../classes/ProfileServiceClient';
@@ -8,14 +9,9 @@ import { AuthenticatedUser } from '../../CoveyTypes';
 const profileServiceClient = new ProfileServiceClient();
 
 const AuthenticatedUserProvider: React.FC = ({ children }) => {
-  const {
-    user,
-    loginWithRedirect,
-    isAuthenticated,
-    isLoading,
-    logout,
-    getAccessTokenSilently,
-  } = useAuth0();
+  const toast = useToast();
+  const { user, loginWithRedirect, isAuthenticated, isLoading, logout, getAccessTokenSilently } =
+    useAuth0();
   const [userInfo, setUserInfo] = useState<AuthenticatedUser>({
     isAuthenticated: false,
     token: '',
@@ -56,6 +52,13 @@ const AuthenticatedUserProvider: React.FC = ({ children }) => {
         refresh,
       });
     } catch (err) {
+      toast({
+        title: 'Failed to refresh account.',
+        description: 'Could not refresh account.',
+        status: 'error',
+        duration: 9000,
+        isClosable: true,
+      });
       console.log('refresh failed with error');
     }
   };
@@ -90,6 +93,14 @@ const AuthenticatedUserProvider: React.FC = ({ children }) => {
           if (err.message.includes('404')) {
             setUserInfo({ ...userInfo, refresh });
             setShouldRegister(true);
+          } else {
+            toast({
+              title: 'Fetch profile failed.',
+              description: 'Could not fetch your profile.',
+              status: 'error',
+              duration: 9000,
+              isClosable: true,
+            });
           }
         }
       }

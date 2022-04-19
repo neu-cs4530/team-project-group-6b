@@ -1,4 +1,6 @@
-import { ChakraProvider, Button } from '@chakra-ui/react';
+import { ChakraProvider, Box, MenuIcon, Button, IconButton, Icon } from '@chakra-ui/react';
+import { MdHome, MdOutlineLogout } from 'react-icons/md';
+import { AppBar, Toolbar, Typography } from '@material-ui/core';
 import { MuiThemeProvider } from '@material-ui/core/styles';
 import assert from 'assert';
 import React, {
@@ -11,16 +13,16 @@ import React, {
   useReducer,
   useState,
 } from 'react';
+import { Link } from 'react-router-dom';
 import { Route, Switch, useLocation } from 'react-router-dom';
 import { io, Socket } from 'socket.io-client';
 import './App.css';
 import ConversationArea, { ServerConversationArea } from './classes/ConversationArea';
 import Player, { ServerPlayer, UserLocation } from './classes/Player';
-import ProfileServiceClient from './classes/ProfileServiceClient';
 import TownsServiceClient, { TownJoinResponse } from './classes/TownsServiceClient';
 import Video from './classes/Video/Video';
 import Login from './components/Login/Login';
-import AuthenticatedProfile from './components/ProfilePage';
+import AuthenticatedProfile from './components/EditProfilePage';
 import Register from './components/Register';
 import { ChatProvider } from './components/VideoCall/VideoFrontend/components/ChatProvider';
 import ErrorDialog from './components/VideoCall/VideoFrontend/components/ErrorDialog/ErrorDialog';
@@ -31,8 +33,6 @@ import theme from './components/VideoCall/VideoFrontend/theme';
 import { Callback } from './components/VideoCall/VideoFrontend/types';
 import useConnectionOptions from './components/VideoCall/VideoFrontend/utils/useConnectionOptions/useConnectionOptions';
 import VideoOverlay from './components/VideoCall/VideoOverlay/VideoOverlay';
-import FieldReportCreator from './components/world/FieldReportCreator';
-import FieldReportsNotepadDrawer from './components/world/FieldReportsNotepadDrawer';
 import WorldMap from './components/world/WorldMap';
 import AuthenticatedUserContext from './contexts/AuthenticatedUserContext';
 import ConversationAreasContext from './contexts/ConversationAreasContext';
@@ -42,6 +42,7 @@ import PlayerMovementContext, { PlayerMovementCallback } from './contexts/Player
 import PlayersInTownContext from './contexts/PlayersInTownContext';
 import VideoContext from './contexts/VideoContext';
 import { CoveyAppState } from './CoveyTypes';
+import AllProfiles from './components/AllProfiles';
 
 export const MOVEMENT_UPDATE_DELAY_MS = 0;
 export const CALCULATE_NEARBY_PLAYERS_MOVING_DELAY_MS = 300;
@@ -272,7 +273,6 @@ function App(props: { setOnDisconnect: Dispatch<SetStateAction<Callback | undefi
   const videoInstance = Video.instance();
 
   const { setOnDisconnect } = props;
-  const [isNotepadOpen, setIsNotepadOpen] = useState(false)
   useEffect(() => {
     setOnDisconnect(() => async () => {
       // Here's a great gotcha: https://medium.com/swlh/how-to-store-a-function-with-the-usestate-hook-in-react-8a88dd4eede1
@@ -291,7 +291,6 @@ function App(props: { setOnDisconnect: Dispatch<SetStateAction<Callback | undefi
       <div>
         <WorldMap />
         <VideoOverlay preferredMode='fullwidth' />
-        <FieldReportCreator />
       </div>
     );
   }, [setupGameController, appState.sessionToken, videoInstance]);
@@ -304,25 +303,22 @@ function App(props: { setOnDisconnect: Dispatch<SetStateAction<Callback | undefi
             <PlayersInTownContext.Provider value={playersInTown}>
               <NearbyPlayersContext.Provider value={nearbyPlayers}>
                 <ConversationAreasContext.Provider value={conversationAreas}>
-                  {url.pathname !== '/register' && url.pathname !== "/profile" ? (
+                  {url.pathname !== '/register' &&
+                  url.pathname !== '/profile' &&
+                  url.pathname !== '/profiles' ? (
                     page
                   ) : (
                     <div style={{ display: 'none' }}>{page}</div>
                   )}
 
-                  {/* <Login doLogin={setupGameController} /> */}
                   <Switch>
                     <Route path='/register'>
-                      {/* <div style={{ display: 'none' }}> */}
-                      {/* xxx */}
-                      {/* </div> */}
                       <Register />
                       <div style={{ display: 'none' }}>{page} </div>
                     </Route>
                     <Route path='/profile' component={AuthenticatedProfile} />
-
+                    <Route path='/profiles' component={AllProfiles} />
                     <Route path='/home' />
-                    {/* <Route component={PageComponent} /> */}
                   </Switch>
                 </ConversationAreasContext.Provider>
               </NearbyPlayersContext.Provider>
@@ -352,18 +348,69 @@ export default function AppStateWrapper(): JSX.Element {
   const authenticatedUserContext = useContext(AuthenticatedUserContext);
   return (
     <>
-      {authenticatedUserContext && (
-        <button type='button' onClick={() => authenticatedUserContext.logout()}>
-          Logout
-        </button>
-      )}
-      <div>
-        {authenticatedUserContext.profile?.email}
-        {authenticatedUserContext.profile?.firstName}
-        {authenticatedUserContext.profile?.lastName}
-      </div>
       <ChakraProvider>
         <MuiThemeProvider theme={theme}>
+          <Box sx={{ flexGrow: 1 }}>
+            <AppBar position='static'>
+              {authenticatedUserContext && (
+                <>
+                  <Toolbar>
+                    <div
+                      style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+                      <Link to='/'>
+                        {/* <IconButton size='medium' aria-label='menu' sx={{ mr: 2 }}>
+                      <MdHomeFilled />
+                    </IconButton> */}
+                        <div style={{ display: 'flex', gap: 15 }}>
+                          <h1 style={{ fontSize: '1.5em', fontWeight: 'bold' }}>CoveyTown</h1>
+                          <IconButton
+                            aria-label='Home'
+                            icon={<Icon as={MdHome} />}
+                            // size='large'
+                            variant='outline'
+                            colorScheme='whiteAlpha'
+                            // edge='start'
+                            // color='inherit'
+                            // aria-label='menu'
+                            // sx={{ mr: 2 }}>
+                          >
+                            {/* <HomeIcon /> */}
+                          </IconButton>
+                        </div>
+                      </Link>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 15 }}>
+                        <h6>Signed in as {authenticatedUserContext.profile?.username}</h6>
+                        <IconButton
+                          aria-label='logout'
+                          icon={<Icon as={MdOutlineLogout} />}
+                          variant='outline'
+                          colorScheme='red'
+                          onClick={() => authenticatedUserContext.logout()}>
+                          Logout
+                        </IconButton>
+                      </div>
+                    </div>
+                  </Toolbar>
+                </>
+              )}
+            </AppBar>
+          </Box>
+          {/* <Box
+            borderWidth={1}
+            borderRadius='lg'
+            padding={30}
+            style={{ width: 'calc(100% - 40px)' }}>
+            {authenticatedUserContext && (
+              <button type='button' onClick={() => authenticatedUserContext.logout()}>
+                Logout
+              </button>
+            )}
+            <div>
+              {authenticatedUserContext.profile?.email}
+              {authenticatedUserContext.profile?.firstName}
+              {authenticatedUserContext.profile?.lastName}
+            </div>
+          </Box> */}
           <AppStateProvider>
             <EmbeddedTwilioAppWrapper />
           </AppStateProvider>

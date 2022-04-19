@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Button, useToast } from '@chakra-ui/react';
 import FieldReportsNotepadDrawer from './FieldReportsNotepadDrawer';
-import CoveyAppContext from '../../contexts/CoveyAppContext';
 import AuthenticatedUserContext from '../../contexts/AuthenticatedUserContext';
 import useMaybeVideo from '../../hooks/useMaybeVideo';
 import ReportServiceClient from '../../classes/ReportServiceClient';
@@ -11,12 +10,18 @@ interface FieldReport {
   username: string;
   fieldReports: string;
   sessionID: string;
-  time: number;
+  time: string;
 }
 
-function FieldReportCreator() {
+function FieldReportCreator(props: {
+  sessionId: string;
+  isOpen?: boolean;
+  onClose?: () => any;
+  onSaveSuccess?: (text: string) => any;
+}) {
+  const { sessionId, isOpen, onClose, onSaveSuccess } = props;
   const [isNotepadOpen, setIsNotepadOpen] = useState(false);
-  const appContext = useContext(CoveyAppContext);
+  // const appContext = useContext(CoveyAppContext);
   const userContext = useContext(AuthenticatedUserContext);
   const toast = useToast();
   const video = useMaybeVideo();
@@ -24,8 +29,7 @@ function FieldReportCreator() {
   const [currentReport, setCurrentReport] = useState<FieldReport | null>(null);
   const [gotReport, setGotReport] = useState(false);
   const fetchReport = async () => {
-    if (!userContext.profile || !appContext) {
-      console.log('returning');
+    if (!userContext.profile) {
       return;
     }
     try {
@@ -33,14 +37,13 @@ function FieldReportCreator() {
       const report = await reportServiceClient.listFieldReport({
         token: userContext.token,
         username: userContext.profile.email,
-        sessionID: appContext?.sessionToken,
+        sessionID: sessionId,
       });
       setCurrentReport(report);
       setIsLoading(false);
     } catch (err) {
       if (err.message.includes('404')) {
         setIsLoading(false);
-        console.log('no field report');
       }
     }
   };
@@ -53,7 +56,7 @@ function FieldReportCreator() {
   });
 
   const handleSubmit = async (text: string) => {
-    if (!appContext || !userContext.profile) {
+    if (!userContext.profile) {
       return;
     }
     try {
@@ -61,14 +64,15 @@ function FieldReportCreator() {
         await reportServiceClient.createFieldReport({
           token: userContext.token,
           fieldReports: text,
-          sessionID: appContext.sessionToken,
-          time: new Date().getUTCDate(),
+          sessionID: sessionId,
+          time: new Date().toUTCString(),
         });
       } else {
         await reportServiceClient.updateFieldReport({
           username: userContext.profile.email,
-          sessionID: appContext.sessionToken,
+          sessionID: sessionId,
           fieldReports: text,
+          token: userContext.token,
         });
       }
       toast({
@@ -78,6 +82,7 @@ function FieldReportCreator() {
         duration: 9000,
         isClosable: true,
       });
+      if (onSaveSuccess) onSaveSuccess(text);
     } catch (err) {
       toast({
         title: 'Error Posting Field Report',
@@ -94,16 +99,18 @@ function FieldReportCreator() {
         fieldReports={currentReport?.fieldReports}
         onSubmit={handleSubmit}
         onClose={() => {
+          if (onClose) {
+            onClose();
+          }
           video?.unPauseGame();
           setIsNotepadOpen(false);
         }}
-        isOpen={isNotepadOpen}
+        isOpen={isOpen !== undefined ? isOpen : isNotepadOpen}
       />
       <Button
         disabled={isLoading}
         colorScheme='blue'
         onClick={async () => {
-          console.log(video);
           video?.pauseGame();
           await fetchReport();
           setIsNotepadOpen(true);
@@ -113,5 +120,11 @@ function FieldReportCreator() {
     </>
   );
 }
+
+FieldReportCreator.defaultProps = {
+  isOpen: undefined,
+  onClose: undefined,
+  onSaveSuccess: undefined,
+};
 
 export default FieldReportCreator;

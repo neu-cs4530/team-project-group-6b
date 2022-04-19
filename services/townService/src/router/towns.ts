@@ -19,6 +19,7 @@ import {
   fieldReportListHandler,
   fieldReportUpdateHandler,
   fieldReportListAllHandler,
+  fieldReportsCollectionDump,
 } from '../requestHandlers/FieldReportRequestHandlers';
 import {
   profileCreateHandler,
@@ -26,6 +27,7 @@ import {
   profileFetchByEmailHandler,
   profileFetchByUsernameHandler,
   profileUpdateHandler,
+  getAllProfiles,
 } from '../requestHandlers/ProfileRequestHandlers';
 import { logError, getEmailForRequest } from '../Utils';
 
@@ -45,7 +47,7 @@ export default function addTownRoutes(http: Server, app: Express): io.Server {
   /**
    * Create a field report
    */
-  app.post('/fieldReport', express.json(), async (req, res) => {
+  app.post('/fieldReport', express.json(), jwtCheck, async (req, res) => {
     let email = '';
     try {
       email = getEmailForRequest(req);
@@ -71,9 +73,10 @@ export default function addTownRoutes(http: Server, app: Express): io.Server {
   /**
    * Get a field report for the specified username created in the specified sessionID
    */
-  app.get('/fieldReport/:username/:sessionID', express.json(), async (req, res) => {
+  app.get('/fieldReport/:username/:sessionID', express.json(), jwtCheck, async (req, res) => {
+    let email = '';
     try {
-      getEmailForRequest(req);
+      email = await getEmailForRequest(req);
     } catch (err) {
       res.status(StatusCodes.BAD_REQUEST).json({ message: 'bad token' });
     }
@@ -82,6 +85,12 @@ export default function addTownRoutes(http: Server, app: Express): io.Server {
         username: req.params.username,
         sessionID: req.params.sessionID,
       });
+      if (result.response?.isPrivate && email !== req.params.username) {
+        res
+          .status(403)
+          .json({ message: 'this report is private, you are not authorized to view it' });
+        return;
+      }
       if (result.isOK) {
         res.status(StatusCodes.OK).json(result);
       } else {
@@ -97,14 +106,64 @@ export default function addTownRoutes(http: Server, app: Express): io.Server {
     }
   });
 
+  app.get('/all-reports', express.json(), jwtCheck, async (_, res) => {
+    try {
+      const result = await fieldReportsCollectionDump();
+      if (result.isOK) {
+        res
+          .status(StatusCodes.OK)
+          .json({ ...result, response: result.response?.filter(fr => !fr.isPrivate) });
+        return;
+      }
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        message: 'Internal server error, please see log in server for more details',
+      });
+    } catch (err) {
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        message: 'Internal server error, please see log in server for more details',
+      });
+    }
+  });
+
+  app.get('/all-profiles', express.json(), jwtCheck, async (_, res) => {
+    try {
+      const result = await getAllProfiles();
+      if (result.isOK) {
+        res.status(StatusCodes.OK).json(result);
+        return;
+      }
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        message: 'Internal server error, please see log in server for more details',
+      });
+    } catch (err) {
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        message: 'Internal server error, please see log in server for more details',
+      });
+    }
+  });
+
   /**
    * Get all field reports for user
    */
-  app.get('/fieldReport/:username/', express.json(), async (req, res) => {
+  app.get('/fieldReport/:username/', express.json(), jwtCheck, async (req, res) => {
+    let email = '';
+    try {
+      email = getEmailForRequest(req);
+    } catch (err) {
+      res.status(StatusCodes.BAD_REQUEST).json({ message: 'bad token' });
+    }
     try {
       const result = await fieldReportListAllHandler(req.params.username);
       if (result.isOK) {
-        res.status(StatusCodes.OK).json(result);
+        if (req.params.username === email) {
+          console.log('same user');
+          res.status(StatusCodes.OK).json(result);
+          return;
+        }
+        console.log('not same user');
+        res
+          .status(StatusCodes.OK)
+          .json({ ...result, response: result.response?.filter(item => !item.isPrivate) });
       } else {
         res.status(404).json({
           message: 'field report not found',
@@ -121,12 +180,19 @@ export default function addTownRoutes(http: Server, app: Express): io.Server {
   /**
    * Update a field report for the specified username created in the specified sessionID
    */
-  app.patch('/fieldReport/:username/:sessionID', express.json(), async (req, res) => {
+  app.patch('/fieldReport/:sessionID', express.json(), jwtCheck, async (req, res) => {
+    let email = '';
+    try {
+      email = getEmailForRequest(req);
+    } catch (err) {
+      res.status(StatusCodes.BAD_REQUEST).json({ message: 'bad token' });
+    }
     try {
       const result = await fieldReportUpdateHandler({
-        username: req.params.username,
+        username: email,
         fieldReports: req.body.fieldReports,
         sessionID: req.params.sessionID,
+        isPrivate: req.body.isPrivate,
       });
       if (result.isOK) {
         res.status(StatusCodes.OK).json(result);
@@ -146,10 +212,16 @@ export default function addTownRoutes(http: Server, app: Express): io.Server {
   /**
    * Delete a field report for the specified username created in the specified sessionID
    */
-  app.delete('/fieldReport/:username/:sessionID', express.json(), async (req, res) => {
+  app.delete('/fieldReport/:sessionID', express.json(), jwtCheck, async (req, res) => {
+    let email = '';
+    try {
+      email = getEmailForRequest(req);
+    } catch (err) {
+      res.status(StatusCodes.BAD_REQUEST).json({ message: 'bad token' });
+    }
     try {
       const result = await fieldReportDeleteHandler({
-        username: req.params.username,
+        username: email,
         sessionID: req.params.sessionID,
       });
       if (result.isOK) {

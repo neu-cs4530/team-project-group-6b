@@ -10,34 +10,22 @@ import {
   useToast,
 } from '@chakra-ui/react';
 import { Form, Formik } from 'formik';
-import React, { useContext, useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useContext } from 'react';
 import ProfileServiceClient from '../classes/ProfileServiceClient';
 import AuthenticatedUserContext from '../contexts/AuthenticatedUserContext';
 
 const profileServiceClient = new ProfileServiceClient();
 
-interface FormValues {
-  username: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  pronouns: string;
-  bio: string;
-}
-
 // Aside: You may see InjectedFormikProps<OtherProps, FormValues> instead of what comes below in older code.. InjectedFormikProps was artifact of when Formik only exported a HoC. It is also less flexible as it MUST wrap all props (it passes them through).
 const ProfileForm = () => {
   const authenticatedUser = useContext(AuthenticatedUserContext);
-  const [error, setError] = useState<string | undefined>(undefined);
-  const [message, setMessage] = useState<string | undefined>(undefined);
   const { getAccessTokenSilently, user } = useAuth0();
 
   const toast = useToast();
   return (
     <Formik
       enableReinitialize
-      onSubmit={(values: FormValues) => {}}
+      onSubmit={() => {}}
       initialValues={{
         username: authenticatedUser.profile?.username || '',
         firstName: authenticatedUser.profile?.firstName || '',
@@ -50,7 +38,6 @@ const ProfileForm = () => {
       {({ handleChange, handleBlur, values }) => (
         <div style={{ display: 'flex', justifyContent: 'center' }}>
           <Box p='4' borderWidth='1px' borderRadius='lg' maxWidth='800'>
-            {console.log('usercontextuser: ', authenticatedUser)}
             <Form>
               <FormControl isRequired>
                 <FormLabel>First Name</FormLabel>
@@ -119,26 +106,18 @@ const ProfileForm = () => {
                     throw new Error('no user');
                   }
                   try {
-                    if (values.firstName === '' || values.lastName === '' || values.username === '') {
-                      toast({
-                        title: 'Incomplete information.',
-                        description: 'Please fill in the required fields.',
-                        status: 'error',
-                        duration: 9000,
-                        isClosable: true,
-                      });
-                      authenticatedUser.refresh();
-                    } else {
-                      await profileServiceClient.patchProfile({
-                        token,
-                        email: user.email,
-                        username: values.username,
-                        firstName: values.firstName,
-                        lastName: values.lastName,
-                        pronouns: values.pronouns,
-                        occupation: values.occupation,
-                        bio: values.bio,
-                      });
+                    const result = await profileServiceClient.patchProfile({
+                      token,
+                      email: user.email,
+                      username: values.username,
+                      firstName: values.firstName,
+                      lastName: values.lastName,
+                      pronouns: values.pronouns,
+                      occupation: values.occupation,
+                      bio: values.bio,
+                    });
+                    authenticatedUser.refresh();
+                    if (result.acknowledged) {
                       toast({
                         title: 'Account updated.',
                         description: "We've updated your account for you.",
@@ -146,11 +125,20 @@ const ProfileForm = () => {
                         duration: 9000,
                         isClosable: true,
                       });
+                      authenticatedUser.refresh();
+                    } else {
+                      toast({
+                        title: 'Missing information.',
+                        description: 'Please fill out all text fields.',
+                        status: 'error',
+                        duration: 9000,
+                        isClosable: true,
+                      });
                     }
                   } catch (err) {
                     toast({
-                      title: 'Username already exists.',
-                      description: (err as Error).message,
+                      title: err,
+                      description: 'Something went wrong, please try again.',
                       status: 'error',
                       duration: 9000,
                       isClosable: true,
@@ -169,9 +157,9 @@ const ProfileForm = () => {
 
 const Wrapper = () => (
   <div>
-    <Heading>My App</Heading>
+    <Heading>Profile</Heading>
     <ProfileForm />
   </div>
 );
 
-export default ProfileForm;
+export default Wrapper;
