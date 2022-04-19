@@ -53,7 +53,6 @@ export default function TownSelection({ doLogin }: TownSelectionProps): JSX.Elem
   const userName = authenticatedUser.profile?.username;
 
   const updateTownListings = useCallback(() => {
-    // console.log(apiClient);
     apiClient.listTowns().then(towns => {
       setCurrentPublicTowns(towns.towns.sort((a, b) => b.currentOccupancy - a.currentOccupancy));
     });
@@ -87,7 +86,6 @@ export default function TownSelection({ doLogin }: TownSelectionProps): JSX.Elem
         }
         const initData = await Video.setup(userName, coveyRoomID);
         const loggedIn = await doLogin(initData);
-        console.log('LOGGED IN: ', loggedIn, initData);
         if (loggedIn) {
           assert(initData.providerVideoToken);
           await videoConnect(initData.providerVideoToken);
@@ -167,26 +165,11 @@ export default function TownSelection({ doLogin }: TownSelectionProps): JSX.Elem
             <Heading as='h2' size='lg'>
               Username: {userName}
             </Heading>
-            <Button onClick={onOpen}>
-              {/* {' '}
-        <Link to='/profile'>Edit Profile</Link>{' '} */}
-              Edit Profile
-            </Button>
-            <Button onClick={() => setIsFieldReportsOpen(true)}>
-              {/* {' '}
-        <Link to='/profile'>Edit Profile</Link>{' '} */}
-              View/Edit Field Reports
-            </Button>
+            <Button onClick={onOpen}>Edit Profile</Button>
+            <Button onClick={() => setIsFieldReportsOpen(true)}>View/Edit Field Reports</Button>
             <Link to='/profiles'>
               <Button>View Profiles</Button>
             </Link>
-            {/* <FormControl>
-        <FormLabel htmlFor="name">Name</FormLabel>
-        <Input autoFocus name="name" placeholder="Your name"
-        value={userName}
-        onChange={event => setUserName(event.target.value)}
-        />
-      </FormControl> */}
           </Box>
           <Box borderWidth='1px' borderRadius='lg'>
             <Heading p='4' as='h2' size='lg'>

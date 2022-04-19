@@ -76,7 +76,7 @@ const OuterForm = () => {
   const [shouldRedirect, setShouldRedirect] = useState(false);
   const [error, setError] = useState<string | undefined>(undefined);
   const toast = useToast();
-  const Wrapper = withFormik<any, FormValues>({
+  const Wrapper = withFormik<string, FormValues>({
     handleSubmit: async values => {
       const token = await getAccessTokenSilently();
       try {
@@ -120,6 +120,7 @@ const OuterForm = () => {
           duration: 9000,
           isClosable: true,
         });
+        setError(err);
       }
     },
   })(InnerForm);

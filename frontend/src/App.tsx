@@ -1,17 +1,16 @@
-import { ChakraProvider, Box, MenuIcon, Button, IconButton, Icon } from '@chakra-ui/react';
+import { ChakraProvider } from '@chakra-ui/react';
 import { MuiThemeProvider } from '@material-ui/core/styles';
 import assert from 'assert';
 import React, {
   Dispatch,
   SetStateAction,
   useCallback,
-  useContext,
   useEffect,
   useMemo,
   useReducer,
   useState,
 } from 'react';
-import { Route, Switch, useLocation, Link } from 'react-router-dom';
+import { Route, Switch, useLocation } from 'react-router-dom';
 import { io, Socket } from 'socket.io-client';
 import TopBar from './components/TopBar';
 import './App.css';
@@ -32,7 +31,6 @@ import { Callback } from './components/VideoCall/VideoFrontend/types';
 import useConnectionOptions from './components/VideoCall/VideoFrontend/utils/useConnectionOptions/useConnectionOptions';
 import VideoOverlay from './components/VideoCall/VideoOverlay/VideoOverlay';
 import WorldMap from './components/world/WorldMap';
-import AuthenticatedUserContext from './contexts/AuthenticatedUserContext';
 import ConversationAreasContext from './contexts/ConversationAreasContext';
 import CoveyAppContext from './contexts/CoveyAppContext';
 import NearbyPlayersContext from './contexts/NearbyPlayersContext';
@@ -293,7 +291,6 @@ function App(props: { setOnDisconnect: Dispatch<SetStateAction<Callback | undefi
     );
   }, [setupGameController, appState.sessionToken, videoInstance]);
   const url = useLocation();
-  const authenticatedUserContext = useContext(AuthenticatedUserContext);
   return (
     <CoveyAppContext.Provider value={appState}>
       <VideoContext.Provider value={Video.instance()}>
@@ -344,28 +341,10 @@ function EmbeddedTwilioAppWrapper() {
 }
 
 export default function AppStateWrapper(): JSX.Element {
-  const authenticatedUserContext = useContext(AuthenticatedUserContext);
-
   return (
     <>
       <ChakraProvider>
         <MuiThemeProvider theme={theme}>
-          {/* <Box
-            borderWidth={1}
-            borderRadius='lg'
-            padding={30}
-            style={{ width: 'calc(100% - 40px)' }}>
-            {authenticatedUserContext && (
-              <button type='button' onClick={() => authenticatedUserContext.logout()}>
-                Logout
-              </button>
-            )}
-            <div>
-              {authenticatedUserContext.profile?.email}
-              {authenticatedUserContext.profile?.firstName}
-              {authenticatedUserContext.profile?.lastName}
-            </div>
-          </Box> */}
           <AppStateProvider>
             <EmbeddedTwilioAppWrapper />
           </AppStateProvider>
