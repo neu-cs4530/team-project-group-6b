@@ -36,30 +36,34 @@ function EditFieldReports() {
   const [fieldReports, setFieldReports] = useState<FieldReport[]>([]);
   const [didFetch, setDidFetch] = useState(false);
   const userContext = useContext(AuthenticatedUserContext);
-
-  const getFieldReports = async () => {
-    if (!userContext.profile) {
-      return;
-    }
-    try {
-      const reports = await reportService.listAllFieldReports({
-        username: userContext.profile?.email,
-        token: userContext.token,
-      });
-      setFieldReports(reports);
-    } catch (err) {
-      console.log('error getting field reports: ', err);
-    }
-  };
+  const toast = useToast();
 
   useEffect(() => {
     if (!didFetch) {
-      getFieldReports();
+      (async () => {
+        if (!userContext.profile) {
+          return;
+        }
+        try {
+          const reports = await reportService.listAllFieldReports({
+            username: userContext.profile?.email,
+            token: userContext.token,
+          });
+          setFieldReports(reports);
+        } catch (err) {
+          toast({
+            title: 'Error fetching reports.',
+            description: 'Please try again.',
+            status: 'error',
+            duration: 9000,
+            isClosable: true,
+          });
+        }
+      })();
     }
     setDidFetch(true);
-  });
+  }, [didFetch, toast, userContext.profile, userContext.token]);
 
-  const toast = useToast();
   const handleDelete = async (sessionId: string) => {
     try {
       await reportService.deleteFieldReport({
@@ -84,8 +88,8 @@ function EditFieldReports() {
       });
     }
     setFieldReports(fieldReports.filter(fr => fr.sessionID !== sessionId));
-    console.log('deleting session: ', sessionId);
   };
+
   const togglePrivacy = async (sessionId: string) => {
     const foundReport = fieldReports.find(fr => fr.sessionID === sessionId);
     if (!foundReport) {
@@ -126,14 +130,11 @@ function EditFieldReports() {
         isClosable: true,
       });
     }
-    // setFieldReports(fieldReports.map(fr => fr.sessionID === sessionId ? {...fr, }));
-    console.log('deleting session: ', sessionId);
   };
+
   const [sortNewest, setSortNewest] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [currentEditingSession, setCurrentEditingSession] = useState('');
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [currentDeletingSelection, setCurrentDeletingSelection] = useState('');
   return (
     <div>
       <Button onClick={() => setSortNewest(!sortNewest)}>
@@ -143,7 +144,6 @@ function EditFieldReports() {
         .sort((a, b) => {
           const bdate = Date.parse(b.time);
           const adate = Date.parse(a.time);
-          // console.log(adate, bdate, bdate - adate);
           return sortNewest ? bdate - adate : adate - bdate;
         })
         .map(report => (

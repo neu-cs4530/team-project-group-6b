@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Button, useToast } from '@chakra-ui/react';
 import FieldReportsNotepadDrawer from './FieldReportsNotepadDrawer';
-import CoveyAppContext from '../../contexts/CoveyAppContext';
 import AuthenticatedUserContext from '../../contexts/AuthenticatedUserContext';
 import useMaybeVideo from '../../hooks/useMaybeVideo';
 import ReportServiceClient from '../../classes/ReportServiceClient';
@@ -31,7 +30,6 @@ function FieldReportCreator(props: {
   const [gotReport, setGotReport] = useState(false);
   const fetchReport = async () => {
     if (!userContext.profile) {
-      console.log('returning');
       return;
     }
     try {
@@ -46,7 +44,6 @@ function FieldReportCreator(props: {
     } catch (err) {
       if (err.message.includes('404')) {
         setIsLoading(false);
-        console.log('no field report');
       }
     }
   };
@@ -114,7 +111,6 @@ function FieldReportCreator(props: {
         disabled={isLoading}
         colorScheme='blue'
         onClick={async () => {
-          console.log(video);
           video?.pauseGame();
           await fetchReport();
           setIsNotepadOpen(true);

@@ -9,14 +9,12 @@ import {
   ModalOverlay,
   Tooltip,
   useDisclosure,
+  useToast,
 } from '@chakra-ui/react';
 import { Card, CardHeader } from '@material-ui/core';
-import React, { JSXElementConstructor, useContext, useEffect, useState } from 'react';
-import { MdEdit } from 'react-icons/md';
-import { JsxElement } from 'typescript';
+import React, { useEffect, useState } from 'react';
 import Player from '../../classes/Player';
 import ProfileServiceClient from '../../classes/ProfileServiceClient';
-import AuthenticatedUserContext from '../../contexts/AuthenticatedUserContext';
 import { IUserProfile } from '../../CoveyTypes';
 import MarkdownRenderer from '../MarkdownRenderer';
 import FieldReportsServiceClient from '../../classes/ReportServiceClient';
@@ -72,33 +70,38 @@ export function RenderFieldReportByUser({ player }: PlayerNameProps) {
   const [fieldReports, setFieldReports] = useState<FieldReport[]>([]);
   const [didFetch, setDidFetch] = useState(false);
   const { getAccessTokenSilently } = useAuth0();
-  const getFieldReports = async () => {
-    const token = await getAccessTokenSilently();
-    try {
-      const playerInfo = await profileServiceClient.getProfileByUsername({
-        token,
-        username: player.userName,
-      });
-      if (!playerInfo) {
-        console.log('no player');
-        return;
-      }
-      const reports = await reportService.listAllFieldReports({
-        username: playerInfo.email,
-        token,
-      });
-      setFieldReports(reports);
-      console.log(reports);
-    } catch (err) {
-      console.log('error getting field reports: ', err);
-    }
-  };
+  const toast = useToast();
+
   useEffect(() => {
     if (!didFetch) {
-      getFieldReports();
+      (async () => {
+        const token = await getAccessTokenSilently();
+        try {
+          const playerInfo = await profileServiceClient.getProfileByUsername({
+            token,
+            username: player.userName,
+          });
+          if (!playerInfo) {
+            return;
+          }
+          const reports = await reportService.listAllFieldReports({
+            username: playerInfo.email,
+            token,
+          });
+          setFieldReports(reports);
+        } catch (err) {
+          toast({
+            title: 'Error fetching reports',
+            description: 'Please try again.',
+            status: 'error',
+            duration: 9000,
+            isClosable: true,
+          });
+        }
+      })();
     }
     setDidFetch(true);
-  });
+  }, [didFetch, getAccessTokenSilently, player.userName, toast]);
 
   return (
     <div>
