@@ -1,4 +1,6 @@
-import { ChakraProvider } from '@chakra-ui/react';
+import { ChakraProvider, Box, MenuIcon, Button, IconButton, Icon } from '@chakra-ui/react';
+import { MdHome, MdOutlineLogout } from 'react-icons/md';
+import { AppBar, Toolbar, Typography } from '@material-ui/core';
 import { MuiThemeProvider } from '@material-ui/core/styles';
 import assert from 'assert';
 import React, {
@@ -11,6 +13,7 @@ import React, {
   useReducer,
   useState,
 } from 'react';
+import { Link } from 'react-router-dom';
 import { Route, Switch, useLocation } from 'react-router-dom';
 import { io, Socket } from 'socket.io-client';
 import './App.css';
@@ -345,18 +348,67 @@ export default function AppStateWrapper(): JSX.Element {
   const authenticatedUserContext = useContext(AuthenticatedUserContext);
   return (
     <>
-      {authenticatedUserContext && (
-        <button type='button' onClick={() => authenticatedUserContext.logout()}>
-          Logout
-        </button>
-      )}
-      <div>
-        {authenticatedUserContext.profile?.email}
-        {authenticatedUserContext.profile?.firstName}
-        {authenticatedUserContext.profile?.lastName}
-      </div>
       <ChakraProvider>
         <MuiThemeProvider theme={theme}>
+          <Box sx={{ flexGrow: 1 }}>
+            <AppBar position='static'>
+              {authenticatedUserContext && (
+                <>
+                  <Toolbar>
+                    <div
+                      style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+                      <Link to='/'>
+                        {/* <IconButton size='medium' aria-label='menu' sx={{ mr: 2 }}>
+                      <MdHomeFilled />
+                    </IconButton> */}
+                        <div style={{ display: 'flex', gap: 15 }}>
+                          <h1 style={{ fontSize: '1.5em', fontWeight: 'bold' }}>CoveyTown</h1>
+                          <IconButton
+                            icon={<Icon as={MdHome} />}
+                            // size='large'
+                            variant='outline'
+                            colorScheme='whiteAlpha'
+                            // edge='start'
+                            // color='inherit'
+                            // aria-label='menu'
+                            // sx={{ mr: 2 }}>
+                          >
+                            {/* <HomeIcon /> */}
+                          </IconButton>
+                        </div>
+                      </Link>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 15 }}>
+                        <h6>Signed in as {authenticatedUserContext.profile?.username}</h6>
+                        <IconButton
+                          icon={<Icon as={MdOutlineLogout} />}
+                          variant='outline'
+                          colorScheme='red'
+                          onClick={() => authenticatedUserContext.logout()}>
+                          Logout
+                        </IconButton>
+                      </div>
+                    </div>
+                  </Toolbar>
+                </>
+              )}
+            </AppBar>
+          </Box>
+          {/* <Box
+            borderWidth={1}
+            borderRadius='lg'
+            padding={30}
+            style={{ width: 'calc(100% - 40px)' }}>
+            {authenticatedUserContext && (
+              <button type='button' onClick={() => authenticatedUserContext.logout()}>
+                Logout
+              </button>
+            )}
+            <div>
+              {authenticatedUserContext.profile?.email}
+              {authenticatedUserContext.profile?.firstName}
+              {authenticatedUserContext.profile?.lastName}
+            </div>
+          </Box> */}
           <AppStateProvider>
             <EmbeddedTwilioAppWrapper />
           </AppStateProvider>

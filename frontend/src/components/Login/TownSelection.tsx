@@ -177,7 +177,9 @@ export default function TownSelection({ doLogin }: TownSelectionProps): JSX.Elem
         <Link to='/profile'>Edit Profile</Link>{' '} */}
               View/Edit Field Reports
             </Button>
-
+            <Link to='/profiles'>
+              <Button>View Profiles</Button>
+            </Link>
             {/* <FormControl>
         <FormLabel htmlFor="name">Name</FormLabel>
         <Input autoFocus name="name" placeholder="Your name"
