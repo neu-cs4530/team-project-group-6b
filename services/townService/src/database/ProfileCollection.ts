@@ -1,6 +1,8 @@
 import { Collection, MongoClient, Document as Doc } from 'mongodb';
 
-const client = new MongoClient('mongodb+srv://admin:admin@cluster0.ktxlq.mongodb.net/myFirstDatabase?retryWrites=true&w=majority');
+const client = new MongoClient(
+  'mongodb+srv://admin:admin@cluster0.ktxlq.mongodb.net/myFirstDatabase?retryWrites=true&w=majority',
+);
 let connected = false;
 
 const connect = async (): Promise<Collection<Doc>> => {
