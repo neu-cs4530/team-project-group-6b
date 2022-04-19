@@ -101,9 +101,7 @@ export async function fieldReportListAllHandler(
   };
 }
 
-export async function fieldReportsCollectionDump(): Promise<
-  ResponseEnvelope<FieldReportListAllResponse>
-> {
+export async function fieldReportsCollectionDump(): Promise<ResponseEnvelope<FieldReportListAllResponse>> {
   const collection = await getFieldReportCollection();
   const result = await collection.find<FieldReportListResponse>({});
 
