@@ -117,28 +117,18 @@ const ProfileForm = () => {
                       bio: values.bio,
                     });
                     authenticatedUser.refresh();
-                    if (result.acknowledged) {
-                      toast({
-                        title: 'Account updated.',
-                        description: "We've updated your account for you.",
-                        status: 'success',
-                        duration: 9000,
-                        isClosable: true,
-                      });
-                      authenticatedUser.refresh();
-                    } else {
-                      toast({
-                        title: 'Missing information.',
-                        description: 'Please fill out all text fields.',
-                        status: 'error',
-                        duration: 9000,
-                        isClosable: true,
-                      });
-                    }
+                    toast({
+                      title: 'Account updated.',
+                      description: "We've updated your account for you.",
+                      status: 'success',
+                      duration: 9000,
+                      isClosable: true,
+                    });
+                    authenticatedUser.refresh();
                   } catch (err) {
                     toast({
-                      title: err,
-                      description: 'Something went wrong, please try again.',
+                      title: 'Edit Profile Page Failed',
+                      description: (err as Error).message,
                       status: 'error',
                       duration: 9000,
                       isClosable: true,
