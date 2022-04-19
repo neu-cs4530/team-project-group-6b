@@ -271,7 +271,6 @@ function App(props: { setOnDisconnect: Dispatch<SetStateAction<Callback | undefi
   const { setOnDisconnect } = props;
   useEffect(() => {
     setOnDisconnect(() => async () => {
-      // Here's a great gotcha: https://medium.com/swlh/how-to-store-a-function-with-the-usestate-hook-in-react-8a88dd4eede1
       dispatchAppUpdate({ action: 'disconnect' });
       return Video.teardown();
     });
