@@ -105,7 +105,7 @@ const AuthenticatedUserProvider: React.FC = ({ children }) => {
         }
       }
       if (!isLoading && !isAuthenticated) {
-        await loginWithRedirect();
+        await loginWithRedirect({ redirectUri: window.location.origin });
       }
     })();
   });
