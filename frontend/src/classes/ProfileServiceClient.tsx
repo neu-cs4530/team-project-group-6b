@@ -1,9 +1,8 @@
 import assert from 'assert';
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
-import { string } from 'yup';
 
 /**
- * The format of a request to join a Town in Covey.Town, as dispatched by the server middleware
+ * Requests that require authentication must have an authentication access token
  */
 
 interface IUserProfile {
@@ -15,21 +14,21 @@ interface IUserProfile {
   bio: string;
   email: string;
 }
-export type CoveyTownInfo = {
-  friendlyName: string;
-  coveyTownID: string;
-  currentOccupancy: number;
-  maximumOccupancy: number;
-};
 
 export interface AuthenticatedRequest {
   token: string;
 }
 
+/**
+ * Payload sent by the client to retrieve profile information for a user by email
+ */
 export interface GetProfileRequest extends AuthenticatedRequest {
   email: string;
 }
 
+/**
+ * Response from the server for a get profile request
+ */
 export interface GetProfileResponse {
   firstName: string;
   lastName: string;
@@ -39,10 +38,17 @@ export interface GetProfileResponse {
   occupation: string;
   bio: string;
 }
+
+/**
+ * Payload sent by the client to retrieve profile information for a user by username
+ */
 export interface GetProfileRequestUsername extends AuthenticatedRequest {
   username: string;
 }
 
+/**
+ * Payload sent by the client to create and/or update a profile
+ */
 export interface ProfileRequest extends AuthenticatedRequest {
   username: string;
   firstName: string;
@@ -51,12 +57,6 @@ export interface ProfileRequest extends AuthenticatedRequest {
   pronouns: string;
   occupation: string;
   bio: string;
-}
-
-export interface FieldReportRequest extends AuthenticatedRequest {
-  text: string;
-  token: string;
-  sessionId: string;
 }
 
 /**
