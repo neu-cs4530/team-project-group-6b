@@ -106,28 +106,41 @@ const ProfileForm = () => {
                     throw new Error('no user');
                   }
                   try {
-                    const result = await profileServiceClient.patchProfile({
-                      token,
-                      email: user.email,
-                      username: values.username,
-                      firstName: values.firstName,
-                      lastName: values.lastName,
-                      pronouns: values.pronouns,
-                      occupation: values.occupation,
-                      bio: values.bio,
-                    });
-                    authenticatedUser.refresh();
-                    toast({
-                      title: 'Account updated.',
-                      description: "We've updated your account for you.",
-                      status: 'success',
-                      duration: 9000,
-                      isClosable: true,
-                    });
-                    authenticatedUser.refresh();
+                    if (
+                      values.firstName === '' ||
+                      values.lastName === '' ||
+                      values.username === ''
+                    ) {
+                      toast({
+                        title: 'Incomplete information.',
+                        description: 'Please fill in the required fields.',
+                        status: 'error',
+                        duration: 9000,
+                        isClosable: true,
+                      });
+                    } else {
+                      await profileServiceClient.patchProfile({
+                        token,
+                        email: user.email,
+                        username: values.username,
+                        firstName: values.firstName,
+                        lastName: values.lastName,
+                        pronouns: values.pronouns,
+                        occupation: values.occupation,
+                        bio: values.bio,
+                      });
+                      toast({
+                        title: 'Account updated.',
+                        description: "We've updated your account for you.",
+                        status: 'success',
+                        duration: 9000,
+                        isClosable: true,
+                      });
+                      authenticatedUser.refresh();
+                    }
                   } catch (err) {
                     toast({
-                      title: 'Edit Profile Page Failed',
+                      title: 'Username already exists.',
                       description: (err as Error).message,
                       status: 'error',
                       duration: 9000,
@@ -145,11 +158,4 @@ const ProfileForm = () => {
   );
 };
 
-const Wrapper = () => (
-  <div>
-    <Heading>Profile</Heading>
-    <ProfileForm />
-  </div>
-);
-
-export default Wrapper;
+export default ProfileForm;

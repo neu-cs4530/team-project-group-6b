@@ -119,7 +119,11 @@ const ProfileForm = () => {
                     throw new Error('no user');
                   }
                   try {
-                    if (values.firstName === '' || values.lastName === '' || values.username === '') {
+                    if (
+                      values.firstName === '' ||
+                      values.lastName === '' ||
+                      values.username === ''
+                    ) {
                       toast({
                         title: 'Incomplete information.',
                         description: 'Please fill in the required fields.',
@@ -127,7 +131,6 @@ const ProfileForm = () => {
                         duration: 9000,
                         isClosable: true,
                       });
-                      authenticatedUser.refresh();
                     } else {
                       await profileServiceClient.patchProfile({
                         token,
@@ -146,6 +149,7 @@ const ProfileForm = () => {
                         duration: 9000,
                         isClosable: true,
                       });
+                      authenticatedUser.refresh();
                     }
                   } catch (err) {
                     toast({
