@@ -156,11 +156,9 @@ export default function addTownRoutes(http: Server, app: Express): io.Server {
       const result = await fieldReportListAllHandler(req.params.username);
       if (result.isOK) {
         if (req.params.username === email) {
-          console.log('same user');
           res.status(StatusCodes.OK).json(result);
           return;
         }
-        console.log('not same user');
         res
           .status(StatusCodes.OK)
           .json({ ...result, response: result.response?.filter(item => !item.isPrivate) });
@@ -295,7 +293,6 @@ export default function addTownRoutes(http: Server, app: Express): io.Server {
    * Get a user by id (username)
    */
   app.get('/api/v2/users/:id', express.json(), async (req, res) => {
-    console.log(req.params.id);
     try {
       const result = await profileFetchByUsernameHandler(req.params.id);
 
