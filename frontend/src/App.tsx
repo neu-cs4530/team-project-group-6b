@@ -364,6 +364,7 @@ export default function AppStateWrapper(): JSX.Element {
                         <div style={{ display: 'flex', gap: 15 }}>
                           <h1 style={{ fontSize: '1.5em', fontWeight: 'bold' }}>CoveyTown</h1>
                           <IconButton
+                            aria-label='Home'
                             icon={<Icon as={MdHome} />}
                             // size='large'
                             variant='outline'
@@ -380,6 +381,7 @@ export default function AppStateWrapper(): JSX.Element {
                       <div style={{ display: 'flex', alignItems: 'center', gap: 15 }}>
                         <h6>Signed in as {authenticatedUserContext.profile?.username}</h6>
                         <IconButton
+                          aria-label='logout'
                           icon={<Icon as={MdOutlineLogout} />}
                           variant='outline'
                           colorScheme='red'
