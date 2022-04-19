@@ -51,12 +51,25 @@ export async function fetchProfileByEmail(email: string): Promise<ResponseEnvelo
   return { isOK: false, message: 'profile not found' };
 }
 
-export async function fetchProfileByUsername(username: string): Promise<ResponseEnvelope<IUserProfile>> {
+export async function fetchProfileByUsername(
+  username: string,
+): Promise<ResponseEnvelope<IUserProfile>> {
   const collection = await getProfileCollection();
   const result = await collection.findOne<IUserProfile>({ username });
 
   if (result !== null && result !== undefined) {
     return { isOK: true, response: result };
+  }
+
+  return { isOK: false, message: 'profile not found' };
+}
+
+export async function getAllProfiles(): Promise<ResponseEnvelope<IUserProfile[]>> {
+  const collection = await getProfileCollection();
+  const result = await collection.find<IUserProfile>({});
+
+  if (result !== null && result !== undefined) {
+    return { isOK: true, response: await result.toArray() };
   }
 
   return { isOK: false, message: 'profile not found' };

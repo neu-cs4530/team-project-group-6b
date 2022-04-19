@@ -27,6 +27,10 @@ export interface FieldReportListAllRequest {
   username: string;
 }
 
+export interface FieldReportCollectionDumpRequest {
+  token: string;
+}
+
 export interface FieldReportListResponse {
   username: string;
   fieldReports: string;
@@ -126,6 +130,16 @@ export default class ReportServiceClient {
   ): Promise<FieldReportListResponse[]> {
     const responseWrapper = await this._axios.get<ResponseEnvelope<FieldReportListResponse[]>>(
       `/fieldReport/${requestData.username}`,
+      { headers: { Authorization: `Bearer ${requestData.token}` } },
+    );
+    return ReportServiceClient.unwrapOrThrowError(responseWrapper);
+  }
+
+  async fieldReportsCollectionDump(
+    requestData: FieldReportCollectionDumpRequest,
+  ): Promise<FieldReportListResponse[]> {
+    const responseWrapper = await this._axios.get<ResponseEnvelope<FieldReportListResponse[]>>(
+      `/all-reports`,
       { headers: { Authorization: `Bearer ${requestData.token}` } },
     );
     return ReportServiceClient.unwrapOrThrowError(responseWrapper);

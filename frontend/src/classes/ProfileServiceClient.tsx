@@ -1,10 +1,20 @@
 import assert from 'assert';
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
+import { string } from 'yup';
 
 /**
  * The format of a request to join a Town in Covey.Town, as dispatched by the server middleware
  */
 
+interface IUserProfile {
+  firstName: string;
+  lastName: string;
+  username: string;
+  pronouns: string;
+  occupation: string;
+  bio: string;
+  email: string;
+}
 export type CoveyTownInfo = {
   friendlyName: string;
   coveyTownID: string;
@@ -81,6 +91,14 @@ export default class ProfileServiceClient {
       headers: { Authorization: `Bearer ${requestData.token}` },
       params: { email: requestData.email },
     });
+    return ProfileServiceClient.unwrapOrThrowError(responseWrapper);
+  }
+
+  async getAllProfiles(requestData: { token: string }): Promise<IUserProfile[]> {
+    const responseWrapper = await this._axios.get<ResponseEnvelope<IUserProfile[]>>(
+      '/all-profiles',
+      { headers: { Authorization: `Bearer ${requestData.token}` } },
+    );
     return ProfileServiceClient.unwrapOrThrowError(responseWrapper);
   }
 

@@ -103,6 +103,25 @@ export async function fieldReportListAllHandler(
   };
 }
 
+export async function fieldReportsCollectionDump(): Promise<
+  ResponseEnvelope<FieldReportListAllResponse>
+> {
+  const collection = await getFieldReportCollection();
+  const result = await collection.find<FieldReportListResponse>({});
+
+  if (result !== null) {
+    return {
+      isOK: true,
+      response: await result.toArray(),
+    };
+  }
+
+  return {
+    isOK: false,
+    message: 'Field report by user with the sessionID cannot be found.',
+  };
+}
+
 export async function fieldReportUpdateHandler(
   requestData: FieldReportUpdateRequest,
 ): Promise<ResponseEnvelope<Record<string, null>>> {

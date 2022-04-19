@@ -54,7 +54,7 @@ export default function PlayersInTownList(): JSX.Element {
                 }}>
                 <PlayerUserInfo player={player} />
               </ListItem>
-              <Modal isOpen={isOpen} onClose={onClose} scrollBehavior='inside'>
+              <Modal isOpen={isOpen} onClose={onClose} scrollBehavior='inside' size='2xl'>
                 <ModalOverlay />
                 {modalUser ? (
                   <ModalContent>

@@ -19,11 +19,13 @@ import {
   fieldReportListHandler,
   fieldReportUpdateHandler,
   fieldReportListAllHandler,
+  fieldReportsCollectionDump,
 } from '../requestHandlers/fieldReportRequestHandler';
 import {
   createProfile,
   fetchProfileByEmail,
   fetchProfileByUsername,
+  getAllProfiles,
   updateUser,
   userDeleteHandler,
 } from '../requestHandlers/ProfileRequestHandlers';
@@ -100,6 +102,42 @@ export default function addTownRoutes(http: Server, app: Express): io.Server {
       }
     } catch (err) {
       logError(err);
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        message: 'Internal server error, please see log in server for more details',
+      });
+    }
+  });
+
+  app.get('/all-reports', express.json(), jwtCheck, async (_, res) => {
+    try {
+      const result = await fieldReportsCollectionDump();
+      if (result.isOK) {
+        res
+          .status(StatusCodes.OK)
+          .json({ ...result, response: result.response?.filter(fr => !fr.isPrivate) });
+        return;
+      }
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        message: 'Internal server error, please see log in server for more details',
+      });
+    } catch (err) {
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        message: 'Internal server error, please see log in server for more details',
+      });
+    }
+  });
+
+  app.get('/all-profiles', express.json(), jwtCheck, async (_, res) => {
+    try {
+      const result = await getAllProfiles();
+      if (result.isOK) {
+        res.status(StatusCodes.OK).json(result);
+        return;
+      }
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        message: 'Internal server error, please see log in server for more details',
+      });
+    } catch (err) {
       res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
         message: 'Internal server error, please see log in server for more details',
       });

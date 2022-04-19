@@ -1,5 +1,6 @@
 import { useAuth0 } from '@auth0/auth0-react';
 import {
+  Heading,
   Icon,
   IconButton,
   Modal,
@@ -19,6 +20,7 @@ import AuthenticatedUserContext from '../../contexts/AuthenticatedUserContext';
 import { IUserProfile } from '../../CoveyTypes';
 import MarkdownRenderer from '../MarkdownRenderer';
 import FieldReportsServiceClient from '../../classes/ReportServiceClient';
+import FieldReportsViewer from '../FieldReportsViewer';
 
 type PlayerNameProps = {
   player: Player;
@@ -29,6 +31,7 @@ interface FieldReport {
   fieldReports: string;
   sessionID: string;
   time: string;
+  isPrivate: boolean;
 }
 
 const profileServiceClient = new ProfileServiceClient();
@@ -99,24 +102,7 @@ export function RenderFieldReportByUser({ player }: PlayerNameProps) {
 
   return (
     <div>
-      {fieldReports.map(report => (
-        <Card
-          key={`${player.id}${report.sessionID}`}
-          variant='elevation'
-          elevation={3}
-          style={{ marginBottom: 30 }}>
-          <CardHeader
-            title={
-              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                {' '}
-                Report From: {report.time}
-              </div>
-            }
-          />
-          <MarkdownRenderer markdown={report.fieldReports} />
-          <CardHeader />
-        </Card>
-      ))}
+      <FieldReportsViewer fieldReports={fieldReports} />
     </div>
   );
 }

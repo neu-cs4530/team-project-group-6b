@@ -42,6 +42,7 @@ import PlayerMovementContext, { PlayerMovementCallback } from './contexts/Player
 import PlayersInTownContext from './contexts/PlayersInTownContext';
 import VideoContext from './contexts/VideoContext';
 import { CoveyAppState } from './CoveyTypes';
+import AllProfiles from './components/AllProfiles';
 
 export const MOVEMENT_UPDATE_DELAY_MS = 0;
 export const CALCULATE_NEARBY_PLAYERS_MOVING_DELAY_MS = 300;
@@ -304,7 +305,9 @@ function App(props: { setOnDisconnect: Dispatch<SetStateAction<Callback | undefi
             <PlayersInTownContext.Provider value={playersInTown}>
               <NearbyPlayersContext.Provider value={nearbyPlayers}>
                 <ConversationAreasContext.Provider value={conversationAreas}>
-                  {url.pathname !== '/register' && url.pathname !== '/profile' ? (
+                  {url.pathname !== '/register' &&
+                  url.pathname !== '/profile' &&
+                  url.pathname !== '/profiles' ? (
                     page
                   ) : (
                     <div style={{ display: 'none' }}>{page}</div>
@@ -320,7 +323,7 @@ function App(props: { setOnDisconnect: Dispatch<SetStateAction<Callback | undefi
                       <div style={{ display: 'none' }}>{page} </div>
                     </Route>
                     <Route path='/profile' component={AuthenticatedProfile} />
-
+                    <Route path='/profiles' component={AllProfiles} />
                     <Route path='/home' />
                     {/* <Route component={PageComponent} /> */}
                   </Switch>
