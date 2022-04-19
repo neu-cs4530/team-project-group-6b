@@ -1,6 +1,4 @@
 import { ChakraProvider, Box, MenuIcon, Button, IconButton, Icon } from '@chakra-ui/react';
-import { MdHome, MdOutlineLogout } from 'react-icons/md';
-import { AppBar, Toolbar, Typography } from '@material-ui/core';
 import { MuiThemeProvider } from '@material-ui/core/styles';
 import assert from 'assert';
 import React, {
@@ -15,6 +13,7 @@ import React, {
 } from 'react';
 import { Route, Switch, useLocation, Link } from 'react-router-dom';
 import { io, Socket } from 'socket.io-client';
+import TopBar from './components/TopBar';
 import './App.css';
 import ConversationArea, { ServerConversationArea } from './classes/ConversationArea';
 import Player, { ServerPlayer, UserLocation } from './classes/Player';
@@ -294,6 +293,7 @@ function App(props: { setOnDisconnect: Dispatch<SetStateAction<Callback | undefi
     );
   }, [setupGameController, appState.sessionToken, videoInstance]);
   const url = useLocation();
+  const authenticatedUserContext = useContext(AuthenticatedUserContext);
   return (
     <CoveyAppContext.Provider value={appState}>
       <VideoContext.Provider value={Video.instance()}>
@@ -302,6 +302,7 @@ function App(props: { setOnDisconnect: Dispatch<SetStateAction<Callback | undefi
             <PlayersInTownContext.Provider value={playersInTown}>
               <NearbyPlayersContext.Provider value={nearbyPlayers}>
                 <ConversationAreasContext.Provider value={conversationAreas}>
+                  <TopBar />
                   {url.pathname !== '/register' &&
                   url.pathname !== '/profile' &&
                   url.pathname !== '/profiles' ? (
@@ -309,7 +310,6 @@ function App(props: { setOnDisconnect: Dispatch<SetStateAction<Callback | undefi
                   ) : (
                     <div style={{ display: 'none' }}>{page}</div>
                   )}
-
                   <Switch>
                     <Route path='/register'>
                       <Register />
@@ -345,55 +345,11 @@ function EmbeddedTwilioAppWrapper() {
 
 export default function AppStateWrapper(): JSX.Element {
   const authenticatedUserContext = useContext(AuthenticatedUserContext);
+
   return (
     <>
       <ChakraProvider>
         <MuiThemeProvider theme={theme}>
-          <Box sx={{ flexGrow: 1 }}>
-            <AppBar position='static'>
-              {authenticatedUserContext && (
-                <>
-                  <Toolbar>
-                    <div
-                      style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-                      <Link to='/'>
-                        {/* <IconButton size='medium' aria-label='menu' sx={{ mr: 2 }}>
-                      <MdHomeFilled />
-                    </IconButton> */}
-                        <div style={{ display: 'flex', gap: 15 }}>
-                          <h1 style={{ fontSize: '1.5em', fontWeight: 'bold' }}>CoveyTown</h1>
-                          <IconButton
-                            aria-label='Home'
-                            icon={<Icon as={MdHome} />}
-                            // size='large'
-                            variant='outline'
-                            colorScheme='whiteAlpha'
-                            // edge='start'
-                            // color='inherit'
-                            // aria-label='menu'
-                            // sx={{ mr: 2 }}>
-                          >
-                            {/* <HomeIcon /> */}
-                          </IconButton>
-                        </div>
-                      </Link>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 15 }}>
-                        <h6>Signed in as {authenticatedUserContext.profile?.username}</h6>
-                        <IconButton
-                          aria-label='logout'
-                          icon={<Icon as={MdOutlineLogout} />}
-                          variant='outline'
-                          colorScheme='red'
-                          onClick={() => authenticatedUserContext.logout()}>
-                          Logout
-                        </IconButton>
-                      </div>
-                    </div>
-                  </Toolbar>
-                </>
-              )}
-            </AppBar>
-          </Box>
           {/* <Box
             borderWidth={1}
             borderRadius='lg'

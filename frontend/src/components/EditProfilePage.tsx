@@ -17,15 +17,59 @@ import AuthenticatedUserContext from '../contexts/AuthenticatedUserContext';
 const profileServiceClient = new ProfileServiceClient();
 
 // Aside: You may see InjectedFormikProps<OtherProps, FormValues> instead of what comes below in older code.. InjectedFormikProps was artifact of when Formik only exported a HoC. It is also less flexible as it MUST wrap all props (it passes them through).
-const ProfileForm = () => {
+const ProfileForm = (props: { onSuccess: () => any }) => {
   const authenticatedUser = useContext(AuthenticatedUserContext);
   const { getAccessTokenSilently, user } = useAuth0();
-
+  const { onSuccess } = props;
   const toast = useToast();
   return (
     <Formik
       enableReinitialize
-      onSubmit={() => {}}
+      onSubmit={async values => {
+        const token = await getAccessTokenSilently();
+        if (!user || !user.email) {
+          throw new Error('no user');
+        }
+        try {
+          if (values.firstName === '' || values.lastName === '' || values.username === '') {
+            toast({
+              title: 'Incomplete information.',
+              description: 'Please fill in the required fields.',
+              status: 'error',
+              duration: 9000,
+              isClosable: true,
+            });
+          } else {
+            await profileServiceClient.patchProfile({
+              token,
+              email: user.email,
+              username: values.username,
+              firstName: values.firstName,
+              lastName: values.lastName,
+              pronouns: values.pronouns,
+              occupation: values.occupation,
+              bio: values.bio,
+            });
+            toast({
+              title: 'Account updated.',
+              description: "We've updated your account for you.",
+              status: 'success',
+              duration: 9000,
+              isClosable: true,
+            });
+            authenticatedUser.refresh();
+            onSuccess();
+          }
+        } catch (err) {
+          toast({
+            title: 'Something went wrong, please try again.',
+            description: (err as Error).message,
+            status: 'error',
+            duration: 9000,
+            isClosable: true,
+          });
+        }
+      }}
       initialValues={{
         username: authenticatedUser.profile?.username || '',
         firstName: authenticatedUser.profile?.firstName || '',
@@ -99,57 +143,7 @@ const ProfileForm = () => {
                 value={values.bio}
                 placeholder='Give users a small bio about you'
               />
-              <Button
-                onClick={async () => {
-                  const token = await getAccessTokenSilently();
-                  if (!user || !user.email) {
-                    throw new Error('no user');
-                  }
-                  try {
-                    if (
-                      values.firstName === '' ||
-                      values.lastName === '' ||
-                      values.username === ''
-                    ) {
-                      toast({
-                        title: 'Incomplete information.',
-                        description: 'Please fill in the required fields.',
-                        status: 'error',
-                        duration: 9000,
-                        isClosable: true,
-                      });
-                    } else {
-                      await profileServiceClient.patchProfile({
-                        token,
-                        email: user.email,
-                        username: values.username,
-                        firstName: values.firstName,
-                        lastName: values.lastName,
-                        pronouns: values.pronouns,
-                        occupation: values.occupation,
-                        bio: values.bio,
-                      });
-                      toast({
-                        title: 'Account updated.',
-                        description: "We've updated your account for you.",
-                        status: 'success',
-                        duration: 9000,
-                        isClosable: true,
-                      });
-                      authenticatedUser.refresh();
-                    }
-                  } catch (err) {
-                    toast({
-                      title: 'Username already exists.',
-                      description: (err as Error).message,
-                      status: 'error',
-                      duration: 9000,
-                      isClosable: true,
-                    });
-                  }
-                }}>
-                Update
-              </Button>
+              <Button type='submit'>Submit</Button>
             </Form>
           </Box>
         </div>

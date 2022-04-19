@@ -69,7 +69,6 @@ function EditFieldReports() {
       await reportService.deleteFieldReport({
         sessionID: sessionId,
         token: userContext.token,
-        username: userContext.profile?.email || '',
       });
       toast({
         title: 'Successfully Deleted Field Report',
@@ -78,6 +77,7 @@ function EditFieldReports() {
         duration: 9000,
         isClosable: true,
       });
+      setFieldReports(fieldReports.filter(fr => fr.sessionID !== sessionId));
     } catch (err) {
       toast({
         title: 'Error Deleting Field Report',
@@ -87,7 +87,6 @@ function EditFieldReports() {
         isClosable: true,
       });
     }
-    setFieldReports(fieldReports.filter(fr => fr.sessionID !== sessionId));
   };
 
   const togglePrivacy = async (sessionId: string) => {

@@ -12,7 +12,6 @@ export interface ResponseEnvelope<T> {
 
 export interface FieldReportDeleteRequest {
   token: string;
-  username: string;
   sessionID: string;
 }
 
@@ -102,7 +101,7 @@ export default class ReportServiceClient {
 
   async deleteFieldReport(requestData: FieldReportDeleteRequest): Promise<void> {
     const responseWrapper = await this._axios.delete<ResponseEnvelope<void>>(
-      `/fieldReport/${requestData.username}/${requestData.sessionID}`,
+      `/fieldReport/${requestData.sessionID}`,
       { headers: { Authorization: `Bearer ${requestData.token}` } },
     );
     return ReportServiceClient.unwrapOrThrowError(responseWrapper);

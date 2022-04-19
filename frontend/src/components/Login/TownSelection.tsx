@@ -291,7 +291,7 @@ export default function TownSelection({ doLogin }: TownSelectionProps): JSX.Elem
           </ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <ProfileForm />
+            <ProfileForm onSuccess={onClose} />
           </ModalBody>
         </ModalContent>
       </Modal>
