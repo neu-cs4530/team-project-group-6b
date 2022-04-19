@@ -1,4 +1,4 @@
-import getProfileCollection from '../database/ProfileCollection';
+import ProfileCollection from '../database/ProfileCollection';
 
 /**
  * Envelope that wraps any response from the server
@@ -26,7 +26,7 @@ export interface UserDeleteRequest {
 export async function profileCreateHandler(
   requestData: IUserProfile,
 ): Promise<ResponseEnvelope<string>> {
-  const collection = await getProfileCollection();
+  const collection = await ProfileCollection();
   const emails = await collection.findOne({ email: requestData.email });
   const usernames = await collection.findOne({ username: requestData.username });
   if (emails === null && usernames == null) {
@@ -45,7 +45,7 @@ export async function profileCreateHandler(
 export async function profileFetchByEmailHandler(
   email: string,
 ): Promise<ResponseEnvelope<IUserProfile>> {
-  const collection = await getProfileCollection();
+  const collection = await ProfileCollection();
   const result = await collection.findOne<IUserProfile>({ email });
 
   if (result !== null && result !== undefined) {
@@ -58,7 +58,7 @@ export async function profileFetchByEmailHandler(
 export async function profileFetchByUsernameHandler(
   username: string,
 ): Promise<ResponseEnvelope<IUserProfile>> {
-  const collection = await getProfileCollection();
+  const collection = await ProfileCollection();
   const result = await collection.findOne<IUserProfile>({ username });
 
   if (result !== null && result !== undefined) {
@@ -69,7 +69,7 @@ export async function profileFetchByUsernameHandler(
 }
 
 export async function getAllProfiles(): Promise<ResponseEnvelope<IUserProfile[]>> {
-  const collection = await getProfileCollection();
+  const collection = await ProfileCollection();
   const result = await collection.find<IUserProfile>({});
 
   if (result !== null && result !== undefined) {
@@ -82,7 +82,7 @@ export async function getAllProfiles(): Promise<ResponseEnvelope<IUserProfile[]>
 export async function profileUpdateHandler(
   requestData: IUserProfile,
 ): Promise<ResponseEnvelope<Record<string, null>>> {
-  const collection = await getProfileCollection();
+  const collection = await ProfileCollection();
   const userProfile = await collection.findOne<IUserProfile>({ username: requestData.username });
   if (userProfile !== null && userProfile.email !== requestData.email) {
     return {
@@ -107,7 +107,7 @@ export async function profileUpdateHandler(
 export async function profileDeleteHandler(
   requestData: UserDeleteRequest,
 ): Promise<ResponseEnvelope<Record<string, null>>> {
-  const collection = await getProfileCollection();
+  const collection = await ProfileCollection();
   const query = { email: requestData.email };
   const result = await collection.deleteOne(query);
   const success = result.acknowledged;
