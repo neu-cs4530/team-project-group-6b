@@ -120,6 +120,7 @@ const OuterForm = () => {
           duration: 9000,
           isClosable: true,
         });
+        setError(err);
       }
     },
   })(InnerForm);
@@ -134,8 +135,7 @@ const OuterForm = () => {
 
 // Use <MyForm /> wherevs
 const Wrapper = () => (
-  <div>
-    <Heading>My App</Heading>
+  <div style={{ paddingTop: '20px' }}>
     <OuterForm />
   </div>
 );

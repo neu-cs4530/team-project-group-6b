@@ -29,24 +29,14 @@ function TopBar() {
                       room.disconnect();
                     }
                   }}>
-                  {/* <IconButton size='medium' aria-label='menu' sx={{ mr: 2 }}>
-                      <MdHomeFilled />
-                    </IconButton> */}
                   <div style={{ display: 'flex', gap: 15 }}>
                     <h1 style={{ fontSize: '1.5em', fontWeight: 'bold' }}>CoveyTown</h1>
                     <IconButton
                       aria-label='Home'
                       icon={<Icon as={MdHome} />}
-                      // size='large'
                       variant='outline'
                       colorScheme='whiteAlpha'
-                      // edge='start'
-                      // color='inherit'
-                      // aria-label='menu'
-                      // sx={{ mr: 2 }}>
-                    >
-                      {/* <HomeIcon /> */}
-                    </IconButton>
+                    />
                   </div>
                 </Link>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 15 }}>

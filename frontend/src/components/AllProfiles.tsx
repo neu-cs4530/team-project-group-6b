@@ -32,54 +32,51 @@ const reportService = new ReportServiceClient();
 function AllProfiles() {
   const authedUser = useContext(AuthenticatedUserContext);
   const [profiles, setProfiles] = useState<IUserProfile[]>([]);
-  // const [fetchedProfiles, setFetchedProfiles] = useState(false);
   const toast = useToast();
-  const fetchProfiles = async () => {
-    try {
-      const profilesResponse = await profileService.getAllProfiles({ token: authedUser.token });
-      setProfiles(profilesResponse);
-    } catch {
-      toast({
-        title: 'Error Fetching Profiles',
-        description: 'Failed to fetch profiles, please try again',
-        status: 'error',
-        duration: 9000,
-        isClosable: true,
-      });
-    }
-  };
+
   useEffect(() => {
-    // if (!fetchedProfiles) {
     if (authedUser.isAuthenticated) {
-      fetchProfiles();
+      (async () => {
+        try {
+          const profilesResponse = await profileService.getAllProfiles({ token: authedUser.token });
+          setProfiles(profilesResponse);
+        } catch {
+          toast({
+            title: 'Error Fetching Profiles',
+            description: 'Failed to fetch profiles, please try again',
+            status: 'error',
+            duration: 9000,
+            isClosable: true,
+          });
+        }
+      })();
     }
-    // }
-  }, [authedUser]);
+  }, [authedUser, toast]);
   const [reports, setReports] = useState<FieldReportListResponse[]>([]);
   const [viewingReports, setViewingReports] = useState(false);
   const [reportsUser, setReportsUser] = useState<IUserProfile | null>();
-  const fetchReports = async () => {
-    try {
-      const reportsResponse = await reportService.listAllFieldReports({
-        username: reportsUser?.email || '',
-        token: authedUser.token,
-      });
-      setReports(reportsResponse);
-    } catch (err) {
-      toast({
-        title: 'Error Fetching Reports',
-        description: 'Failed to fetch reports, please try again later',
-        status: 'error',
-        duration: 9000,
-        isClosable: true,
-      });
-    }
-  };
+
   useEffect(() => {
     if (viewingReports) {
-      fetchReports();
+      (async () => {
+        try {
+          const reportsResponse = await reportService.listAllFieldReports({
+            username: reportsUser?.email || '',
+            token: authedUser.token,
+          });
+          setReports(reportsResponse);
+        } catch (err) {
+          toast({
+            title: 'Error Fetching Reports',
+            description: 'Failed to fetch reports, please try again later',
+            status: 'error',
+            duration: 9000,
+            isClosable: true,
+          });
+        }
+      })();
     }
-  }, [viewingReports]);
+  }, [authedUser.token, reportsUser?.email, toast, viewingReports]);
   return (
     <>
       <Modal
@@ -119,7 +116,6 @@ function AllProfiles() {
               onClick={() => {
                 setViewingReports(true);
                 setReportsUser(prof);
-                console.log('clicked user');
               }}>
               <CardHeader
                 title={

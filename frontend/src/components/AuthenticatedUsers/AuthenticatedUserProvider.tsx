@@ -16,26 +16,20 @@ const AuthenticatedUserProvider: React.FC = ({ children }) => {
     isAuthenticated: false,
     token: '',
     logout: () => {},
-    refresh: async () => {
-      console.log('old refresh');
-    },
+    refresh: async () => {},
   });
-  console.log('USER: ', user);
   const [gotProfile, setGotProfile] = useState(false);
   const [shouldRegister, setShouldRegister] = useState(false);
   const refresh = async () => {
     const token = await getAccessTokenSilently();
-    console.log('refresh 1');
     if (!isAuthenticated || !user || !user.email) {
       return;
     }
-    console.log('refresh 2');
     try {
       const profileResponse = await profileServiceClient.getProfile({
         token,
         email: user.email || '',
       });
-      console.log(profileResponse);
       setUserInfo({
         token,
         profile: {
@@ -59,7 +53,6 @@ const AuthenticatedUserProvider: React.FC = ({ children }) => {
         duration: 9000,
         isClosable: true,
       });
-      console.log('refresh failed with error');
     }
   };
   useEffect(() => {
@@ -72,7 +65,6 @@ const AuthenticatedUserProvider: React.FC = ({ children }) => {
             token,
             email: user.email || '',
           });
-          console.log(profileResponse);
           setUserInfo({
             token,
             profile: {
@@ -89,7 +81,6 @@ const AuthenticatedUserProvider: React.FC = ({ children }) => {
             refresh,
           });
         } catch (err) {
-          console.log('getprofile failed with error: ', err);
           if (err.message.includes('404')) {
             setUserInfo({ ...userInfo, refresh });
             setShouldRegister(true);

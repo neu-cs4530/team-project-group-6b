@@ -1,6 +1,5 @@
 import assert from 'assert';
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
-import { string } from 'yup';
 
 /**
  * The format of a request to join a Town in Covey.Town, as dispatched by the server middleware

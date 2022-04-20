@@ -1,22 +1,9 @@
 import { useAuth0 } from '@auth0/auth0-react';
-import {
-  Heading,
-  Icon,
-  IconButton,
-  Modal,
-  ModalCloseButton,
-  ModalHeader,
-  ModalOverlay,
-  Tooltip,
-  useDisclosure,
-  useToast,
-} from '@chakra-ui/react';
-import { Card, CardHeader } from '@material-ui/core';
+import { Tooltip, useToast } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import Player from '../../classes/Player';
 import ProfileServiceClient from '../../classes/ProfileServiceClient';
 import { IUserProfile } from '../../CoveyTypes';
-import MarkdownRenderer from '../MarkdownRenderer';
 import FieldReportsServiceClient from '../../classes/ReportServiceClient';
 import FieldReportsViewer from '../FieldReportsViewer';
 

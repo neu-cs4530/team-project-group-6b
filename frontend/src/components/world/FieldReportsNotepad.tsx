@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Textarea, Icon, Switch } from '@chakra-ui/react';
+import { Button, Textarea, Icon } from '@chakra-ui/react';
 import {
   MdStrikethroughS,
   MdOutlineFormatBold,
@@ -10,7 +10,7 @@ import {
 } from 'react-icons/md';
 import MarkdownRenderer from '../MarkdownRenderer';
 
-function Notepad(props: { defaultText: string; onSubmit: (text: string) => any }) {
+function Notepad(props: { defaultText: string; onSubmit: (text: string) => void }) {
   const { defaultText, onSubmit } = props;
   const [defaultTextAreaValue, setDefaultTextAreaValue] = useState(defaultText);
   const [inputText, setInputText] = useState(defaultTextAreaValue);

@@ -53,7 +53,6 @@ export default function TownSelection({ doLogin }: TownSelectionProps): JSX.Elem
   const userName = authenticatedUser.profile?.username;
 
   const updateTownListings = useCallback(() => {
-    // console.log(apiClient);
     apiClient.listTowns().then(towns => {
       setCurrentPublicTowns(towns.towns.sort((a, b) => b.currentOccupancy - a.currentOccupancy));
     });
@@ -87,7 +86,6 @@ export default function TownSelection({ doLogin }: TownSelectionProps): JSX.Elem
         }
         const initData = await Video.setup(userName, coveyRoomID);
         const loggedIn = await doLogin(initData);
-        console.log('LOGGED IN: ', loggedIn, initData);
         if (loggedIn) {
           assert(initData.providerVideoToken);
           await videoConnect(initData.providerVideoToken);
@@ -164,29 +162,18 @@ export default function TownSelection({ doLogin }: TownSelectionProps): JSX.Elem
       <form>
         <Stack>
           <Box p='4' borderWidth='1px' borderRadius='lg'>
-            <Heading as='h2' size='lg'>
+            <Heading as='h2' size='lg' style={{ marginBottom: '10px' }}>
               Username: {userName}
             </Heading>
-            <Button onClick={onOpen}>
-              {/* {' '}
-        <Link to='/profile'>Edit Profile</Link>{' '} */}
+            <Button onClick={onOpen} style={{ marginRight: '20px' }}>
               Edit Profile
             </Button>
-            <Button onClick={() => setIsFieldReportsOpen(true)}>
-              {/* {' '}
-        <Link to='/profile'>Edit Profile</Link>{' '} */}
+            <Button onClick={() => setIsFieldReportsOpen(true)} style={{ marginRight: '20px' }}>
               View/Edit Field Reports
             </Button>
             <Link to='/profiles'>
               <Button>View Profiles</Button>
             </Link>
-            {/* <FormControl>
-        <FormLabel htmlFor="name">Name</FormLabel>
-        <Input autoFocus name="name" placeholder="Your name"
-        value={userName}
-        onChange={event => setUserName(event.target.value)}
-        />
-      </FormControl> */}
           </Box>
           <Box borderWidth='1px' borderRadius='lg'>
             <Heading p='4' as='h2' size='lg'>
@@ -206,7 +193,9 @@ export default function TownSelection({ doLogin }: TownSelectionProps): JSX.Elem
               </Box>
               <Box>
                 <FormControl>
-                  <FormLabel htmlFor='isPublic'>Publicly Listed</FormLabel>
+                  <FormLabel htmlFor='isPublic' style={{ marginLeft: '5px' }}>
+                    Publicly Listed
+                  </FormLabel>
                   <Checkbox
                     id='isPublic'
                     name='isPublic'
@@ -214,11 +203,15 @@ export default function TownSelection({ doLogin }: TownSelectionProps): JSX.Elem
                     onChange={e => {
                       setNewTownIsPublic(e.target.checked);
                     }}
+                    style={{ marginTop: '10px', marginLeft: '55px' }}
                   />
                 </FormControl>
               </Box>
               <Box>
-                <Button data-testid='newTownButton' onClick={handleCreate}>
+                <Button
+                  data-testid='newTownButton'
+                  onClick={handleCreate}
+                  style={{ marginTop: '32px' }}>
                   Create
                 </Button>
               </Box>
@@ -243,7 +236,10 @@ export default function TownSelection({ doLogin }: TownSelectionProps): JSX.Elem
                     onChange={event => setTownIDToJoin(event.target.value)}
                   />
                 </FormControl>
-                <Button data-testid='joinTownByIDButton' onClick={() => handleJoin(townIDToJoin)}>
+                <Button
+                  data-testid='joinTownByIDButton'
+                  onClick={() => handleJoin(townIDToJoin)}
+                  style={{ marginTop: '32px', marginLeft: '20px' }}>
                   Connect
                 </Button>
               </Flex>
