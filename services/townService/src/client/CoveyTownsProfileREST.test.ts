@@ -381,4 +381,56 @@ describe('TownsServiceAPIREST', () => {
       }
     });
   });
+  describe('ProfileGetAllProfilesAPI', () => {
+    it('throws 401 error if invalid token', async () => {
+      try {
+        await apiClient.getAllProfiles({
+          token: 'invalidToken',
+        });
+        fail('Expected getProfileByUsername to throw an error');
+      } catch (e) {
+        const err = e as AxiosError;
+        if (err.response) {
+          expect(err.response.status).toBe(401);
+        }
+      }
+    });
+    it('retrives all profiles in database successfully', async () => {
+      const token = jwks.token({
+        aud: audience,
+        iss: issuer,
+      });
+      const mockUser = {
+        firstName: 'Jane',
+        lastName: 'Doe',
+        email: 'JaneDoeEmail5@gmail.com',
+        username: 'JaneDoe5',
+        pronouns: 'she/her',
+        occupation: 'student',
+        bio: 'i love covey town',
+      };
+      const mockUserTwo = {
+        firstName: 'John',
+        lastName: 'Smith',
+        email: 'JS@gmail.com',
+        username: 'IAmJohnSmith',
+        pronouns: 'he/him',
+        occupation: 'student',
+        bio: 'i love covey town more',
+      };
+
+      let allProfiles = await apiClient.getAllProfiles({
+        token,
+      });
+      expect(allProfiles.length).toBe(0);
+      await createProfileForTesting(mockUser);
+      await createProfileForTesting(mockUserTwo);
+
+      allProfiles = await apiClient.getAllProfiles({
+        token,
+      });
+
+      expect(allProfiles.length).toBe(2);
+    });
+  });
 });
