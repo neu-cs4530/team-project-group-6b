@@ -19,6 +19,7 @@ export interface GetProfileRequest extends AuthenticatedRequest {
  * Response from the server for a get profile request
  */
 export interface GetProfileResponse {
+  _id: string;
   firstName: string;
   lastName: string;
   email: string;

@@ -9,7 +9,6 @@ import { AddressInfo } from 'net';
 import * as profileCollection from '../database/ProfileCollection';
 import { IUserProfile } from '../requestHandlers/ProfileRequestHandlers';
 import addTownRoutes from '../router/towns';
-import * as utils from '../Utils';
 import ProfileServiceClient from './ProfileServiceClient';
 
 describe('TownsServiceAPIREST', () => {
@@ -205,7 +204,8 @@ describe('TownsServiceAPIREST', () => {
   });
   describe('ProfileUpdateAPI', () => {
     let mockUser: IUserProfile;
-    beforeAll(async () => {
+    let mockUserTwo: IUserProfile;
+    beforeEach(async () => {
       mockUser = {
         firstName: 'Jane',
         lastName: 'Doe',
@@ -215,9 +215,19 @@ describe('TownsServiceAPIREST', () => {
         occupation: 'student',
         bio: 'i love covey town',
       };
+      mockUserTwo = {
+        firstName: 'John',
+        lastName: 'Smith',
+        email: 'JS@gmail.com',
+        username: 'IAmJohnSmith',
+        pronouns: 'he/him',
+        occupation: 'student',
+        bio: 'i love covey town more',
+      };
       await createProfileForTesting(mockUser);
+      await createProfileForTesting(mockUserTwo);
     });
-    afterAll(async () => {
+    afterEach(async () => {
       await collection.deleteMany({});
     });
     it('throws 401 error if invalid token', async () => {
@@ -232,7 +242,7 @@ describe('TownsServiceAPIREST', () => {
           bio: '',
           token: 'invalidToken',
         });
-        fail('Expected postProfile to throw an error');
+        fail('Expected patchProfile to throw an error');
       } catch (e) {
         const err = e as AxiosError;
         if (err.response) {
@@ -241,10 +251,11 @@ describe('TownsServiceAPIREST', () => {
       }
     });
     it('successfully updates the correct existing profile', async () => {
+      /*
       jest
         .spyOn(utils, 'getEmailForRequest')
         .mockImplementationOnce(() => 'JaneDoeEmail5@gmail.com');
-
+      */
       const token = jwks.token({
         aud: audience,
         iss: issuer,
@@ -278,8 +289,31 @@ describe('TownsServiceAPIREST', () => {
       expect(retrievedProfile).not.toEqual(mockUserWithId);
       expect(retrievedProfile).toEqual(newProfileWithId);
     });
+    it('throws error if try to update to same username as another player', async () => {
+      const token = jwks.token({
+        aud: audience,
+        iss: issuer,
+      });
+      const newProfile = {
+        firstName: 'John',
+        lastName: 'Smith',
+        email: 'JaneDoeEmail5@gmail.com',
+        username: 'IAmJohnSmith', // same username as John Smith profile
+        pronouns: 'he/him',
+        occupation: 'new student',
+        bio: 'i really love covey town',
+      };
 
-    jest.spyOn(utils, 'getEmailForRequest').mockReset();
+      try {
+        await apiClient.patchProfile({
+          ...newProfile,
+          token,
+        });
+        fail('Expected patchProfile to throw an error');
+      } catch (e) {
+        // expect error
+      }
+    });
   });
   describe('ProfileGetByUsernameAPI', () => {
     let mockUser: IUserProfile;
@@ -304,7 +338,7 @@ describe('TownsServiceAPIREST', () => {
           username: 'JaneDoe5',
           token: 'invalidToken',
         });
-        fail('Expected postProfile to throw an error');
+        fail('Expected getProfileByUsername to throw an error');
       } catch (e) {
         const err = e as AxiosError;
         if (err.response) {
