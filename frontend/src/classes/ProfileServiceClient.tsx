@@ -100,7 +100,7 @@ export default class ProfileServiceClient {
     const responseWrapper = await this._axios.get<ResponseEnvelope<GetProfileResponse>>(
       `/api/v2/users-by-email`,
       {
-        headers: { Authentication: `Bearer ${requestData.token}` },
+        headers: { Authorization: `Bearer ${requestData.token}` },
         params: { email: requestData.email },
       },
     );
