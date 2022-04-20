@@ -1,14 +1,5 @@
 import { useAuth0 } from '@auth0/auth0-react';
-import {
-  Box,
-  Button,
-  FormControl,
-  FormLabel,
-  Heading,
-  Input,
-  Textarea,
-  useToast,
-} from '@chakra-ui/react';
+import { Box, Button, FormControl, FormLabel, Input, Textarea, useToast } from '@chakra-ui/react';
 import { Form, Formik } from 'formik';
 import React, { useContext } from 'react';
 import ProfileServiceClient from '../classes/ProfileServiceClient';
@@ -17,7 +8,7 @@ import AuthenticatedUserContext from '../contexts/AuthenticatedUserContext';
 const profileServiceClient = new ProfileServiceClient();
 
 // Aside: You may see InjectedFormikProps<OtherProps, FormValues> instead of what comes below in older code.. InjectedFormikProps was artifact of when Formik only exported a HoC. It is also less flexible as it MUST wrap all props (it passes them through).
-const ProfileForm = (props: { onSuccess: () => any }) => {
+const ProfileForm = (props: { onSuccess: () => void }) => {
   const authenticatedUser = useContext(AuthenticatedUserContext);
   const { getAccessTokenSilently, user } = useAuth0();
   const { onSuccess } = props;

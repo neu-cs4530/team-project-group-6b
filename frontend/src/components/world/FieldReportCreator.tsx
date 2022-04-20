@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { Button, useToast } from '@chakra-ui/react';
 import FieldReportsNotepadDrawer from './FieldReportsNotepadDrawer';
 import AuthenticatedUserContext from '../../contexts/AuthenticatedUserContext';
@@ -16,19 +16,18 @@ interface FieldReport {
 function FieldReportCreator(props: {
   sessionId: string;
   isOpen?: boolean;
-  onClose?: () => any;
-  onSaveSuccess?: (text: string) => any;
+  onClose?: () => void;
+  onSaveSuccess?: (text: string) => void;
 }) {
   const { sessionId, isOpen, onClose, onSaveSuccess } = props;
   const [isNotepadOpen, setIsNotepadOpen] = useState(false);
-  // const appContext = useContext(CoveyAppContext);
   const userContext = useContext(AuthenticatedUserContext);
   const toast = useToast();
   const video = useMaybeVideo();
   const [isLoading, setIsLoading] = useState(false);
   const [currentReport, setCurrentReport] = useState<FieldReport | null>(null);
   const [gotReport, setGotReport] = useState(false);
-  const fetchReport = async () => {
+  const fetchReport = useCallback(async () => {
     if (!userContext.profile) {
       return;
     }
@@ -46,14 +45,14 @@ function FieldReportCreator(props: {
         setIsLoading(false);
       }
     }
-  };
+  }, [sessionId, userContext.profile, userContext.token]);
 
   useEffect(() => {
     if (!gotReport) {
       fetchReport();
       setGotReport(true);
     }
-  });
+  }, [gotReport, fetchReport]);
 
   const handleSubmit = async (text: string) => {
     if (!userContext.profile) {

@@ -5,14 +5,14 @@ import {
   DrawerHeader,
   DrawerOverlay,
 } from '@chakra-ui/react';
-import React, { useState } from 'react';
+import React from 'react';
 import Notepad from './FieldReportsNotepad';
 
 function FieldReportsNotepadDrawer(props: {
   fieldReports: string | undefined;
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (text: string) => any;
+  onSubmit: (text: string) => void;
 }) {
   const { isOpen, onClose, onSubmit, fieldReports } = props;
 
