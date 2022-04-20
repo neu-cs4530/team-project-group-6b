@@ -15,6 +15,8 @@ const mockConnect = jest.fn(() => Promise.resolve());
 
 const mockToast = jest.fn();
 jest.mock('../../classes/TownsServiceClient');
+jest.mock('../../classes/ProfileServiceClient');
+jest.mock('../../classes/ReportServiceClient');
 jest.mock('../../classes/Video/Video');
 jest.mock('../VideoCall/VideoFrontend/hooks/useVideoContext/useVideoContext.ts', () => ({
   __esModule: true, // this property makes it work
