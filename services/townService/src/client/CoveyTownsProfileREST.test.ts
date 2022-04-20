@@ -11,7 +11,7 @@ import { IUserProfile } from '../requestHandlers/ProfileRequestHandlers';
 import addTownRoutes from '../router/towns';
 import ProfileServiceClient from './ProfileServiceClient';
 
-describe('TownsServiceAPIREST', () => {
+describe('ProfileServiceAPIREST', () => {
   let server: http.Server;
   let apiClient: ProfileServiceClient;
   let connection: MongoClient;

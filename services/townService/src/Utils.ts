@@ -1,5 +1,5 @@
-import jwt, { JwtPayload } from 'jsonwebtoken';
 import { Request } from 'express';
+import jwt from 'jsonwebtoken';
 
 /**
  * This function exists solely to help satisfy the linter + typechecker when it looks over the
@@ -25,10 +25,10 @@ export function getEmailForRequest(req: Request): string {
   if (!token) {
     throw new Error('bad token');
   }
-  const decoded = jwt.decode(token) as any;
+  const decoded = jwt.decode(token) as jwt.JwtPayload;
   if (!decoded[tokenKey]) {
     throw new Error('bad token');
   }
 
-  return (decoded as any)[tokenKey];
+  return decoded[tokenKey];
 }

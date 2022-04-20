@@ -53,6 +53,7 @@ export default function addTownRoutes(http: Server, app: Express): io.Server {
       email = getEmailForRequest(req);
     } catch (err) {
       res.status(StatusCodes.BAD_REQUEST).json({ message: 'bad token' });
+      return;
     }
     try {
       const result = await fieldReportCreateHandler({
@@ -79,6 +80,7 @@ export default function addTownRoutes(http: Server, app: Express): io.Server {
       email = await getEmailForRequest(req);
     } catch (err) {
       res.status(StatusCodes.BAD_REQUEST).json({ message: 'bad token' });
+      return;
     }
     try {
       const result = await fieldReportListHandler({
@@ -151,6 +153,7 @@ export default function addTownRoutes(http: Server, app: Express): io.Server {
       email = getEmailForRequest(req);
     } catch (err) {
       res.status(StatusCodes.BAD_REQUEST).json({ message: 'bad token' });
+      return;
     }
     try {
       const result = await fieldReportListAllHandler(req.params.username);
@@ -184,6 +187,7 @@ export default function addTownRoutes(http: Server, app: Express): io.Server {
       email = getEmailForRequest(req);
     } catch (err) {
       res.status(StatusCodes.BAD_REQUEST).json({ message: 'bad token' });
+      return;
     }
     try {
       const result = await fieldReportUpdateHandler({
@@ -216,6 +220,7 @@ export default function addTownRoutes(http: Server, app: Express): io.Server {
       email = getEmailForRequest(req);
     } catch (err) {
       res.status(StatusCodes.BAD_REQUEST).json({ message: 'bad token' });
+      return;
     }
     try {
       const result = await fieldReportDeleteHandler({
