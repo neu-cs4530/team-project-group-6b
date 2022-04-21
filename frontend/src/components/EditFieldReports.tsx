@@ -1,24 +1,24 @@
 import {
-  IconButton,
-  Icon,
-  PopoverTrigger,
-  Popover,
-  PopoverContent,
-  PopoverArrow,
-  PopoverCloseButton,
-  PopoverHeader,
-  PopoverBody,
   Button,
-  useToast,
   Divider,
   Heading,
+  Icon,
+  IconButton,
+  Popover,
+  PopoverArrow,
+  PopoverBody,
+  PopoverCloseButton,
+  PopoverContent,
+  PopoverHeader,
+  PopoverTrigger,
   Switch,
+  useToast,
 } from '@chakra-ui/react';
-import { MdEdit, MdDeleteOutline } from 'react-icons/md';
 import { Card, CardHeader } from '@material-ui/core';
 import React, { useContext, useEffect, useState } from 'react';
-import AuthenticatedUserContext from '../contexts/AuthenticatedUserContext';
+import { MdDeleteOutline, MdEdit } from 'react-icons/md';
 import FieldReportsServiceClient from '../classes/ReportServiceClient';
+import AuthenticatedUserContext from '../contexts/AuthenticatedUserContext';
 import MarkdownRenderer from './MarkdownRenderer';
 import FieldReportCreator from './world/FieldReportCreator';
 
@@ -218,6 +218,7 @@ function EditFieldReports() {
           isOpen={isEditing}
           onClose={() => setIsEditing(false)}
           sessionId={currentEditingSession}
+          showButton={false}
         />
       )}
     </div>
