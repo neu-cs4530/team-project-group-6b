@@ -107,16 +107,18 @@ function FieldReportCreator(props: {
         }}
         isOpen={isOpen !== undefined ? isOpen : isNotepadOpen}
       />
-      <Button
-        disabled={isLoading}
-        colorScheme='blue'
-        onClick={async () => {
-          video?.pauseGame();
-          await fetchReport();
-          setIsNotepadOpen(true);
-        }}>
-        {isLoading ? 'Loading...' : 'Note'}
-      </Button>
+      {showButton && (
+        <Button
+          disabled={isLoading}
+          colorScheme='blue'
+          onClick={async () => {
+            video?.pauseGame();
+            await fetchReport();
+            setIsNotepadOpen(true);
+          }}>
+          {isLoading ? 'Loading...' : 'Field Report'}
+        </Button>
+      )}
     </>
   );
 }
