@@ -116,7 +116,7 @@ function FieldReportCreator(props: {
             await fetchReport();
             setIsNotepadOpen(true);
           }}>
-          {isLoading ? 'Loading...' : 'Field Report'}
+          {isLoading ? 'Loading...' : 'Note'}
         </Button>
       )}
     </>
