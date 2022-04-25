@@ -32,6 +32,14 @@ To create an account and configure your local environment:
 | `TWILIO_API_KEY_SECRET` | The secret for the API key you created.   |
 | `TWILIO_API_AUTH_TOKEN` | Visible on your twilio account dashboard. |
 
+### Configuring MongoDB Database and Collections and JSON Web Token Authentication
+
+The MongoDB database and JSON web token authentication are hardcoded, so if a user wants to run this app locally, there should be no issue.
+
+If you would like to use your own MongoDB database and collections, you must change the `MongoClient` url in `services/townService/src/database/FieldReportCollection.ts` and `services/townService/src/database/ProfileCollection.ts`.
+
+If you would like to use your own JSON web token authentication key, that can be altered in `services/townService/src/router/towns.ts`.
+
 ### Starting the backend
 
 Once your backend is configured, you can start it by running `npm start` in the `services/townService` directory (the first time you run it, you will also need to run `npm install`).
