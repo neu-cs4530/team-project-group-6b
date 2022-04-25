@@ -169,7 +169,7 @@ export default function TownSelection({ doLogin }: TownSelectionProps): JSX.Elem
               Edit Profile
             </Button>
             <Button onClick={() => setIsFieldReportsOpen(true)} style={{ marginRight: '20px' }}>
-              View/Edit Field Reports
+              View/Edit Notes
             </Button>
             <Link to='/profiles'>
               <Button>View Profiles</Button>
