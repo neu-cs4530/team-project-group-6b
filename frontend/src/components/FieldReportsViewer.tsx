@@ -26,7 +26,7 @@ function FieldReportsViewer(props: { fieldReports: FieldReportListResponse[] }) 
                 }}>
                 {' '}
                 <Heading size='sm' style={{ lineHeight: 2.5 }}>
-                  Report From: {new Date(report.time).toLocaleString('en-US')}
+                  Note From: {new Date(report.time).toLocaleString('en-US')}
                 </Heading>
               </div>
             }

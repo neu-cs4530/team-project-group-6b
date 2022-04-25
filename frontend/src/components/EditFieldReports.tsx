@@ -52,7 +52,7 @@ function EditFieldReports() {
           setFieldReports(reports);
         } catch (err) {
           toast({
-            title: 'Error fetching reports.',
+            title: 'Error fetching notes.',
             description: 'Please try again.',
             status: 'error',
             duration: 9000,
@@ -71,8 +71,8 @@ function EditFieldReports() {
         token: userContext.token,
       });
       toast({
-        title: 'Successfully Deleted Field Report',
-        description: 'Successfully deleted field report',
+        title: 'Successfully Deleted Note',
+        description: 'Successfully deleted note',
         status: 'success',
         duration: 9000,
         isClosable: true,
@@ -80,8 +80,8 @@ function EditFieldReports() {
       setFieldReports(fieldReports.filter(fr => fr.sessionID !== sessionId));
     } catch (err) {
       toast({
-        title: 'Error Deleting Field Report',
-        description: 'There was an error deleting your field report, please try again',
+        title: 'Error Deleting Note',
+        description: 'There was an error deleting your note, please try again',
         status: 'error',
         duration: 9000,
         isClosable: true,
@@ -93,8 +93,8 @@ function EditFieldReports() {
     const foundReport = fieldReports.find(fr => fr.sessionID === sessionId);
     if (!foundReport) {
       toast({
-        title: 'Error Changing Privacy on Field Report',
-        description: 'There was an error changing privacy on your field report, please try again',
+        title: 'Error Changing Privacy on Note',
+        description: 'There was an error changing privacy on your note, please try again',
         status: 'error',
         duration: 9000,
         isClosable: true,
@@ -110,7 +110,7 @@ function EditFieldReports() {
       });
       toast({
         title: 'Successfully Toggled Privacy',
-        description: 'Successfully toggled field report privacy',
+        description: 'Successfully toggled note privacy',
         status: 'success',
         duration: 9000,
         isClosable: true,
@@ -122,8 +122,8 @@ function EditFieldReports() {
       );
     } catch (err) {
       toast({
-        title: 'Error Setting Field Report Privacy',
-        description: 'There was an error setting field report privacy, please try again',
+        title: 'Error Setting Note Privacy',
+        description: 'There was an error setting note privacy, please try again',
         status: 'error',
         duration: 9000,
         isClosable: true,
@@ -162,13 +162,14 @@ function EditFieldReports() {
                   }}>
                   {' '}
                   <Heading size='sm' style={{ lineHeight: 2.5 }}>
-                    Report From: {new Date(report.time).toLocaleString('en-US')}
+                    Note From: {new Date(report.time).toLocaleString('en-US')}
                   </Heading>
                   <div>
                     <Switch
                       isChecked={report.isPrivate !== undefined ? report.isPrivate : false}
-                      onChange={() => togglePrivacy(report.sessionID)}
-                    />
+                      onChange={() => togglePrivacy(report.sessionID)}>
+                      private
+                    </Switch>
                     <IconButton
                       aria-label='edit'
                       icon={<Icon as={MdEdit} />}
@@ -187,7 +188,7 @@ function EditFieldReports() {
                       <PopoverContent>
                         <PopoverArrow />
                         <PopoverCloseButton />
-                        <PopoverHeader>Delete this field report?</PopoverHeader>
+                        <PopoverHeader>Delete this note?</PopoverHeader>
                         <PopoverBody>
                           <Button onClick={() => handleDelete(report.sessionID)} color='red'>
                             Delete

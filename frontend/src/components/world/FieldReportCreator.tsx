@@ -76,7 +76,7 @@ function FieldReportCreator(props: {
         });
       }
       toast({
-        title: 'Successfully Saved Field Report',
+        title: 'Successfully Saved Note',
         description: 'Successfully saved field report',
         status: 'success',
         duration: 9000,
@@ -85,7 +85,7 @@ function FieldReportCreator(props: {
       if (onSaveSuccess) onSaveSuccess(text);
     } catch (err) {
       toast({
-        title: 'Error Posting Field Report',
+        title: 'Error Posting Note',
         description: 'There was an error posting your field report, please try again',
         status: 'error',
         duration: 9000,
@@ -107,18 +107,16 @@ function FieldReportCreator(props: {
         }}
         isOpen={isOpen !== undefined ? isOpen : isNotepadOpen}
       />
-      {showButton && (
-        <Button
-          disabled={isLoading}
-          colorScheme='blue'
-          onClick={async () => {
-            video?.pauseGame();
-            await fetchReport();
-            setIsNotepadOpen(true);
-          }}>
-          {isLoading ? 'Loading...' : 'Field Report'}
-        </Button>
-      )}
+      <Button
+        disabled={isLoading}
+        colorScheme='blue'
+        onClick={async () => {
+          video?.pauseGame();
+          await fetchReport();
+          setIsNotepadOpen(true);
+        }}>
+        {isLoading ? 'Loading...' : 'Note'}
+      </Button>
     </>
   );
 }
