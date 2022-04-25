@@ -161,7 +161,7 @@ export async function fieldReportDeleteHandler(
     username: requestData.username,
     sessionID: requestData.sessionID,
   });
-  const success = result.acknowledged;
+  const success = result.deletedCount !== 0;
 
   return {
     isOK: success,

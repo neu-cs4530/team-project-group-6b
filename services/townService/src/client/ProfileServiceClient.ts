@@ -1,10 +1,6 @@
 import assert from 'assert';
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
 
-/**
- * Requests that require authentication must have an authentication access token
- */
-
 interface IUserProfile {
   firstName: string;
   lastName: string;
@@ -15,6 +11,9 @@ interface IUserProfile {
   email: string;
 }
 
+/**
+ * Requests that require authentication must have an authentication access token
+ */
 export interface AuthenticatedRequest {
   token: string;
 }
@@ -30,6 +29,7 @@ export interface GetProfileRequest extends AuthenticatedRequest {
  * Response from the server for a get profile request
  */
 export interface GetProfileResponse {
+  _id: string;
   firstName: string;
   lastName: string;
   email: string;
@@ -98,19 +98,11 @@ export default class ProfileServiceClient {
 
   async getProfile(requestData: GetProfileRequest): Promise<GetProfileResponse> {
     const responseWrapper = await this._axios.get<ResponseEnvelope<GetProfileResponse>>(
-      `/api/v2/users-by-email`,
+      '/api/v2/users-by-email',
       {
         headers: { Authorization: `Bearer ${requestData.token}` },
         params: { email: requestData.email },
       },
-    );
-    return ProfileServiceClient.unwrapOrThrowError(responseWrapper);
-  }
-
-  async getAllProfiles(requestData: { token: string }): Promise<IUserProfile[]> {
-    const responseWrapper = await this._axios.get<ResponseEnvelope<IUserProfile[]>>(
-      '/all-profiles',
-      { headers: { Authorization: `Bearer ${requestData.token}` } },
     );
     return ProfileServiceClient.unwrapOrThrowError(responseWrapper);
   }
@@ -125,7 +117,7 @@ export default class ProfileServiceClient {
 
   async postProfile(requestData: ProfileRequest): Promise<void> {
     const responseWrapper = await this._axios.post<ResponseEnvelope<void>>(
-      `/api/v2/users/`,
+      '/api/v2/users/',
       requestData,
       {
         headers: { Authorization: `Bearer ${requestData.token}` },
@@ -141,6 +133,14 @@ export default class ProfileServiceClient {
       {
         headers: { Authorization: `Bearer ${requestData.token}` },
       },
+    );
+    return ProfileServiceClient.unwrapOrThrowError(responseWrapper);
+  }
+
+  async getAllProfiles(requestData: { token: string }): Promise<IUserProfile[]> {
+    const responseWrapper = await this._axios.get<ResponseEnvelope<IUserProfile[]>>(
+      '/all-profiles',
+      { headers: { Authorization: `Bearer ${requestData.token}` } },
     );
     return ProfileServiceClient.unwrapOrThrowError(responseWrapper);
   }

@@ -45,9 +45,8 @@ export default function PlayersInTownList(): JSX.Element {
         </Tooltip>
         <OrderedList>
           {sorted.map(player => (
-            <>
+            <React.Fragment key={player.id}>
               <ListItem
-                key={player.id}
                 onClick={() => {
                   setModalUser(player);
                   onOpen();
@@ -75,7 +74,7 @@ export default function PlayersInTownList(): JSX.Element {
                   </ModalContent>
                 )}
               </Modal>
-            </>
+            </React.Fragment>
           ))}
         </OrderedList>
       </Box>
