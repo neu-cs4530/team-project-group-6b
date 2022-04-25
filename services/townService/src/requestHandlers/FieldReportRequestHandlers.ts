@@ -9,16 +9,25 @@ export interface ResponseEnvelope<T> {
   response?: T;
 }
 
+/**
+ * Payload sent by client to delete a field report
+ */
 export interface FieldReportDeleteRequest {
   username: string;
   sessionID: string;
 }
 
+/**
+ * Payload sent by client to list a field report from a session id
+ */
 export interface FieldReportListRequest {
   username: string;
   sessionID: string;
 }
 
+/**
+ * Response from the server for a field report list request
+ */
 export interface FieldReportListResponse {
   username: string;
   fieldReports: string;
@@ -29,6 +38,9 @@ export interface FieldReportListResponse {
 
 export type FieldReportListAllResponse = FieldReportListResponse[];
 
+/**
+ * Payload sent by client to create a field report
+ */
 export interface FieldReportCreateRequest {
   username: string;
   fieldReports: string;
@@ -36,6 +48,9 @@ export interface FieldReportCreateRequest {
   time: number;
 }
 
+/**
+ * Payload sent by client to update a field report
+ */
 export interface FieldReportUpdateRequest {
   username: string;
   fieldReports?: string;
