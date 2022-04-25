@@ -58,7 +58,6 @@ const AuthenticatedUserProvider: React.FC = ({ children }) => {
   };
   useEffect(() => {
     (async () => {
-      console.log("is loading: ", isLoading)
       if (isAuthenticated && user && user.email && !user.profile && !gotProfile) {
         const token = await getAccessTokenSilently();
         try {
@@ -83,7 +82,7 @@ const AuthenticatedUserProvider: React.FC = ({ children }) => {
             refresh,
           });
         } catch (err) {
-          if (err.message.includes('404')) {
+          if ((err as Error).message.includes('404')) {
             setUserInfo({ ...userInfo, refresh });
             setShouldRegister(true);
           } else {
@@ -98,7 +97,6 @@ const AuthenticatedUserProvider: React.FC = ({ children }) => {
         }
       }
       if (!isLoading && !isAuthenticated) {
-        console.log("is logging in");
         await loginWithRedirect({ redirectUri: window.location.origin });
       }
     })();
