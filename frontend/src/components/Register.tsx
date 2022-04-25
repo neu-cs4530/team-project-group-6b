@@ -6,7 +6,6 @@ import {
   FormLabel,
   Heading,
   Input,
-  Text,
   Textarea,
   useToast,
 } from '@chakra-ui/react';
