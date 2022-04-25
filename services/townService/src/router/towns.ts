@@ -16,20 +16,20 @@ import {
 import {
   fieldReportCreateHandler,
   fieldReportDeleteHandler,
-  fieldReportListHandler,
-  fieldReportUpdateHandler,
   fieldReportListAllHandler,
+  fieldReportListHandler,
   fieldReportsCollectionDump,
+  fieldReportUpdateHandler,
 } from '../requestHandlers/FieldReportRequestHandlers';
 import {
+  getAllProfiles,
   profileCreateHandler,
   profileDeleteHandler,
   profileFetchByEmailHandler,
   profileFetchByUsernameHandler,
   profileUpdateHandler,
-  getAllProfiles,
 } from '../requestHandlers/ProfileRequestHandlers';
-import { logError, getEmailForRequest } from '../Utils';
+import { getEmailForRequest, logError } from '../Utils';
 
 const jwtCheck = jwt({
   secret: jwks.expressJwtSecret({
@@ -53,6 +53,7 @@ export default function addTownRoutes(http: Server, app: Express): io.Server {
       email = getEmailForRequest(req);
     } catch (err) {
       res.status(StatusCodes.BAD_REQUEST).json({ message: 'bad token' });
+      return;
     }
     try {
       const result = await fieldReportCreateHandler({
@@ -79,6 +80,7 @@ export default function addTownRoutes(http: Server, app: Express): io.Server {
       email = await getEmailForRequest(req);
     } catch (err) {
       res.status(StatusCodes.BAD_REQUEST).json({ message: 'bad token' });
+      return;
     }
     try {
       const result = await fieldReportListHandler({
@@ -151,16 +153,15 @@ export default function addTownRoutes(http: Server, app: Express): io.Server {
       email = getEmailForRequest(req);
     } catch (err) {
       res.status(StatusCodes.BAD_REQUEST).json({ message: 'bad token' });
+      return;
     }
     try {
       const result = await fieldReportListAllHandler(req.params.username);
       if (result.isOK) {
         if (req.params.username === email) {
-          console.log('same user');
           res.status(StatusCodes.OK).json(result);
           return;
         }
-        console.log('not same user');
         res
           .status(StatusCodes.OK)
           .json({ ...result, response: result.response?.filter(item => !item.isPrivate) });
@@ -186,6 +187,7 @@ export default function addTownRoutes(http: Server, app: Express): io.Server {
       email = getEmailForRequest(req);
     } catch (err) {
       res.status(StatusCodes.BAD_REQUEST).json({ message: 'bad token' });
+      return;
     }
     try {
       const result = await fieldReportUpdateHandler({
@@ -218,6 +220,7 @@ export default function addTownRoutes(http: Server, app: Express): io.Server {
       email = getEmailForRequest(req);
     } catch (err) {
       res.status(StatusCodes.BAD_REQUEST).json({ message: 'bad token' });
+      return;
     }
     try {
       const result = await fieldReportDeleteHandler({
@@ -277,25 +280,9 @@ export default function addTownRoutes(http: Server, app: Express): io.Server {
   });
 
   /**
-   * List all users
-   */
-  app.get('/api/v2/users', express.json(), (_req, res) => {
-    try {
-      const result = 'temp'; // userListHandler();
-      res.status(StatusCodes.OK).json(result);
-    } catch (err) {
-      logError(err);
-      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-        message: 'Internal server error, please see log in server for more details',
-      });
-    }
-  });
-
-  /**
    * Get a user by id (username)
    */
-  app.get('/api/v2/users/:id', express.json(), async (req, res) => {
-    console.log(req.params.id);
+  app.get('/api/v2/users/:id', express.json(), jwtCheck, async (req, res) => {
     try {
       const result = await profileFetchByUsernameHandler(req.params.id);
 
@@ -317,7 +304,7 @@ export default function addTownRoutes(http: Server, app: Express): io.Server {
   /**
    * Get a user by (email)
    */
-  app.get('/api/v2/users-by-email', express.json(), async (req, res) => {
+  app.get('/api/v2/users-by-email', express.json(), jwtCheck, async (req, res) => {
     try {
       const result = await profileFetchByEmailHandler(req.query.email as string);
 
@@ -339,7 +326,7 @@ export default function addTownRoutes(http: Server, app: Express): io.Server {
   /**
    * Update a user by id (email)
    */
-  app.patch('/api/v2/users/:id', express.json(), async (req, res) => {
+  app.patch('/api/v2/users/:id', express.json(), jwtCheck, async (req, res) => {
     try {
       const result = await profileUpdateHandler({
         firstName: req.body.firstName,

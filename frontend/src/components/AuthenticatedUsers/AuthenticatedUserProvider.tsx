@@ -10,8 +10,9 @@ const profileServiceClient = new ProfileServiceClient();
 
 const AuthenticatedUserProvider: React.FC = ({ children }) => {
   const toast = useToast();
-  const { user, loginWithRedirect, isAuthenticated, isLoading, logout, getAccessTokenSilently } =
+  const { user, loginWithRedirect, isAuthenticated, isLoading, logout: azLogout, getAccessTokenSilently } =
     useAuth0();
+  const logout = () => azLogout({returnTo: window.location.href})
   const [userInfo, setUserInfo] = useState<AuthenticatedUser>({
     isAuthenticated: false,
     token: '',
@@ -57,6 +58,7 @@ const AuthenticatedUserProvider: React.FC = ({ children }) => {
   };
   useEffect(() => {
     (async () => {
+      console.log("is loading: ", isLoading)
       if (isAuthenticated && user && user.email && !user.profile && !gotProfile) {
         const token = await getAccessTokenSilently();
         try {
@@ -96,7 +98,8 @@ const AuthenticatedUserProvider: React.FC = ({ children }) => {
         }
       }
       if (!isLoading && !isAuthenticated) {
-        await loginWithRedirect();
+        console.log("is logging in");
+        await loginWithRedirect({ redirectUri: window.location.origin });
       }
     })();
   });

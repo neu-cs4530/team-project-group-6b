@@ -1,9 +1,9 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { Button, useToast } from '@chakra-ui/react';
-import FieldReportsNotepadDrawer from './FieldReportsNotepadDrawer';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
+import ReportServiceClient from '../../classes/ReportServiceClient';
 import AuthenticatedUserContext from '../../contexts/AuthenticatedUserContext';
 import useMaybeVideo from '../../hooks/useMaybeVideo';
-import ReportServiceClient from '../../classes/ReportServiceClient';
+import FieldReportsNotepadDrawer from './FieldReportsNotepadDrawer';
 
 const reportServiceClient = new ReportServiceClient();
 interface FieldReport {
@@ -18,8 +18,9 @@ function FieldReportCreator(props: {
   isOpen?: boolean;
   onClose?: () => void;
   onSaveSuccess?: (text: string) => void;
+  showButton?: boolean;
 }) {
-  const { sessionId, isOpen, onClose, onSaveSuccess } = props;
+  const { sessionId, isOpen, onClose, onSaveSuccess, showButton } = props;
   const [isNotepadOpen, setIsNotepadOpen] = useState(false);
   const userContext = useContext(AuthenticatedUserContext);
   const toast = useToast();
@@ -124,6 +125,7 @@ FieldReportCreator.defaultProps = {
   isOpen: undefined,
   onClose: undefined,
   onSaveSuccess: undefined,
+  showButton: true,
 };
 
 export default FieldReportCreator;

@@ -1,4 +1,4 @@
-import getFieldReportCollection from '../database/FieldReportCollection';
+import FieldReportCollection from '../database/FieldReportCollection';
 
 /**
  * Envelope that wraps any response from the server
@@ -46,7 +46,7 @@ export interface FieldReportUpdateRequest {
 export async function fieldReportCreateHandler(
   requestData: FieldReportCreateRequest,
 ): Promise<ResponseEnvelope<Record<string, null>>> {
-  const collection = await getFieldReportCollection();
+  const collection = await FieldReportCollection();
   const result = await collection.insertOne({ ...requestData, isPrivate: false });
   const success = result.acknowledged;
   return {
@@ -61,7 +61,7 @@ export async function fieldReportCreateHandler(
 export async function fieldReportListHandler(
   requestData: FieldReportListRequest,
 ): Promise<ResponseEnvelope<FieldReportListResponse>> {
-  const collection = await getFieldReportCollection();
+  const collection = await FieldReportCollection();
   const result = await collection.findOne<FieldReportListResponse>({
     username: requestData.username,
     sessionID: requestData.sessionID,
@@ -83,7 +83,7 @@ export async function fieldReportListHandler(
 export async function fieldReportListAllHandler(
   username: string,
 ): Promise<ResponseEnvelope<FieldReportListAllResponse>> {
-  const collection = await getFieldReportCollection();
+  const collection = await FieldReportCollection();
   const result = collection.find<FieldReportListResponse>({
     username,
   });
@@ -101,10 +101,8 @@ export async function fieldReportListAllHandler(
   };
 }
 
-export async function fieldReportsCollectionDump(): Promise<
-  ResponseEnvelope<FieldReportListAllResponse>
-> {
-  const collection = await getFieldReportCollection();
+export async function fieldReportsCollectionDump(): Promise<ResponseEnvelope<FieldReportListAllResponse>> {
+  const collection = await FieldReportCollection();
   const result = await collection.find<FieldReportListResponse>({});
 
   if (result !== null) {
@@ -123,8 +121,7 @@ export async function fieldReportsCollectionDump(): Promise<
 export async function fieldReportUpdateHandler(
   requestData: FieldReportUpdateRequest,
 ): Promise<ResponseEnvelope<Record<string, null>>> {
-  const collection = await getFieldReportCollection();
-  console.log('request data: ', requestData);
+  const collection = await FieldReportCollection();
   const query = {
     username: requestData.username,
     sessionID: requestData.sessionID,
@@ -143,8 +140,6 @@ export async function fieldReportUpdateHandler(
     updates.fieldReports = requestData.fieldReports;
   }
   const update = { $set: updates };
-  console.log('querying report with query: ', JSON.stringify(query));
-  console.log('updating report with update: ', JSON.stringify(update));
   const options = {};
   const result = await collection.updateOne(query, update, options);
   const success = result.acknowledged;
@@ -161,12 +156,12 @@ export async function fieldReportUpdateHandler(
 export async function fieldReportDeleteHandler(
   requestData: FieldReportDeleteRequest,
 ): Promise<ResponseEnvelope<Record<string, null>>> {
-  const collection = await getFieldReportCollection();
+  const collection = await FieldReportCollection();
   const result = await collection.deleteOne({
     username: requestData.username,
     sessionID: requestData.sessionID,
   });
-  const success = result.acknowledged;
+  const success = result.deletedCount !== 0;
 
   return {
     isOK: success,

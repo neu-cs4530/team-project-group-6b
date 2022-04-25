@@ -17,7 +17,7 @@ ReactDOM.render(
         domain='harrymerzin.auth0.com'
         clientId='cEVvHBp7TMMUFxSr0PQWvkuhZkV9Tzxf'
         scope='profile email'
-        redirectUri='http://localhost:3000'>
+        redirectUri={window.location.origin}>
         <AuthenticatedUserContextProvider>
           <App />
         </AuthenticatedUserContextProvider>
