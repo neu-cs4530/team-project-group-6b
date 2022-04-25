@@ -299,7 +299,7 @@ export default function TownSelection({ doLogin }: TownSelectionProps): JSX.Elem
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>
-            Hi {authenticatedUser.profile?.firstName}, edit your field reports below
+            Hi {authenticatedUser.profile?.firstName}, edit your notes below
           </ModalHeader>
           <ModalCloseButton />
           <ModalBody>

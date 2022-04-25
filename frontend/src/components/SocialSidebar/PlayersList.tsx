@@ -59,7 +59,7 @@ export default function PlayersInTownList(): JSX.Element {
                   <ModalContent>
                     <ModalHeader>
                       {modalUser.userName}
-                      {`'`}s reports
+                      {`'`}s notes
                     </ModalHeader>
                     <ModalCloseButton />
                     <ModalBody>

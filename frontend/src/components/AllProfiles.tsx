@@ -87,7 +87,7 @@ function AllProfiles() {
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>
-            Viewing Reports for: {reportsUser?.firstName} {reportsUser?.lastName}
+            Viewing Notes for: {reportsUser?.firstName} {reportsUser?.lastName}
           </ModalHeader>
           <ModalCloseButton />
           <ModalBody>
