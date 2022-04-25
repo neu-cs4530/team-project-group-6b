@@ -165,10 +165,10 @@ function EditFieldReports() {
                     Note From: {new Date(report.time).toLocaleString('en-US')}
                   </Heading>
                   <div>
+                    private 
                     <Switch
                       isChecked={report.isPrivate !== undefined ? report.isPrivate : false}
                       onChange={() => togglePrivacy(report.sessionID)}>
-                      private
                     </Switch>
                     <IconButton
                       aria-label='edit'
